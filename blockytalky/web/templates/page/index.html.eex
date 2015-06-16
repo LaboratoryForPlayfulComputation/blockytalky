@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<div class="jumbotron">
+  <h2>Welcome to BlockyTalky!</h2>
+  <p class="lead">This is a test</p>
+</div>
+<div id="blocklyDiv" style="height: 600px; width: 100%;"></div>
+
+<%= render Blockytalky.PageView, "blockbin.html" %>
+
+ <script>
+   var workspace = Blockly.inject('blocklyDiv',
+       {media: '<%= static_path(@conn, "/media/") %>',
+        toolbox: document.getElementById('toolbox')});
+ </script>
