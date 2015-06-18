@@ -55,6 +55,10 @@ defmodule Mix.Tasks.PythonDeps do
     System.cmd "python", ["setup.py", "install"], [cd: "#{deps_dir}/brickpi/"]
     Mix.shell.info "Installing Grove Pi globally"
     System.cmd "python", ["setup.py", "install"], [cd: "#{deps_dir}/grovepi/Software/Python/"]
+    # copy for local use: such as reading constants.
+    System.cmd "cp", ["#{deps_dir}/brickpi/BrickPi.py", "#{__DIR__}/../hw_apis"]
+    System.cmd "cp", ["#{deps_dir}/grovepi/Software/Python/grovepi.py","#{__DIR__}/../hw_apis"]
+
     Mix.shell.info "Done! Cleaning up..."
   end
 end
@@ -63,12 +67,18 @@ defmodule Mix.Tasks.FileLogging do
   use Mix.Task
   def run(_) do
     Mix.shell.info "Configuring file logging using rsyslog #{IO.ANSI.format([:blue,"(Debian/Ubuntu systems supported)"])}"
-
+    unless is_sudo, do: Mix.raise "This mix task needs to be run with sudo to copy #{IO.ANSI.format([:blue,"/etc/rsyslog.d"])} files"
     if File.exists?("/etc/rsyslog.d") do
-      System.cmd("cp", ["#{__DIR__}/lib/setup/blockytalky-log.conf","/etc/rsyslog.d"])
-      System.cmd("cp", ["#{__DIR__}/lib/setup/bt_logrotation_script.sh","/etc/rsyslog.d"])
+      System.cmd("cp", ["#{__DIR__}/blockytalky-log.conf","/etc/rsyslog.d"])
+      System.cmd("cp", ["#{__DIR__}/bt_logrotation_script.sh","/etc/rsyslog.d"])
       System.cmd("chmod", ["+x","/etc/rsyslog.d/bt_logrotation_script.sh"])
     end
 
+  end
+  defp is_sudo do
+    {user,_} = System.cmd "whoami", []
+    user = String.strip user
+    Mix.shell.info "Currently running as: #{IO.ANSI.format([:blue,user],true)} user"
+    user == "root"
   end
 end

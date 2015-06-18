@@ -35,7 +35,7 @@ Vagrant.configure(2) do |config|
 
   #blockytalky default port forwarding
   config.vm.network "forwarded_port", guest: 4000, host: 8080
-  config.vm.network "forwarded_port", guest: 4369, host: 8282
+  # config.vm.network "forwarded_port", guest: 4369, host: 8282
   config.vm.network "private_network", type: "dhcp"
   # Require the Trigger plugin for Vagrant
 unless Vagrant.has_plugin?('vagrant-triggers')
