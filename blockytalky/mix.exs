@@ -38,7 +38,9 @@ defmodule Blockytalky.Mixfile do
      {:erlport, git: "https://github.com/hdima/erlport.git"},
      {:osc,     git: "https://github.com/mujaheed/erlang-osc.git"},
      {:httpoison, "~> 0.7"},
-     {:syslog, git: "https://github.com/smpallen99/syslog"}
+     {:syslog, git: "https://github.com/smpallen99/syslog.git"},
+     { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
+     { :socket, git: "https://github.com/meh/elixir-socket.git"}
    ]
   end
 end

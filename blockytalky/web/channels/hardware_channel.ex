@@ -1,6 +1,6 @@
 defmodule Blockytalky.HardwareChannel do
   use Phoenix.Channel
-  alias Blockytalky.HardwareDaemon, as: HardwareDaemon
+  alias Blockytalky.MockHW, as: MockHW
   require Logger
   @moduledoc """
   Implemented based on example at:
@@ -12,7 +12,7 @@ defmodule Blockytalky.HardwareChannel do
   ####
   #External API
   def pub_mock_hw_message() do
-    value = case HardwareDaemon.get_sensor_value(:mock,3) do
+    value = case MockHW.get_sensor_value(3) do
       {:ok, data} -> data
       _           -> ":("
     end
@@ -22,7 +22,7 @@ defmodule Blockytalky.HardwareChannel do
   ####
   #Channel GenServer implementation
   #pattern match on param 1, a string like "topic:subtopic"
-  def join("hardware:" <> any, auth_msg, socket) do
+  def join("hardware:" <> _any, _auth_msg, socket) do
     Logger.debug "User joined socket: #{inspect socket}"
     {:ok, socket}
   end

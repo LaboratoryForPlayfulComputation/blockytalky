@@ -13,14 +13,13 @@ defmodule Blockytalky do
       supervisor(Blockytalky.Endpoint, []),
       # Start the Ecto repository
       worker(Blockytalky.Repo, []),
-      # Here you could define other workers and supervisors as children
-      # worker(Blockytalky.Worker, [arg1, arg2, arg3]),
 
       ####
       # BT IO stuff
-      supervisor(Blockytalky.HardwareDaemon, [])
+      supervisor(Blockytalky.HardwareDaemon, []),
       #TODO: Music Supervisor
       #TODO: Comms/Messaging Supervisor
+      supervisor(Blockytalky.CommsModule, [])
       #TODO: User Code / DSL Supervisor
     ]
 

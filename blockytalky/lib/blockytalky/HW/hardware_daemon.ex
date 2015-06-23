@@ -112,7 +112,7 @@ defmodule Blockytalky.PythonQuerier do
       :python.call(python_env, python_module, method, args)
        {:noreply,state}
     rescue
-      e in ErlangError ->
+      _e in ErlangError ->
         #if the cast failed on setup, then we don't want to restart the module, but if it was just a bad method call, we do.
         reason = if method == :setup, do: :shutdown, else: :abnormal
         {:stop, reason, state}
