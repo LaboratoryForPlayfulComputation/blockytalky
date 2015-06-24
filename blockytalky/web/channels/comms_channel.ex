@@ -1,5 +1,6 @@
 defmodule Blockytalky.CommsChannel do
   use Phoenix.Channel
+  alias Blockytalky.UserScript, as: US
   require Logger
   ####
   #Channel GenServer implementation
@@ -17,6 +18,8 @@ defmodule Blockytalky.CommsChannel do
   end
   def handle_in("message", msg, socket) do
     #do everything we need to do with this message. probably interop with user code
+    #Logger.debug "Received message: #{inspect msg}"
+    US.queue_message(msg)
     push socket, "message", msg
     {:noreply, socket}
   end

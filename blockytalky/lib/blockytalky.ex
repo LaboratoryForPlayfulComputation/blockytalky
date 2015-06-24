@@ -17,8 +17,9 @@ defmodule Blockytalky do
       ####
       # BT IO stuff
       supervisor(Blockytalky.HardwareDaemon, []),
-      supervisor(Blockytalky.CommsModule, [])
+      supervisor(Blockytalky.CommsModule, []),
       #TODO: User Code / DSL Supervisor
+      worker(Blockytalky.UserScript,[])
     ]
     if @music, do: children ++ [worker(Blockytalky.Music, [])]
 

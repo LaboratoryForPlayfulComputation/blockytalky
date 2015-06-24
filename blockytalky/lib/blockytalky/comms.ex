@@ -146,7 +146,7 @@ defmodule Blockytalky.LocalListener do
   def get_locals_time(btu_name), do: GenServer.call(__MODULE__,{:get_locals_time, btu_name})
 
   defp listen udp_conn do
-    Logger.debug "Listeneing for UDP messages"
+    #Logger.debug "Listeneing for UDP messages"
     #listen for UDP messages
     {data, ip} = udp_conn |> Socket.Datagram.recv!
     msg = message_decode(data)
@@ -184,7 +184,7 @@ defmodule Blockytalky.LocalListener do
     |> Socket.Datagram.send! CM.message_encode(@btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_multicast_port}
   end
   defp announce udp_conn do
-    Logger.debug "Announcing UDP status"
+    #Logger.debug "Announcing UDP status"
     #announce timestamp / ip address
     udp_conn
     |> Socket.Datagram.send! CM.message_encode(@btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
