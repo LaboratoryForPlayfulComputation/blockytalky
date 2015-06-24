@@ -6,9 +6,6 @@ defmodule Blockytalky.CommsModule do
   @moduledoc """
   In charge of local and remote messaging between
   BTUs, App Inventor Apps, and music synths.
-
-  Simply wraps the python comms module and replaces pika for now
-  TODO Connect to python WS from elixir
   """
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
 
@@ -22,7 +19,12 @@ defmodule Blockytalky.CommsModule do
         {:error, reason}
     end
   end
-
+  @doc """
+  The primary API function all the other modules can call. Will try to use UDP
+  broadcast first, but then defaults to remote server if it cannot find the ip
+  ## Example
+      iex> Blockytalky.CommsModule.send_message("hello",Application.get_env(:blockytalky, :id, "Unknown")) #loopback, send to self
+  """
   def send_message(msg, to) when is_atom(to), do: send_message(msg, Atom.to_string(to))
   def send_message(msg, to) do
     case LL.get_locals_ip(to) do
@@ -31,17 +33,29 @@ defmodule Blockytalky.CommsModule do
       ip ->
         #send udp message
         LL.send(msg, ip)
-
     end
   end
-
+  @doc """
+  This is the public API `message out` function. It publishes on a Blockytalky.Endpoint channel for other modules to listen to.
+  TODO Make this function broadcast to a globally known channel that can be listened on.
+  """
   def receive_message msg do
-    #TODO broadcast on Endpoint Channel for everyone to react to.
-    Logger.debug "#{inspect msg}"
+    Logger.debug "received message: #{inspect msg}"
+    case msg do
+      {sender, :network_sync} ->
+        Blockytalky.Endpoint.broadcast! "comms:message", "network_sync",  %{body: msg}
+      _ ->
+        Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: msg}
+    end
   end
   ####
   #Internal functions and helpers
-
+  @doc """
+  packs the python message.py style json object for the sake of backwards compat.
+  """
+  def message_encode(source, destination, channel, content \\ []) do
+    ~s|{"py/object": "message.Message", "content": {"py/tuple": #{inspect content}}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
+  end
   ####
   # Supervisor implementation
   # CH17 Programming Elixir
@@ -60,30 +74,32 @@ defmodule Blockytalky.CommsState do
   require Logger
   alias Blockytalky.CommsModule, as: CM
   @moduledoc """
-  keeps track of dax ws connection on init.
+  keeps track of dax ws connection and has a listener process to push to the
+  CommsModule receive channel
   """
   @dax_router Application.get_env(:blockytalky, :dax, "ws://0.0.0.0:8005/dax")
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
 
   def start_link() do
     dax_conn = Socket.connect! @dax_router
-    msg = message_encode(@btu_id, "dax", "Subs")
+    msg = CM.message_encode(@btu_id, "dax", "Subs")
     Socket.Web.send! dax_conn, {:text, msg}
     {:ok, _pid} = GenServer.start_link(__MODULE__, dax_conn, name: __MODULE__)  #return this
   end
   def send_message(msg, to) do
     dax_conn = get_dax_conn
-    Socket.Web.send! dax_conn, {:text,message_encode(@btu_id, to, "Message", msg)}
+    Socket.Web.send! dax_conn, {:text,CM.message_encode(@btu_id, to, "Message", msg)}
   end
   def get_dax_conn, do: GenServer.call(__MODULE__,:get_dax_conn)
-  defp message_encode(source, destination, channel, content \\ []) do
-    ~s|{"py/object": "message.Message", "content": {"py/tuple": #{inspect content}}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
-  end
   defp message_decode({:text, msg_string}) do
-    result = msg_string
+    msg = msg_string
               |> JSX.decode!
+    content = msg
               |> Map.get("content")
               |> Map.get("py/tuple")
+    sender  = msg
+              |> Map.get("source")
+    {sender, content}
   end
   defp listen(dax_conn) do
     msg = Socket.Web.recv! dax_conn
@@ -111,7 +127,10 @@ defmodule Blockytalky.LocalListener do
   use GenServer
   require Logger
   alias Blockytalky.CommsModule, as: CM
-
+  @moduledoc """
+  Keeps track of the %{btu_id => ip_addr} map and handles listening and broadcasting
+  on the UDP port.
+  """
   @udp_multicast_ip "224.0.0.1"
   @udp_multicast_delay 10_000 #milliseconds
   @udp_multicast_port 9999
@@ -129,28 +148,46 @@ defmodule Blockytalky.LocalListener do
   defp listen udp_conn do
     Logger.debug "Listeneing for UDP messages"
     #listen for UDP messages
-    {key, ip} = udp_conn |> Socket.Datagram.recv!
+    {data, ip} = udp_conn |> Socket.Datagram.recv!
+    msg = message_decode(data)
     #store result:
-    case key do
-      "ANNOUNCE:" <> value ->
+    case msg do
+      {:announce, value} ->
         add_local(value,ip)
         spawn  fn -> expire(value) end
-      "MSG:" <> value ->
+      {:message, value} ->
         CM.receive_message(value)
     end
     listen(udp_conn)
+  end
+  defp message_decode(msg_string) do
+    result = msg_string
+              |> JSX.decode!
+    case result |> Map.get("destination") do
+      "announce" ->
+        value = result
+                |> Map.get("source")
+        {:announce, value}
+      _ ->
+        content = result
+                |> Map.get("content")
+                |> Map.get("py/tuple")
+        sender = result
+                |> Map.get("source")
+        {:message, {sender, content}}
+    end
   end
   def send(msg, socket) do
     Logger.debug "sending message via udp: #{msg} to #{inspect socket}"
     {ip,port} = socket
     GenServer.call(__MODULE__,:get_udp_conn)
-    |> Socket.Datagram.send! "MSG:#{msg}", {erl_ip_to_socket_ip(ip), @udp_multicast_port}
+    |> Socket.Datagram.send! CM.message_encode(@btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_multicast_port}
   end
   defp announce udp_conn do
     Logger.debug "Announcing UDP status"
     #announce timestamp / ip address
     udp_conn
-    |> Socket.Datagram.send! "ANNOUNCE:#{@btu_id}", {@udp_multicast_ip, @udp_multicast_port}
+    |> Socket.Datagram.send! CM.message_encode(@btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
     #sleep for a short time
     :timer.sleep(@udp_multicast_delay)
     announce(udp_conn)

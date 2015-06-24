@@ -20,6 +20,7 @@ defmodule Blockytalky.Router do
   #http://www.phoenixframework.org/v0.13.1/docs/channels
   socket "/ws", Blockytalky do
     channel "hardware:*", HardwareChannel
+    channel "comms:*", CommsChannel
   end
   # Other scopes may use custom stacks.
   # scope "/api", Blockytalky do
