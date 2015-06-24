@@ -15,40 +15,44 @@ defmodule Blockytalky.SonicPi do
     [:down_beat, :up_beat, :beat1, :beat2, :beat3, :beat4]
   end
   def init do
-    tempo(120) <> maestro
+    tempo(120) <> maestro_beat_pattern(false,4)
   end
   def tempo(val) do
     """
     $tempo = #{val}
     """
   end
-  def maestro do
+  def maestro_beat_pattern(network, beats_per_measure) do
+    sync_to_network = if network, do: "sync :network_sync", else: "#"
+    beat_signaling = cond do
+      beats_per_measure > 2 ->
+      Enum.reduce(2..beats_per_measure,"",fn(x,acc) -> """
+        sync :down_beat
+        cue :beat#{x}
+        """
+      end)
+      true ->
+        "#"
+      end
+    #return program:
     """
-    # Main tempo cueing / UDP broadcasting thread
     u1 = UDPSocket.new
+    #{sync_to_network}
+    # Main tempo cueing / UDP broadcasting thread
     live_loop :down_beat do
       use_bpm $tempo
-      u1.send :network, 0, 127.0.0.1, #{@listen_port}
       sleep 0.50
       use_bpm $tempo
       cue :up_beat
       sleep 0.50
     end
-    """
-  end
-  def maestro_network do
-    """
-    # Main tempo cueing / UDP broadcasting thread
-    u1 = UDPSocket.new
-    sync :network_sync
-    live_loop :down_beat do
-      use_bpm $tempo
-      u1.send :network, 0, 127.0.0.1, #{@listen_port}
-      sleep 0.50
-      use_bpm $tempo
-      cue :up_beat
-      sleep 0.50
+    live_loop :beat_pattern do
+      sync :down_beat
+      cue  :beat1
+      u1.send :network_sync, 0, '127.0.0.1', #{@listen_port}
+      #{beat_signaling}
     end
+
     """
   end
   # stop motif with $motif_name.kill

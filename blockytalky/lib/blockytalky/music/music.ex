@@ -11,6 +11,9 @@ defmodule Blockytalky.Music do
   @listen_port  Application.get_env(:blockytalky, :music_port, 9090)
   ####
   #External API
+  @doc """
+  Adds a btu_id to send a :network_sync 
+  """
   def add_child(btu_id) do
     GenServer.cast(__MODULE__, {:add_dependant, btu_id})
   end
@@ -21,13 +24,22 @@ defmodule Blockytalky.Music do
   def sync_to_parent(parent_id) do
     if parent_id == get_parent, do: send_music_program(SonicPi.cue(:network))
   end
-  ####
-  #Internal API
+  @doc """
+  Sends a music program(string) to the sonic pi instance running on local host
+  see Blockytalky.SonicPi for programs API
+  ## Example
+      iex> Blockytalky.Music.send_music_program(Blockytalky.SonicPi.cue(:my_cue))
+  """
   def send_music_program(program) do
+    #pack program as osc message
+    m = {:message, '/run-code',[String.to_char_list(program)]}
+        |> :osc_lib.encode
     #send program via udp to sonic pi port
     GenServer.call(__MODULE__, :get_udp_conn)
-    |> Socket.Datagram.send! program, {"127.0.0.1", @sonicpi_port}
+    |> Socket.Datagram.send! m, {"127.0.0.1", @sonicpi_port}
   end
+  ####
+  #Internal API
   #all messages come from sonic_pi, any message from another BTU will come from the comms module
   defp listen(udp_conn) do
     #listen for udp message

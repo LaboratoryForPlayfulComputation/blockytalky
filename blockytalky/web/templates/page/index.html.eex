@@ -6,9 +6,3 @@
 <div id="blocklyDiv" style="height: 600px; width: 100%;"></div>
 
 <%= render Blockytalky.PageView, "blockbin.html" %>
-
- <script>
-   var workspace = Blockly.inject('blocklyDiv',
-       {media: '<%= static_path(@conn, "/media/") %>',
-        toolbox: document.getElementById('toolbox')});
- </script>

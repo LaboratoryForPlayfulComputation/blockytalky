@@ -26,7 +26,7 @@ defmodule Blockytalky.HardwareChannel do
     Logger.debug "User joined socket: #{inspect socket}"
     {:ok, socket}
   end
-
+  #def handle_in("hw_msg", payload, socket) #client server
   def handle_out("hw_msg", payload, socket) do
     push socket, "hw_msg", payload
     {:noreply, socket}
