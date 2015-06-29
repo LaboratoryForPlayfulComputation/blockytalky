@@ -12,6 +12,10 @@ chan.on("hw_msg", payload => {
   console.log("received hardware message: " + payload)
   jumbotron.find(".lead").text(payload.body)
 })
+/* blockly */
+let workspace = Blockly.inject('blocklyDiv',
+    {media: '/media/',
+     toolbox: document.getElementById('toolbox')});
 let App = {
 }
 

@@ -1,6 +1,6 @@
 defmodule Blockytalky do
   use Application
-
+  @music Application.get_env(:blockytalky, :music, false) #config setting
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -13,16 +13,15 @@ defmodule Blockytalky do
       supervisor(Blockytalky.Endpoint, []),
       # Start the Ecto repository
       worker(Blockytalky.Repo, []),
-      # Here you could define other workers and supervisors as children
-      # worker(Blockytalky.Worker, [arg1, arg2, arg3]),
 
       ####
       # BT IO stuff
-      supervisor(Blockytalky.HardwareDaemon, [])
-      #TODO: Music Supervisor
-      #TODO: Comms/Messaging Supervisor
+      supervisor(Blockytalky.HardwareDaemon, []),
+      supervisor(Blockytalky.CommsModule, []),
       #TODO: User Code / DSL Supervisor
+      worker(Blockytalky.UserScript,[])
     ]
+    if @music, do: children ++ [worker(Blockytalky.Music, [])]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

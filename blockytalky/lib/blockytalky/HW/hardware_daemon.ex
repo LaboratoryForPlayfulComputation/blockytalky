@@ -34,14 +34,14 @@ defmodule Blockytalky.HardwareDaemon do
     hw_children = for hw <- @supported_hardware do
       case hw do
         :btbrickpi ->
-            [worker(PythonQuerier, [hw], id: hw),
+            [worker(PythonQuerier, [hw], id: hw, restart: :transient),
              worker(Blockytalky.BrickPiState,[])]
-        _ -> worker(PythonQuerier, [hw], id: hw)
+        _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end
     |> List.flatten
     Logger.debug "Starting HW Workers: #{inspect hw_children}"
-    supervise hw_children, strategy: :one_for_one
+    supervise hw_children, strategy: :one_for_one, max_restarts: 5, max_seconds: 1
   end
 end
 
@@ -58,7 +58,7 @@ defmodule Blockytalky.PythonQuerier do
   consumption by the userscript.
 
   The state our Genserver will keep track of is a tuple:
-  {python_env, pythong_module}
+  {python_env, python_module}
 
   we can query the GenServer in order to run the script with those args.
   Name keyword can be any of: #{inspect Application.get_env(:blockytalky, :supported_hardware)}
@@ -91,6 +91,8 @@ defmodule Blockytalky.PythonQuerier do
   # See: Ch16 of Programming Elixir
 
   def init(python_env, python_module) do
+    #trap exit
+    #:erlang.process_flag(:trap_exit, true)
     #return state
     {:ok, {python_env, python_module}}
   end
@@ -106,12 +108,31 @@ defmodule Blockytalky.PythonQuerier do
 
   def handle_cast({:run, method, args},state={python_env, python_module}) do
     #runscript
-    :python.call(python_env, python_module, method, args)
-    {:noreply,state}
+    result = try do
+      :python.call(python_env, python_module, method, args)
+       {:noreply,state}
+    rescue
+      _e in ErlangError ->
+        #if the cast failed on setup, then we don't want to restart the module, but if it was just a bad method call, we do.
+        reason = if method == :setup, do: :shutdown, else: :abnormal
+        {:stop, reason, state}
+    end
+    result
+
   end
-  def terminate(_reason, {python_env, python_module}) do
+#  def handle_info({:exit, _pid, reason}, state) do
+#    Logger.debug "#{inspect reason}"
+#    {:noreply, state}
+#  end
+  def terminate(reason, {python_env, python_module}) do
     #clean up env
-    Logger.info "Terminating: #{inspect python_module}. UI should repoll for port types / reset port types after restart."
+    Logger.info "Terminating: #{inspect python_module} with reason: #{inspect reason}."
+    case reason do
+      :shutdown ->
+        Logger.info "This module is not going to restart, please make sure you have the correct environment for your python modules."
+      _ ->
+        Logger.info "Restarting... UI should repoll port types from state server and reset them."
+    end
     :python.stop(python_env)
   end
 end

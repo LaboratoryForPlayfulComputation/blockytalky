@@ -18,7 +18,11 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-
+config :blockytalky,
+  id: "lpc_btu",
+  dax: "ws://btrouter.getdown.org:8005/dax",
+  music: true, #set to true if sonic pi is running / this is a synth unit
+  music_port: 9090
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

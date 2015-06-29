@@ -9,10 +9,6 @@
 
     <title>Hello Phoenix!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
-    <!--Blockly Scripts -->
-    <script src="<%= static_path(@conn,"/js/blockly_compressed.js") %>"></script>
-    <script src="<%= static_path(@conn,"/js/blocks_compressed.js") %>"></script>
-    <script src="<%= static_path(@conn,"/js/lang/en.js") %>"></script>
   </head>
 
   <body>
@@ -34,5 +30,6 @@
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
     <script>require("web/static/js/app")</script>
+
   </body>
 </html>
