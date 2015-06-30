@@ -1,2 +1,0 @@
-%{"erlport": {:git, "https://github.com/hdima/erlport.git", "4041c0810f798cba9fa528ebca90556f0ae50645", []},
-  "osc": {:git, "https://github.com/mujaheed/erlang-osc.git", "203d67f836ad01600297042d33096c3b1efede3c", []}}

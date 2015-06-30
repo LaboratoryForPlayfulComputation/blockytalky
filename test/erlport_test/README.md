@@ -1,4 +1,0 @@
-ErlportTest
-===========
-
-** TODO: Add description **

@@ -72,6 +72,7 @@ defmodule Mix.Tasks.FileLogging do
       System.cmd("cp", ["#{__DIR__}/blockytalky-log.conf","/etc/rsyslog.d"])
       System.cmd("cp", ["#{__DIR__}/bt_logrotation_script.sh","/etc/rsyslog.d"])
       System.cmd("chmod", ["+x","/etc/rsyslog.d/bt_logrotation_script.sh"])
+      Mix.shell.info "Setting up File Logging: Done!"
     end
 
   end

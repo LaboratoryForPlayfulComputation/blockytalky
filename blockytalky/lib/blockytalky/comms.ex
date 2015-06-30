@@ -81,10 +81,7 @@ defmodule Blockytalky.CommsState do
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
 
   def start_link() do
-    dax_conn = Socket.connect! @dax_router
-    msg = CM.message_encode(@btu_id, "dax", "Subs")
-    Socket.Web.send! dax_conn, {:text, msg}
-    {:ok, _pid} = GenServer.start_link(__MODULE__, dax_conn, name: __MODULE__)  #return this
+    {:ok, _pid} = GenServer.start_link(__MODULE__, [], name: __MODULE__)  #return this
   end
   def send_message(msg, to) do
     dax_conn = get_dax_conn
@@ -103,13 +100,18 @@ defmodule Blockytalky.CommsState do
   end
   defp listen(dax_conn) do
     msg = Socket.Web.recv! dax_conn
-    message_decode(msg)
-    |> CM.receive_message
+    spawn fn ->
+      message_decode(msg)
+      |> CM.receive_message
+    end
     listen(dax_conn)
   end
   ####
   #Genserver Implementation
   def init(dax_conn) do
+    dax_conn = Socket.connect! @dax_router
+    msg = CM.message_encode(@btu_id, "dax", "Subs")
+    Socket.Web.send! dax_conn, {:text, msg}
     Logger.debug "dax_conn: #{inspect dax_conn}"
     listener_pid = spawn  fn -> listen(dax_conn) end
     {:ok, {dax_conn, listener_pid}}

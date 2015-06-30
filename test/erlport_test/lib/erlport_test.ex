@@ -1,2 +1,0 @@
-defmodule ErlportTest do
-end
