@@ -224,8 +224,8 @@ defmodule Blockytalky.LocalListener do
     {:noreply,{udp,lis,ann,local_map}}
   end
   #def handle_cast(:remove_local)
-  def handle_cast({:remove_local, btu_name, ip}, {udp,lis,ann,local_map}) do
-    local_map = Map.delete(local_map, btu_name, ip)
+  def handle_cast({:remove_local, btu_name}, {udp,lis,ann,local_map}) do
+    local_map = Map.delete(local_map, btu_name)
     {:noreply,{udp,lis,ann,local_map}}
   end
   def handle_call({:get_locals_ip, btu_name},_from, state={_udp,_lis,_ann,local_map}) do

@@ -51,7 +51,7 @@ Blockly.Elixir['lists_repeat'] = function(block) {
       Blockly.Elixir.ORDER_NONE) || 'nil';
   var argument1 = Blockly.Elixir.valueToCode(block, 'NUM',
       Blockly.Elixir.ORDER_MULTIPLICATIVE) || '0';
-  var code = '[' + argument0 + '] |> Stream.cycle |> Stream.take(' + argument1') |> Enum.to_list';
+  var code = '[' + argument0 + '] |> Stream.cycle |> Stream.take(' + argument1 + ') |> Enum.to_list';
   return [code, Blockly.Elixir.ORDER_FUNCTION_CALL];
 };
 
@@ -125,7 +125,7 @@ Blockly.Elixir['lists_getIndex'] = function(block) {
       var code = list + '|> List.last';
       return [code, Blockly.Elixir.ORDER_MEMBER];
     } else {
-        var code = '[head | tail] = ' + list ' |> Enum.reverse; Enum.reverse(tail)'
+        var code = '[head | tail] = ' + list + ' |> Enum.reverse; Enum.reverse(tail)';
         return code + '\n';
     }
   } else if (where == 'FROM_START') {
@@ -154,10 +154,10 @@ Blockly.Elixir['lists_getIndex'] = function(block) {
     }
   } else if (where == 'RANDOM') {
     if (mode == 'GET') {
-      code = list ' |> Enum.shuffle |> List.first';
+      code = list + ' |> Enum.shuffle |> List.first';
       return [code, Blockly.Elixir.ORDER_FUNCTION_CALL];
     } else {
-      code = list '|> Enum.delete_at(:random.uniform(length('+list+') - 1))';
+      code = list + '|> Enum.delete_at(:random.uniform(length('+list+') - 1))';
       return code + '\n';
     }
   }

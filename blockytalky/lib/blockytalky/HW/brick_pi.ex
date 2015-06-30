@@ -39,7 +39,7 @@ defmodule Blockytalky.BrickPi do
    """
    def get_sensor_type(port_num), do: BrickPiState.get_sensor_type(port_num)
    def get_sensor_type_constants, do: BrickPiState.get_sensor_type_constants
-  def set_motor_value(port_num, value)do
+   def set_motor_value(port_num, value) do
     new_value = _normalize(value, [low: -100, high: 100], [low: -255, high: 255])
     PythonQuerier.run(:btbrickpi, :set_motor_value,[port_num, new_value])
   end

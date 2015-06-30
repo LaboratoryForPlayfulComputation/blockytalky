@@ -31,20 +31,7 @@ goog.require('Blockly.Elixir');
 
 Blockly.Elixir['procedures_defreturn'] = function(block) {
   // Define a procedure with a return value.
-  // First, add a 'global' statement for every variable that is assigned.
-  var globals = Blockly.Variables.allVariables(block);
-  for (var i = globals.length - 1; i >= 0; i--) {
-    var varName = globals[i];
-    if (block.arguments_.indexOf(varName) == -1) {
-      globals[i] = Blockly.Elixir.variableDB_.getName(varName,
-          Blockly.Variables.NAME_TYPE);
-    } else {
-      // This variable is actually a parameter name.  Do not include it in
-      // the list of globals, thus allowing it be of local scope.
-      //globals.splice(i, 1);
-    }
-  }
-  //TODO global variables?
+  
   //globals = globals.length ? '  global ' + globals.join(', ') + '\n' : '';
   var funcName = Blockly.Elixir.variableDB_.getName(block.getFieldValue('NAME'),
       Blockly.Procedures.NAME_TYPE);
@@ -69,7 +56,7 @@ Blockly.Elixir['procedures_defreturn'] = function(block) {
         Blockly.Variables.NAME_TYPE);
   }
   var code = 'def ' + funcName + '(' + args.join(', ') + ') do \n' +
-      globals + branch + returnValue +'\n end \n';
+      branch + returnValue +'\n end \n';
   code = Blockly.Elixir.scrub_(block, code);
   Blockly.Elixir.definitions_[funcName] = code;
   return null;

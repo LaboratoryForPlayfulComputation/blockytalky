@@ -174,7 +174,7 @@ Blockly.Elixir['math_number_property'] = function(block) {
          '  if is_binary(n) do',
          '    {n,_} = Float.parse(n)',
          '  end                     ',
-         '  cond do'
+         '  cond do',
          '    n == 2 or n == 3 -> true',
          '    # False if n is negative, is 1, or not whole,' +
              ' or if n is divisible by 2 or 3.',
@@ -211,7 +211,7 @@ Blockly.Elixir['math_number_property'] = function(block) {
       if (!divisor || divisor == '0') {
         return ['false', Blockly.Elixir.ORDER_ATOMIC];
       }
-      code = 'rem (number_to_check + ' , ' + divisor)' + ' == 0';
+      code = 'rem (' + number_to_check + ' , ' + divisor + ')' + ' == 0';
       break;
   }
   return [code, Blockly.Elixir.ORDER_RELATIONAL];
@@ -223,7 +223,7 @@ Blockly.Elixir['math_change'] = function(block) {
       Blockly.Elixir.ORDER_ADDITIVE) || '0';
   var varName = Blockly.Elixir.variableDB_.getName(block.getFieldValue('VAR'),
       Blockly.Variables.NAME_TYPE);
-  return varName + ' = '+ varName + argument0 + '\n';
+  return varName + ' = '+ varName + ' + (' +argument0 + ')\n';
 };
 
 // Rounding functions have a single operand.

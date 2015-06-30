@@ -34,7 +34,6 @@ goog.require('Blockly.Generator');
  * @type !Blockly.Generator
  */
 Blockly.Elixir = new Blockly.Generator('Elixir');
-
 /**
  * List of illegal variable names.
  * This is not intended to be a security feature.  Blockly is 100% client-side,
@@ -45,16 +44,13 @@ Blockly.Elixir = new Blockly.Generator('Elixir');
 Blockly.Elixir.addReservedWords(
     // import keyword
     // print ','.join(keyword.kwlist)
-    // http://docs.python.org/reference/lexical_analysis.html#keywords
     'after,alias,and,as,assert,def,defp,defdelegate,defmodule,defmacro,defmacrop,defimpl,defcallback,else,except,fn,for,if,import,in,not,or,raise,rescue,try,' +
-    //http://docs.python.org/library/constants.html
     'true,false' +
-    // http://docs.python.org/library/functions.html
+    'set, get' + //custom macros
     'abs,apply,binary_part,binding, case,cd,clear,c,cond,div,exit,flush,get_and_updated_in,get_in,h,hd,inspect,is_atom,is_binary,is_bitstring,is_boolean,is_float,is_function,is_integer,is_list,is_map,is_nil,is_number,is_pid,is_port,is_reference,is_tuple,l,length,ls,macro_exported?,make_ref,map_size,match?,max,min,node,put_elem,put_in,pwd,quote,r,raise,receive,rem,require,reraise,respawn,round,s,self,send,sigil_C,sigil_R,sigil_S,sigilW,sigil_c,sigil_r,sigil_s,sigil_w,spawn,spawn_link,spawn_monitor,struct,super,t,throw,tl,to_char_list,to_string,trunc,try,tuple_size,unless,unqoute,unquote_splicing,update_in,use,v,var');
 
 /**
  * Order of operation ENUMs.
- * http://docs.python.org/reference/expressions.html#summary
  */
 Blockly.Elixir.ORDER_ATOMIC = 0;            // 0 "" ...
 Blockly.Elixir.ORDER_COLLECTION = 1;        // tuples, lists, dictionaries
@@ -93,37 +89,35 @@ Blockly.Elixir.init = function(workspace) {
   Blockly.Elixir.definitions_ = Object.create(null);
   // Create a dictionary mapping desired function names in definitions_
   // to actual function names (to avoid collisions with user functions).
-  Blockly.Python.functionNames_ = Object.create(null);
+  Blockly.Elixir.functionNames_ = Object.create(null);
 
-  if (!Blockly.Python.variableDB_) {
-    Blockly.Python.variableDB_ =
+  if (!Blockly.Elixir.variableDB_) {
+    Blockly.Elixir.variableDB_ =
         new Blockly.Names(Blockly.Elixir.RESERVED_WORDS_);
   } else {
-    Blockly.Python.variableDB_.reset();
+    Blockly.Elixir.variableDB_.reset();
   }
-
-  var defvars = [];
-  var variables = Blockly.Variables.allVariables(workspace);
-  for (var x = 0; x < variables.length; x++) {
-    defvars[x] = Blockly.Elixir.variableDB_.getName(variables[x],
-        Blockly.Variables.NAME_TYPE) + '= nil';
-  }
-  Blockly.Elixir.definitions_['variables'] = defvars.join('\n');
 };
 
 /**
+ * TODO Add docs to this, we edited it in a domain specific way.
+ * We added Blockytalky specific boilerplate, mostly to get around statelessness
  * Prepend the generated code with the variable definitions.
  * @param {string} code Generated code.
  * @return {string} Completed code.
  */
-Blockly.Blockly.finish = function(code) {
-  // Convert the definitions dictionary into a list.
-  // Convert the definitions dictionary into a list.
+Blockly.Elixir.finish = function(code) {
   var definitions = [];
   for (var name in Blockly.Elixir.definitions_) {
-    definitions.push(Blockly.Elixir.definitions_[name]);
+    if(name !== "variables")
+      definitions.push(Blockly.Elixir.definitions_[name]);
   }
-  return definitions.join('\n\n') + '\n\n\n' + code;
+  definitions = definitions.join('\n')
+  header = 'defmodule Blockytalky.UserCode do\n' +
+            'import Blockytalky.DSL \n\n'
+  footer = 'init\n'+ //this is a macro in Blockytalky.DSL
+           'end\n'
+  return header + definitions + footer; //ignore code outside of definitions for now
 };
 
 /**
@@ -147,7 +141,7 @@ Blockly.Elixir.quote_ = function(string) {
   string = string.replace(/\\/g, '\\\\')
                  .replace(/\n/g, '\\\n')
                  .replace(/\%/g, '\\%')
-                 .replace(/'/g, '\\\'');
+                 .replace(/"/g, '\\\"');
   return '"' + string + '"';
 };
 
@@ -184,6 +178,6 @@ Blockly.Elixir.scrub_ = function(block, code) {
     }
   }
   var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
-  var nextCode = Blockly.Python.blockToCode(nextBlock);
+  var nextCode = Blockly.Elixir.blockToCode(nextBlock);
   return commentCode + code + nextCode;
 };
