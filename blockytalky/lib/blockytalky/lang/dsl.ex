@@ -27,14 +27,16 @@ defmodule Blockytalky.DSL do
     quote do
       def init(_) do
         if Module.defines? __MODULE__, {:start,0}, do: start
-        run
+        run()
       end
       defp run() do
         if Module.defines? __MODULE__, {:continuously,0}, do: continuously
         if Module.defines? __MODULE__, {:handle_message,1} do
           handle_message(get_msg)
         end
+        run() #loop
       end
+      def handle_message(_), do: :ok
     end
   end
   ## Events
@@ -88,7 +90,7 @@ defmodule Blockytalky.DSL do
   ## Comms
   # send message <msg> to <unit>
   def send_message(msg, to), do: CM.send_message(msg,to)
-  def get_message(), do
+  def get_message() do
     {msg, _sender} = US.dequeue_message
     msg
   end
