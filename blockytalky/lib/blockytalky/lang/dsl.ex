@@ -1,5 +1,5 @@
 defmodule Blockytalky.DSL do
-  alias Blockytalky.UserScript, as: US
+  alias Blockytalky.UserState, as: US
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
@@ -27,18 +27,17 @@ defmodule Blockytalky.DSL do
     quote do
       def init(_) do
         if Module.defines? __MODULE__, {:start,0}, do: start
-        run()
       end
-      defp run() do
+      def loop() do
         if Module.defines? __MODULE__, {:continuously,0}, do: continuously
         if Module.defines? __MODULE__, {:handle_message,1} do
           handle_message(get_msg)
         end
-        run() #loop
       end
       def handle_message(_), do: :ok
     end
   end
+
   ## Events
   ## Variables
   def set(var_name, value), do: US.set_var(var_name, value)
@@ -47,7 +46,10 @@ defmodule Blockytalky.DSL do
   #set sensor type
   def bp_set_sensor_type(port_num, type_string), do: BP.set_sensor_type(port_num, type_string)
   #get sensor value
-  def bp_get_sensor_value(port_num), do: BP.get_sensor_value(port_num)
+  def bp_get_sensor_value(port_num) do
+     {new_value, old_value} = US.get_value(port_num)
+     new_value
+   end
   #when sensor value is <comp> <value>, do: <body>
   def when_bp_sensor_value_compare(port_num, comp_fun, value, fun) do
     is_valid = US.apply(

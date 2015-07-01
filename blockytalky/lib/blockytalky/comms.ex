@@ -81,11 +81,13 @@ defmodule Blockytalky.CommsState do
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
 
   def start_link() do
-    {:ok, _pid} = GenServer.start_link(__MODULE__, [], name: __MODULE__)  #return this
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)  #return this
   end
   def send_message(msg, to) do
-    dax_conn = get_dax_conn
-    Socket.Web.send! dax_conn, {:text,CM.message_encode(@btu_id, to, "Message", msg)}
+    try do #the genserver might not be running
+      dax_conn = get_dax_conn
+      Socket.Web.send dax_conn, {:text,CM.message_encode(@btu_id, to, "Message", msg)}
+    end
   end
   def get_dax_conn, do: GenServer.call(__MODULE__,:get_dax_conn)
   defp message_decode({:text, msg_string}) do
@@ -108,13 +110,18 @@ defmodule Blockytalky.CommsState do
   end
   ####
   #Genserver Implementation
-  def init(dax_conn) do
-    dax_conn = Socket.connect! @dax_router
-    msg = CM.message_encode(@btu_id, "dax", "Subs")
-    Socket.Web.send! dax_conn, {:text, msg}
-    Logger.debug "dax_conn: #{inspect dax_conn}"
-    listener_pid = spawn  fn -> listen(dax_conn) end
-    {:ok, {dax_conn, listener_pid}}
+  def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
+    try do
+      dax_conn = Socket.connect! @dax_router
+      msg = CM.message_encode(@btu_id, "dax", "Subs")
+      Socket.Web.send! dax_conn, {:text, msg}
+      Logger.debug "dax_conn: #{inspect dax_conn}"
+      listener_pid = spawn  fn -> listen(dax_conn) end
+      {:ok, {dax_conn, listener_pid}}
+    rescue
+      _ -> :ignore
+    end
   end
   def handle_call(:get_dax_conn, _from, state={dax_conn,_l}) do
     {:reply, dax_conn, state}
@@ -139,8 +146,8 @@ defmodule Blockytalky.LocalListener do
   @local_ip_expiration 60_000 #milliseconds
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
   def start_link() do # () -> {:ok, pid}
-    udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
-    {:ok, _pid} =  GenServer.start_link(__MODULE__,{udp_conn, %{}}, name: __MODULE__)
+
+    {:ok, _pid} =  GenServer.start_link(__MODULE__,[], name: __MODULE__)
   end
   def add_local(btu_name, ip), do: GenServer.cast(__MODULE__,{:add_local,btu_name,ip})
   def remove_local(btu_name), do: GenServer.cast(__MODULE__,{:remove_local,btu_name})
@@ -183,13 +190,14 @@ defmodule Blockytalky.LocalListener do
     Logger.debug "sending message via udp: #{msg} to #{inspect socket}"
     {ip,port} = socket
     GenServer.call(__MODULE__,:get_udp_conn)
-    |> Socket.Datagram.send! CM.message_encode(@btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_multicast_port}
+    |> Socket.Datagram.send CM.message_encode(@btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_multicast_port}
   end
   defp announce udp_conn do
     #Logger.debug "Announcing UDP status"
     #announce timestamp / ip address
-    udp_conn
-    |> Socket.Datagram.send! CM.message_encode(@btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
+    status = udp_conn
+    |> Socket.Datagram.send CM.message_encode(@btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
+    Logger.debug(inspect status)
     #sleep for a short time
     :timer.sleep(@udp_multicast_delay)
     announce(udp_conn)
@@ -211,13 +219,14 @@ defmodule Blockytalky.LocalListener do
     end
   end
   defp erl_ip_to_socket_ip({a,b,c,d}), do: "#{a}.#{b}.#{c}.#{d}"
-  def init({udp_conn, local_map}) do
+  def init(_) do
+    udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
     Logger.debug "Initializing LL"
     listener_pid  =  spawn  fn -> listen(udp_conn) end
     Logger.debug "LL listener pid: #{inspect listener_pid}"
     announcer_pid = spawn fn -> announce(udp_conn) end
     Logger.debug "LL announcer pid: #{inspect announcer_pid}"
-    {:ok, {udp_conn, listener_pid, announcer_pid, local_map}}
+    {:ok, {udp_conn, listener_pid, announcer_pid, %{}}}
   end
   def handle_cast({:add_local, btu_name, ip}, {udp,lis,ann,local_map}) do
     local_map = Map.put(local_map, btu_name, {ip, :calendar.universal_time})
@@ -238,7 +247,7 @@ defmodule Blockytalky.LocalListener do
   end
   def handle_call(:get_udp_conn, _from, state={udp,_,_,_}), do: {:reply, udp, state}
   def terminate(reason, state={udp_conn, listener_pid, announcer_pid, _map}) do
-    Logger.debug "ShuttingDown LL: #{inspect reason}"
+    Logger.debug "ShuttingDown #{inspect __MODULE__}"
     Socket.close udp_conn
     Process.exit(listener_pid, :restarting)
     Process.exit(announcer_pid, :restarting)

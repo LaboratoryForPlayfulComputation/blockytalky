@@ -12,22 +12,27 @@ defmodule Blockytalky.BrickPi do
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
   ####
   #External API
-  def get_sensor_value(port_num) do
+  def get_sensor_value(port_id) do
+    port_num = BrickPiState.get_sensor_type_constants[port_id]
     value = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
-    type = BrickPiState.get_sensor_type(port_num)
+    type = BrickPiState.get_sensor_type(port_id)
     #normalize from brickpi to blockytalky values here:
     case type do
       _ -> value
     end
   end
-  def get_encoder_value(port_num), do: PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num])
+  def get_encoder_value(port_id) do
+     port_num = BrickPiState.get_sensor_type_constants[port_id]
+     PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num])
+   end
   @doc """
   ##Example
       iex>Blockytalky.BrickPi.set_sensor_type(0,"TYPE_SENSOR_TOUCH")
   """
-  def set_sensor_type(port_num, sensor_type) do
-     BrickPiState.set_sensor_type(port_num, sensor_type)
+  def set_sensor_type(port_id, sensor_type) do
+     BrickPiState.set_sensor_type(port_id, sensor_type)
      num_type = BrickPiState.get_sensor_type_constants[sensor_type]
+     port_num = BrickPiState.get_sensor_type_constants[port_id]
      PythonQuerier.run(:btbrickpi, :set_sensor_type, [port_num, num_type])
 
    end
@@ -67,6 +72,7 @@ defmodule Blockytalky.BrickPiState do
   state to reflect that new type. The state looks like:
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
+  @file  "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/sensors.json"
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
   def start_link() do
@@ -75,7 +81,12 @@ defmodule Blockytalky.BrickPiState do
   def init(_) do
     # {:ok, %{"TYPE_NAME"=> value, ...},[:"1":num, ...]}
     map = _get_sensor_type_constants
-    {:ok, {map, []}}
+    #reload last known configuration of sensor types
+    sensor_types = case File.read(@file) do
+      {:ok, text} -> JSX.decode(text)
+      {_,_} -> []
+    end
+    {:ok, {map, sensor_types}}
   end
   # () -> {:ok,%{"type"=>num...}}
   def get_sensor_type_constants, do: GenServer.call(__MODULE__, {:get_sensor_type_constants})
@@ -92,7 +103,11 @@ defmodule Blockytalky.BrickPiState do
     {:reply, {:ok, type}, state}
   end
   def handle_cast({:set_sensor_type,port_num, sensor_type},{constants, sensor_types}) do
-    {:noreply,{constants, Keyword.put(sensor_types,:"#{port_num}", sensor_type)}}
+    sensor_types = Keyword.put(sensor_types,:"#{port_num}", sensor_type)
+    #backup sensor types
+    {status, json} = JSX.encode sensor_types
+    if status == :ok, do: File.write(@file, json)
+    {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do
   end

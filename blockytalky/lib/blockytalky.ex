@@ -19,7 +19,7 @@ defmodule Blockytalky do
       supervisor(Blockytalky.HardwareDaemon, []),
       supervisor(Blockytalky.CommsModule, []),
       #TODO: User Code / DSL Supervisor
-      worker(Blockytalky.UserScript,[])
+      worker(Blockytalky.UserState,[])
     ]
     if @music, do: children ++ [worker(Blockytalky.Music, [])]
 
