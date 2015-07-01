@@ -197,7 +197,6 @@ defmodule Blockytalky.LocalListener do
     #announce timestamp / ip address
     status = udp_conn
     |> Socket.Datagram.send CM.message_encode(@btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
-    Logger.debug(inspect status)
     #sleep for a short time
     :timer.sleep(@udp_multicast_delay)
     announce(udp_conn)
