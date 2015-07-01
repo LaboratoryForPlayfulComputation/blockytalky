@@ -1,0 +1,3 @@
+<%= for sensor <- sensors do %>
+    <%= render "sensor_box.html", sensor: sensor %>
+    <% end %>

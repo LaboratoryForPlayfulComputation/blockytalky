@@ -2,6 +2,7 @@ defmodule Blockytalky.UserState do
   use GenServer
   require Logger
   alias Blockytalky.BrickPi, as: BP
+  alias Blockytalky.MockHW, as: MockHW
   @moduledoc """
   Keeps track of the statful-ness of the client's BT program.
   e.g. hardware change over time, message queue to be handled
@@ -12,10 +13,13 @@ defmodule Blockytalky.UserState do
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
   @btu_id Application.get_env(:blockytalky, :id, "Unknown")
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @update_rate 30 #milliseconds
   ####
   # External API
   ## UserCode state State
   def update_state() do
+    #update mock state
+    if :mock in @supported_hardware, do: update_mock_state()
     #update brickpi state
     if :btbrickpi in @supported_hardware, do: update_bp_state()
     #update grove state
@@ -67,13 +71,15 @@ defmodule Blockytalky.UserState do
   def put_value(value, port_id) do
     GenServer.cast(__MODULE__,{:put_value, value, port_id})
   end
-  def get_value(value, port_id) do
+  def get_value(port_id) do
     GenServer.call(__MODULE__, {:get_value, port_id})
   end
   @doc """
   applies the passed function with airity 3 to new value, and old value of
   the port with the passed id.
-  ((x,y,z) -> any), #) -> any
+  ((x,y,z) -> any), port_id, value_for_z) -> any
+  where x is the newest value of that port and y is the previous value
+  useful for seeing if a user defined value is within/outside of a range
   ## Example
       iex> Blockytalky.UserScript.apply(fn(x,y,z) -> x > z and x < y end, 1, 10)
   """
@@ -84,6 +90,12 @@ defmodule Blockytalky.UserState do
 
   def set_var(var_name, var_value), do: GenServer.cast(__MODULE__,{:set_var,var_name, var_value})
   def get_var(var_name), do: GenServer.call(__MODULE__, {:get_var,var_name})
+  def get_sensor_names do
+    sensors = []
+    ++ if :mock in @supported_hardware, do: ~w/Mock_1 Mock_2 Mock_3 Mock_4/, else: []
+    ++ if :btbrickpi in @supported_hardware, do: ~w/PORT_1 PORT_2 PORT_3 PORT_4/ ++ ~w/PORT_A PORT_B PORT_C PORT_D/, else: []
+    sensors
+  end
   ####
   # Internal API
   defp update_bp_state do
@@ -96,14 +108,40 @@ defmodule Blockytalky.UserState do
       put_value(x, BP.get_encoder_value(x))
     end
   end
+  defp update_mock_state do
+    sensor_ports = ~w/Mock_1 Mock_2 Mock_3 Mock_4/
+    for x <- sensor_ports do
+      value = MockHW.get_sensor_value(x)
+      #Logger.debug "Mock_hardware update: #{inspect value}"
+      put_value(value, x)
+    end
+  end
   def loop() do
-    :timer.sleep(1_000)
+    :timer.sleep(@update_rate)
     update_state()
     upid = GenServer.call(__MODULE__, :get_upid)
     if upid do
       send upid, :updated
     end
+    push_to_clients()
     loop()
+  end
+  defp push_to_clients do
+    #push to clients
+    #broadcase sensor / motor values
+    values_json = GenServer.call(__MODULE__,:get_value_map) |> strip_oks
+    #Logger.debug("#{inspect values_json}")
+    Blockytalky.Endpoint.broadcast! "hardware:values", "all",  %{body: values_json}
+  end
+  defp strip_oks(map) do
+    list = for {key,value} <- map do
+      new_v = case value do
+        {{:ok, nv}, {:ok, ov}} -> nv
+        _ -> "NO_VAL"
+      end
+      {key, new_v}
+    end
+    Enum.into(list, %{})
   end
   ####
   # Genserver Implementation
@@ -111,7 +149,7 @@ defmodule Blockytalky.UserState do
 
   def start_link() do
     status = GenServer.start_link(__MODULE__,[], name: __MODULE__)
-    spawn loop()
+    spawn (fn -> loop() end)
     status
   end
 
@@ -140,6 +178,9 @@ defmodule Blockytalky.UserState do
     value = Map.get(port_values, port_id, {:noval, :noval})
     {:reply, value, s}
   end
+  def handle_call(:get_value_map, _from, s={_mq, port_values, _var_map, _ucs, _upid}) do
+    {:reply, port_values, s}
+  end
   def handle_call({:get_var, var_name}, _from, s={_mq, _port_values, var_map, _ucs, _upid}) do
     value = Map.get(var_map, var_name)
     {:reply, value, s}
@@ -159,7 +200,7 @@ defmodule Blockytalky.UserState do
       {new_value, old_value} ->
         {value, new_value}
     end
-
+    #Logger.debug("user state values: #{inspect updated}")
     {:noreply, { mq , Map.put(port_values,port_id,updated), var_map, ucs, upid } }
   end
   def handle_cast({:queue_message, msg}, {mq, port_values, var_map, ucs, upid}) do
@@ -181,5 +222,4 @@ defmodule Blockytalky.UserState do
   def terminate(_reason, _state) do
     Logger.info "Terminating: #{inspect __MODULE__}"
   end
-
 end

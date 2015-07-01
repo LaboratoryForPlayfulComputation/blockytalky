@@ -91,17 +91,13 @@ defmodule Blockytalky.PythonQuerier do
   # See: Ch16 of Programming Elixir
 
   def init(python_env, python_module) do
-    #trap exit
-    #:erlang.process_flag(:trap_exit, true)
     #return state
     {:ok, {python_env, python_module}}
   end
 
   def handle_call({:run, method, args}, _from, state={python_env, python_module}) do
     #erlport run the script
-    Logger.debug "About to run #{inspect python_module}.#{inspect method}(#{inspect args})"
     result = :python.call(python_env, python_module, method, args)
-    Logger.debug "Result: #{inspect result}"
     #return result and keep state unchanged
     {:reply, {:ok, result}, state}
   end

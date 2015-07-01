@@ -39,7 +39,19 @@ form.link, form.button {
   padding-right: 15px;
   padding-left: 15px;
 }
-
+.sensor-box {
+  border-style: dashed;
+  border-width: 5px;
+  float: left;
+}
+.sensor-name, .sensor-value {
+  text-align:center;
+}
+.name-header {
+  text-align:center;
+  width: 50%;
+  float: left;
+}
 /* Customize container */
 @media (min-width: 768px) {
   .container {

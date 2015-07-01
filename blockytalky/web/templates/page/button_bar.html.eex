@@ -1,0 +1,24 @@
+<!-- styling from foundation .css/.js-->
+<div class="icon-bar four-up">
+  <!-- renable help after we get hopscotch integrated again -->
+  <!--<a class="item help-button">
+    <img src="images/help.png" >
+    <label>Help</label>
+  </a>-->
+  <a class="item download-button">
+    <img src="/images/load.png" >
+    <label>Download Code</label>
+  </a>
+  <a class="item upload-button">
+    <img src="/images/uparrows.png" >
+    <label>Upload Code</label>
+  </a>
+  <a class="item stop-button">
+    <img src="/images/stop.png" >
+    <label>Stop Code</label>
+  </a>
+  <a class="item run-button">
+    <img src="/images/play.png" >
+    <label>Run Code</label>
+  </a>
+</div>

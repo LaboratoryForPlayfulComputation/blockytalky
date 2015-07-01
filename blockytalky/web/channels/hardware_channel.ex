@@ -16,7 +16,7 @@ defmodule Blockytalky.HardwareChannel do
       {:ok, data} -> data
       _           -> ":("
     end
-    Blockytalky.Endpoint.broadcast! "hardware:mock", "hw_msg",  %{body: value}
+    Blockytalky.Endpoint.broadcast! "hardware:values", "mock",  %{body: value}
   end
 
   ####
@@ -27,8 +27,8 @@ defmodule Blockytalky.HardwareChannel do
     {:ok, socket}
   end
   #def handle_in("hw_msg", payload, socket) #client server
-  def handle_out("hw_msg", payload, socket) do
-    push socket, "hw_msg", payload
+  def handle_out(any, payload, socket) do
+    push socket, any, payload
     {:noreply, socket}
   end
 

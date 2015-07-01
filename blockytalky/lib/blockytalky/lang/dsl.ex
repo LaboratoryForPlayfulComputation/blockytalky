@@ -34,7 +34,6 @@ defmodule Blockytalky.DSL do
           handle_message(get_msg)
         end
       end
-      def handle_message(_), do: :ok
     end
   end
 

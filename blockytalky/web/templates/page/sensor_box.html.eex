@@ -1,0 +1,8 @@
+<div class="sensor-box panel callout radius" data-name="<%= @sensor %>" style="width: <%= sensor_width%>;">
+  <div class="sensor-name">
+    <%= @sensor %>
+  </div>
+  <div class="sensor-value">
+    -
+  </div>
+</div>

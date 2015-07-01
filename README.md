@@ -13,4 +13,4 @@ You will also need the following vagrant plugins:
 - vagrant-triggers  (>= 0.5.0)
 - vagrant-vbguest   (>= 0.10.0)
 
-You can install the plugins with: vagrant plugin install <plugin-name>
+You can install the plugins with: `vagrant plugin install <plugin-name>``
