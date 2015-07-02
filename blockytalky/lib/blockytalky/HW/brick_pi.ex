@@ -12,6 +12,7 @@ defmodule Blockytalky.BrickPi do
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
   ####
   #External API
+
   def get_sensor_value(port_id) do
     port_num = BrickPiState.get_sensor_type_constants[port_id]
     value = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
@@ -27,7 +28,7 @@ defmodule Blockytalky.BrickPi do
    end
   @doc """
   ##Example
-      iex>Blockytalky.BrickPi.set_sensor_type(0,"TYPE_SENSOR_TOUCH")
+      iex>Blockytalky.BrickPi.set_sensor_type("PORT_1","TYPE_SENSOR_TOUCH")
   """
   def set_sensor_type(port_id, sensor_type) do
      BrickPiState.set_sensor_type(port_id, sensor_type)
@@ -42,10 +43,11 @@ defmodule Blockytalky.BrickPi do
       iex>Blockytalky.BrickPi.get_sensor_type(0)
       {:ok, "TYPE_SENSOR_TOUCH"}
    """
-   def get_sensor_type(port_num), do: BrickPiState.get_sensor_type(port_num)
+   def get_sensor_type(port_id), do: BrickPiState.get_sensor_type(port_id)
    def get_sensor_type_constants, do: BrickPiState.get_sensor_type_constants
-   def set_motor_value(port_num, value) do
+   def set_motor_value(port_id, value) do
     new_value = _normalize(value, [low: -100, high: 100], [low: -255, high: 255])
+    port_num = BrickPiState.get_sensor_type_constants[port_id]
     PythonQuerier.run(:btbrickpi, :set_motor_value,[port_num, new_value])
   end
   #notmalized an int from its % in one range to another.

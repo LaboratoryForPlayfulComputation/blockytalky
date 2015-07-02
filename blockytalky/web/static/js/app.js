@@ -5,10 +5,8 @@ import {Socket} from "phoenix"
   humane.baseCls = 'humane-libnotify';
   humane.clickToClose = true;
   humane.error = humane.spawn({ addnCls: 'humane-libnotify-error', timeout: 1000 });
- //button-bar callbacks:
- $(".run-button").click(function(){
-   humane.log("Telling BTU to run code!");
- });
+ //foundation.js for pretty widgets and dropdowns
+ $(document).foundation() //init
  //sockets and channels
  let socket = new Socket("/ws")
  socket.connect()
@@ -42,5 +40,10 @@ var App = {
        toolbox: document.getElementById('toolbox')}),
 }
 console.log(App)
+
+//button-bar callbacks:
+$(".run-button").click(function(){
+  humane.log("Telling BTU to run code!");
+});
 
 export default App

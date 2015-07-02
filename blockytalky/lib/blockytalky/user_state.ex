@@ -90,12 +90,6 @@ defmodule Blockytalky.UserState do
 
   def set_var(var_name, var_value), do: GenServer.cast(__MODULE__,{:set_var,var_name, var_value})
   def get_var(var_name), do: GenServer.call(__MODULE__, {:get_var,var_name})
-  def get_sensor_names do
-    sensors = []
-    ++ if :mock in @supported_hardware, do: ~w/Mock_1 Mock_2 Mock_3 Mock_4/, else: []
-    ++ if :btbrickpi in @supported_hardware, do: ~w/PORT_1 PORT_2 PORT_3 PORT_4/ ++ ~w/PORT_A PORT_B PORT_C PORT_D/, else: []
-    sensors
-  end
   ####
   # Internal API
   defp update_bp_state do
@@ -109,7 +103,7 @@ defmodule Blockytalky.UserState do
     end
   end
   defp update_mock_state do
-    sensor_ports = ~w/Mock_1 Mock_2 Mock_3 Mock_4/
+    sensor_ports = for {key,_} <- MockHW.port_map, do: key
     for x <- sensor_ports do
       value = MockHW.get_sensor_value(x)
       #Logger.debug "Mock_hardware update: #{inspect value}"

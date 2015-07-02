@@ -19,7 +19,45 @@ defmodule Blockytalky.HardwareDaemon do
   #config
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  ####
+  #External API
 
+  def get_sensor_names do
+    sensor_types = [
+      %{:id => "TYPE_SENSOR_RAW", :label => "None"},
+      %{:id => "TYPE_SENSOR_TOUCH", :label => "Touch"},
+      %{:id => "TYPE_SENSOR_ULTRASONIC_CONT", :label => "Ultrasonic (Distance)"},
+      %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Light (ambient)"},
+      %{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Light (reflective)"}
+    ]
+    sensor_data = [] ++
+    if :mock in @supported_hardware do
+      [
+      %{:hw => "mock", :id => "MOCK_1", :label => "Mock 1", :type => "sensor", :types => sensor_types},
+      %{:hw => "mock", :id => "MOCK_2", :label => "Mock 2", :type => "sensor", :types => sensor_types},
+      %{:hw => "mock", :id => "MOCK_3", :label => "Mock 3", :type => "sensor", :types => sensor_types},
+      %{:hw => "mock", :id => "MOCK_4", :label => "Mock 4", :type => "sensor", :types => sensor_types}
+      ]
+    else
+      []
+    end
+    ++
+    if :btbrickpi in @supported_hardware do
+      [
+        %{:hw => "btbrickpi", :id => "PORT_1", :label => "Sensor Port 1", :type => "sensor", :types => sensor_types},
+        %{:hw => "btbrickpi", :id => "PORT_2", :label => "Sensor Port 2", :type => "sensor", :types => sensor_types},
+        %{:hw => "btbrickpi", :id => "PORT_3", :label => "Sensor Port 3", :type => "sensor", :types => sensor_types},
+        %{:hw => "btbrickpi", :id => "PORT_4", :label => "Sensor Port 4", :type => "sensor", :types => sensor_types},
+        %{:hw => "btbrickpi", :id => "PORT_A", :label => "Motor Port 1", :type => "motor"},
+        %{:hw => "btbrickpi", :id => "PORT_B", :label => "Motor Port 2", :type => "motor"},
+        %{:hw => "btbrickpi", :id => "PORT_C", :label => "Motor Port 3", :type => "motor"},
+        %{:hw => "btbrickpi", :id => "PORT_D", :label => "Motor Port 4", :type => "motor"}
+      ]
+    else
+      []
+    end
+    sensor_data
+  end
   ####
   #Supervisor implementation
   # See: Ch. 17 of Programming Elixir
@@ -55,7 +93,7 @@ defmodule Blockytalky.PythonQuerier do
   This is a Gen Server implementation that's job is to run the python scripts
   for interfacing with the BTU hardware (brick pi, grove pi, etc).
   continuously read values get put it into a stream for
-  consumption by the userscript.
+  consumption by the userstate.
 
   The state our Genserver will keep track of is a tuple:
   {python_env, python_module}

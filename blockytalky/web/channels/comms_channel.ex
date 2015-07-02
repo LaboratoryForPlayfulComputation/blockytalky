@@ -1,6 +1,6 @@
 defmodule Blockytalky.CommsChannel do
   use Phoenix.Channel
-  alias Blockytalky.UserScript, as: US
+  alias Blockytalky.UserState, as: US
   require Logger
   ####
   #Channel GenServer implementation

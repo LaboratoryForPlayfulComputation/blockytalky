@@ -1,8 +1,18 @@
-<div class="sensor-box panel callout radius" data-name="<%= @sensor %>" style="width: <%= sensor_width%>;">
+<div class="sensor-box panel" data-name="<%= @sensor[:id] %>">
   <div class="sensor-name">
-    <%= @sensor %>
+    <%= @sensor[:label] %>
   </div>
   <div class="sensor-value">
     -
   </div>
+  <%= if @sensor[:type] == "sensor" do %>
+  <button href="#" data-dropdown="drop<%= @sensor[:id] %>" aria-controls="drop<%= @sensor[:id] %>" aria-expanded="false" class="button dropdown">
+    None
+  </button><br>
+  <ul id="drop<%= @sensor[:id] %>" data-dropdown-content class="f-dropdown" aria-hidden="true">
+    <%= for type <- @sensor[:types] do %>
+      <li><a href="#" data-value="<%= type[:id]%>"><%= type[:label] %></a></li>
+    <% end %>
+  </ul>
+  <% end %>
 </div>

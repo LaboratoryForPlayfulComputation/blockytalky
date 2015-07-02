@@ -14,7 +14,6 @@ defmodule Blockytalky.Router do
 
   scope "/", Blockytalky do
     pipe_through :browser # Use the default browser stack
-
     get "/", PageController, :index
   end
   #http://www.phoenixframework.org/v0.13.1/docs/channels

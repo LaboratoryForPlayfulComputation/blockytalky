@@ -28,8 +28,8 @@
 
     </div> <!-- /container -->
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="<%= static_path(@conn, "/js/foundation.min.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-
     <script>require("web/static/js/app")</script>
 
   </body>

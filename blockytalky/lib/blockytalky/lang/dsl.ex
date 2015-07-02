@@ -10,7 +10,7 @@ defmodule Blockytalky.DSL do
   (or library if you prefer)
   can be many lines to one "instruction"
 
-  Mainly interoperates with the other APIs: Hardware, Music, Comms, and UserScript
+  Mainly interoperates with the other APIs: Hardware, Music, Comms, and UserState
   We ``should`` do type checking / correctness checking here!
   """
   ## Macros
