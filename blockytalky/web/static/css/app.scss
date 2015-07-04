@@ -44,6 +44,18 @@ form.link, form.button {
   text-align: center;
   margin: auto;
 }
+.sensor-box{
+  margin: 0;
+  padding: 0;
+}
+#sensors-bin {
+  li {
+    padding-bottom: 0;
+  }
+}
+#workspace-marker{
+  display: block;
+}
 .name-header {
   text-align: center;
   width: 50%;
@@ -86,7 +98,7 @@ form.link, form.button {
   }
   /* Space out the masthead */
   .header {
-    margin-bottom: 30px;
+    margin-bottom: 1px;
   }
   /* Remove the bottom border on the jumbotron for visual effect */
   .jumbotron {

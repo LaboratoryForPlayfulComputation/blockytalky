@@ -136,27 +136,34 @@ $(".shutdown-button").click(function(){
 });
 
 $(".sensor-select-option").click(function(){
-  var option = $(this).find("a");
+  var option = $(this).find("label");
   //get the sensor id and the type id and push on websocket
   var hw_v    = option.data("hw")
   var sensor = option.data("sensor");
   var value  = option.data("value");
   console.log("change sensor: " + sensor + " to: " + value);
   hw_chan.push("change_sensor_type", {hw: hw_v, port_id: sensor, sensor_type: value});
+  $("body").click(); //close dropdown since it isn't an anchor tag
 });
 
 //global stuff
 window.App = App;
 $(document).ready(function() {
-    humane.log("Loading code from btu... please wait :)")
+    humane.log("Connecting to btu... please wait :)");
+    $(".icon-bar .item").addClass("disabled");
+    $("#sensors-bin button").addClass("disabled");
+    $("body").dimBackground();
 });
 window.onload = function() {
   console.log("window on load fn");
   var load_code_on_init = window.setInterval(function(){
     if(uc_chan.canPush()){
         window.clearInterval(load_code_on_init);
+        $(".icon-bar .item").removeClass("disabled");
+        $("#sensors-bin button").removeClass("disabled");
+        $.undim();
         App.download_code();
-        console.log("on load download")
+        console.log("on load download");
     }
   }, 100);
 };
