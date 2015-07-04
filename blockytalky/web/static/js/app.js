@@ -32,6 +32,13 @@ hw_chan.on("all", payload => {
     $("div").find("[data-name='" + key + "']").find(".sensor-value").text(sensor_obj[key]);
   }
 });
+hw_chan.on("sensor_changed", payload => {
+  var port_id = payload.port_id;
+  var sensor_label = payload.sensor_label;
+  console.log("sensor_changed " + port_id + ":" + sensor_label);
+  humane.log("System: Port Changed!" );
+  $(".sensor-select[data-name='" + port_id + "']").text(sensor_label);
+});
 comm_chan.on("message", payload => {
   humane.log("received message: " + payload.body);
 });
@@ -88,7 +95,7 @@ $(".download-button").click(function(){
 });
 //help buttons
 $(".tour-button").click(function(){
-  App.workspace.clear();
+  $(document).foundation('joyride', 'start');
 });
 $(".clear-button").click(function(){
   App.workspace.clear();
@@ -124,12 +131,18 @@ $(document).on('change','#fileupload', function(e){
   e.targetvalue = null;
 });
 $(".shutdown-button").click(function(){
-  App.workspace.clear();
+  //send signal to BTU to shutdown
+  //It will broadcast back to all connected clients to shutdown
 });
 
 $(".sensor-select-option").click(function(){
-  option = $(this).find("a")
+  var option = $(this).find("a");
   //get the sensor id and the type id and push on websocket
+  var hw_v    = option.data("hw")
+  var sensor = option.data("sensor");
+  var value  = option.data("value");
+  console.log("change sensor: " + sensor + " to: " + value);
+  hw_chan.push("change_sensor_type", {hw: hw_v, port_id: sensor, sensor_type: value});
 });
 
 //global stuff

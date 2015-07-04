@@ -9,7 +9,7 @@ defmodule Blockytalky.UserState do
   e.g. hardware change over time, message queue to be handled
   Called by IR as needed to stash data between iterations
   state looks like:
-  {[message queue], %{port_id => {new_value, old_value}}, %{var_name => value}}
+
   """
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
@@ -31,24 +31,29 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__, {:upload_user_code, code_string})
   end
   def execute_user_code() do
+    stop_user_code() #stop currently running code before rerunning
     code_string = GenServer.call(__MODULE__, :get_user_code)
       |> Map.get("code")
     Code.compile_string(code_string)
     loop_stream = Stream.repeatedly (fn ->
-      Blockytalky.UserCode.loop()
-      receive do
+      Blockytalky.UserCode.loop() # do one iteration of the loop
+      receive do #wait for values to be updated to run again (FRP-like)
         _ -> :ok #only :updated for now
       end
     end)
     uc_pid = spawn (fn ->
-      Blockytalky.UserCode.init(:ok)
+      Blockytalky.Endpoint.broadcast! "uc:command", "progress", %{body: "Program Running!"}
+      Blockytalky.UserCode.init(:ok) #call init once, this is code such as "when I start"
       for _ <- loop_stream, do: :ok
     end)
     GenServer.cast(__MODULE__, {:set_upid, uc_pid})
   end
   def stop_user_code() do
     upid = GenServer.call(__MODULE__, :get_upid)
-    if upid, do: Process.exit(upid, :kill)
+    if upid do
+      Process.exit(upid, :kill)
+      Blockytalky.Endpoint.broadcast! "uc:command", "progress", %{body: "Program Stopped!"}
+    end
     GenServer.cast(__MODULE__, :clear_state)
   end
   def queue_message(msg) do

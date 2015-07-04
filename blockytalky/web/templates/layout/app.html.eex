@@ -17,7 +17,7 @@
         <ul class="nav nav-pills pull-right">
           <li><a href="http://lpc.cs.tufts.edu/">LPC</a></li>
         </ul>
-        <span class="logo"></span>
+        <span id="btu-logo" class="logo"></span>
         <h2 class="name-header"><%= btu_id %> </h2>
       </div>
 

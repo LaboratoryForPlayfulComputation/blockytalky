@@ -1,14 +1,17 @@
 <xml id="toolbox" style="display: none">
    <category name="BrickPi">
-     <category name="Events">
+     <category name="Sensors">
      </category>
-     <category name="Values">
+     <category name="Motors">
      </category>
    </category>
    <category name="Events">
    </category>
+   <category name="Messaging">
+   </category>
    <category name="Music">
    </category>
+   <sep></sep>
    <category name="Logic">
      <category name="If">
        <block type="controls_if"></block>

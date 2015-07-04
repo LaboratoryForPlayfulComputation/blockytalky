@@ -1,4 +1,4 @@
- <ul class="small-block-grid-4">
+ <ul id="sensors-bin" class="small-block-grid-4">
     <%= for sensor <- sensors do %>
       <li><%= render "sensor_box.html", sensor: sensor%></li>
     <% end %>

@@ -1,23 +1,23 @@
 <!-- styling from foundation .css/.js-->
 <div class="icon-bar five-up">
   <!-- renable help after we get hopscotch integrated again -->
-  <a class="item download-button">
+  <a id="download-button" class="item download-button">
     <i class="fi-download" ></i>
     <label>Download Code</label>
   </a>
-  <a class="item upload-button">
+  <a id="upload-button" class="item upload-button">
     <i class="fi-upload-cloud" ></i>
     <label>Upload Code</label>
   </a>
-  <a class="item stop-button">
+  <a id="stop-button" class="item stop-button">
     <i class="fi-x" ></i>
     <label>Stop Code</label>
   </a>
-  <a class="item run-button">
+  <a id="run-button" class="item run-button">
     <i class="fi-play-circle" ></i>
     <label>Run Code</label>
   </a>
-  <a class="item help-button" data-dropdown="hover-help" data-options="is_hover:true; hover_timeout:200">
+  <a id="help-button" class="item help-button" data-dropdown="hover-help" data-options="is_hover:true; hover_timeout:200">
     <i class="fi-info" ></i>
     <label>More Options</label>
   </a>

@@ -1,0 +1,51 @@
+<!--docs: http://foundation.zurb.com/docs/components/joyride.html -->
+<!-- At the bottom of index but inside of the body tag -->
+<ol class="joyride-list" data-joyride>
+  <li data-id="btu-logo" data-text="Next" data-options="prev_button: false">
+    <p>Hi, my name is <%= btu_id %> and I am a <br>Blockytalky Unit</p>
+  </li>
+  <li data-id="download-button" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Download Code</h4>
+    <p>Click this button if you want to use the blocks that were last uploaded to me</p>
+  </li>
+  <li data-id="upload-button" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Upload Code</h4>
+    <p>Click this button to save your blocks to me. I can only run code that has been uploaded to me.</p>
+  </li>
+  <li data-id="stop-button" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Stop Code</h4>
+    <p>If you don't want your program to run any more, click here and I will stop running the program and stop all moving motors!</p>
+  </li>
+  <li data-id="run-button" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Run Code</h4>
+    <p>This button will run the last uploaded code. Make sure you upload first to save any changes you want to see run!</p>
+  </li>
+  <li data-id="help-button" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>More Options</h4>
+    <p>Other options live here. If you want to save or load a block program from your computer (not from me!), clear the screen, or shutdown. Click/Hover over me!</p>
+  </li>
+  <li data-id="sensors-bin" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Sensors and Motors</h4>
+    <p>This is the sensor and motor ports currently connected to me. Also, I will display the values of any sensors you have plugged in, even if your code isn't running.
+    I do need you to set their type first, though, so I know what kind of numbers to give you!</p>
+  </li>
+  <li data-id=":0" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev">
+    <h4>Block Bin</h4>
+    <p>These are the bins that keep all the blocks you can use to program me. Brick Pi blocks are the ones that control my sensors and motors. Music blocks make
+    me play sound. Event blocks are how you tell me what to do when I start running the program or at other times. Messaging blocks are how you tell me to talk to
+    other blockytalkies!</p>
+  </li>
+  <li data-id="workspace-marker" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev" data-options="tip_location: top ">
+    <h4>Workspace</h4>
+    <p>Drag blocks from the blockbin in order to program me. Code you want me to understand and run must be in a rounded block (Like "When I Start") in order for me to
+    see it. I will ignore loose code outside of a rounded block, because I won't know when you want me to do it. Sorry! </p>
+  </li>
+  <li data-id="blocklyTrashBodyClipPath" data-class="custom so-awesome" data-text="Next" data-prev-text="Prev" data-options="tip_location: top ">
+    <h4>Trash Blocks</h4>
+    <p>If you don't like a block anymore, feel free to clean it up by dragging it over this trashcan or by pressing the delete/backspace key on your keyboard. </p>
+  </li>
+  <li data-button="End" data-prev-text="Prev">
+    <h4>BlockyTalky</h4>
+    <p>Thanks for programming me! Let's make some neat things!</p>
+  </li>
+</ol>

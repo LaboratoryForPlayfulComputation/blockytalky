@@ -7,12 +7,12 @@
   </div>
   <%= if @sensor[:type] == "sensor" do %>
     <div class=".center">
-      <button href="#" data-dropdown="drop<%= @sensor[:id] %>" aria-controls="drop<%= @sensor[:id] %>" aria-expanded="false" class="button dropdown sensor-select">
-        None
+      <button href="#" data-name="<%= @sensor[:id] %>" data-dropdown="drop<%= @sensor[:id] %>" aria-controls="drop<%= @sensor[:id] %>" aria-expanded="false" class="button dropdown sensor-select">
+        <%= init_sensor_type(@sensor[:hw],@sensor[:id])%>
       </button><br>
       <ul id="drop<%= @sensor[:id] %>" data-dropdown-content class="f-dropdown" aria-hidden="true">
         <%= for type <- @sensor[:types] do %>
-          <li class="sensor-select-option"><a href="#" data-sensor="<%= @sensor[:id] %>" data-value="<%= type[:id]%>"><%= type[:label] %></a></li>
+          <li class="sensor-select-option"><a href="#" data-hw="<%= @sensor[:hw] %>" data-sensor="<%= @sensor[:id] %>" data-value="<%= type[:id]%>"><%= type[:label] %></a></li>
         <% end %>
       </ul>
   <% end %>
