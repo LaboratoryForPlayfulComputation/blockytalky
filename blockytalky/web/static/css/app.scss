@@ -40,11 +40,12 @@ form.link, form.button {
   padding-left: 15px;
 }
 
-.sensor-name, .sensor-value {
-  text-align:center;
+.sensor-name, .sensor-value, .sensor-select {
+  text-align: center;
+  margin: auto;
 }
 .name-header {
-  text-align:center;
+  text-align: center;
   width: 50%;
   float: left;
 }
@@ -92,3 +93,7 @@ form.link, form.button {
     border-bottom: 0;
   }
 }
+/* Foundation scss */
+
+// We use these to style the icon-bar and items
+$icon-bar-icon-color: #FAEBD7;

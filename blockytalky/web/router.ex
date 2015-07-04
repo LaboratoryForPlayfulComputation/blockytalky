@@ -20,6 +20,7 @@ defmodule Blockytalky.Router do
   socket "/ws", Blockytalky do
     channel "hardware:*", HardwareChannel
     channel "comms:*", CommsChannel
+    channel "uc:*", UserCodeChannel
   end
   # Other scopes may use custom stacks.
   # scope "/api", Blockytalky do

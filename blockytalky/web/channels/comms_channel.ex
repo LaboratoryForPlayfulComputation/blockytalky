@@ -6,7 +6,7 @@ defmodule Blockytalky.CommsChannel do
   #Channel GenServer implementation
   #pattern match on param 1, a string like "topic:subtopic"
   def join("comms:" <> _any, _auth_msg, socket) do
-    Logger.debug "User joined socket: #{inspect socket}"
+    #Logger.debug "User joined socket: #{inspect socket}"
     {:ok, socket}
   end
 

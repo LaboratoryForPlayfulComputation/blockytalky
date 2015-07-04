@@ -25,7 +25,7 @@ defmodule Blockytalky.HardwareChannel do
   #Channel implementation
   #pattern match on param 1, a string like "topic:subtopic"
   def join("hardware:" <> _any, _auth_msg, socket) do
-    Logger.debug "User joined socket: #{inspect socket}"
+    #Logger.debug "User joined socket: #{inspect socket}"
     {:ok, socket}
   end
   @doc """

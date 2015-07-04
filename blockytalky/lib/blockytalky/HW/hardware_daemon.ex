@@ -58,6 +58,21 @@ defmodule Blockytalky.HardwareDaemon do
     end
     sensor_data
   end
+  @doc """
+  When the user hits the stop button, it will stop their code loop from running,
+  but also UserCodeChannel will call this method.
+  """
+  def stop_signal() do
+    for sensor <- get_sensor_names do
+      #for brickpi: stop all motor_ports
+      if sensor[:hw] == "btbrickpi" and sensor[:type] == "motor" do
+        Blockytalky.BrickPi.set_motor_value(sensor[:id],0)
+      end
+      #for grovepi: TODO
+      #for music: TODO 
+      :ok
+    end
+  end
   ####
   #Supervisor implementation
   # See: Ch. 17 of Programming Elixir

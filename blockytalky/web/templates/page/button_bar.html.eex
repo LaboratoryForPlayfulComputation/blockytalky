@@ -1,24 +1,31 @@
 <!-- styling from foundation .css/.js-->
-<div class="icon-bar four-up">
+<div class="icon-bar five-up">
   <!-- renable help after we get hopscotch integrated again -->
-  <!--<a class="item help-button">
-    <img src="images/help.png" >
-    <label>Help</label>
-  </a>-->
   <a class="item download-button">
-    <img src="/images/load.png" >
+    <i class="fi-download" ></i>
     <label>Download Code</label>
   </a>
   <a class="item upload-button">
-    <img src="/images/uparrows.png" >
+    <i class="fi-upload-cloud" ></i>
     <label>Upload Code</label>
   </a>
   <a class="item stop-button">
-    <img src="/images/stop.png" >
+    <i class="fi-x" ></i>
     <label>Stop Code</label>
   </a>
   <a class="item run-button">
-    <img src="/images/play.png" >
+    <i class="fi-play-circle" ></i>
     <label>Run Code</label>
   </a>
+  <a class="item help-button" data-dropdown="hover-help" data-options="is_hover:true; hover_timeout:200">
+    <i class="fi-info" ></i>
+    <label>More Options </label>
+  </a>
+  <ul id="hover-help" class="f-dropdown" data-dropdown-content>
+    <li><a href="#">Take a tour</a></li>
+    <li><a href="#">Clear Workspace</a></li>
+    <li><a href="#">Save Code to Computer</a></li>
+    <li><a href="#">Load Code from Computer</a></li>
+    <li><i class="fi-power" style="color: #444;"></i><a href="#">Power Down</a></li>
+  </ul>
 </div>

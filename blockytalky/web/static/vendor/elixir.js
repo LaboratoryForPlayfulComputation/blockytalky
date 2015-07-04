@@ -114,10 +114,8 @@ Blockly.Elixir.finish = function(code) {
   }
   definitions = definitions.join('\n')
   header = 'defmodule Blockytalky.UserCode do\n' +
-            '  require Blockytalky.DSL\n' +
-            '  import Blockytalky.DSL \n'
-  footer = '  init\n'+ //this is a macro in Blockytalky.DSL
-           'end\n'
+            '  use Blockytalky.DSL '
+  footer = 'end\n'
   return header + definitions + footer; //ignore code outside of definitions for now
 };
 

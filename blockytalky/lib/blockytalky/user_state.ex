@@ -1,6 +1,7 @@
 defmodule Blockytalky.UserState do
   use GenServer
   require Logger
+  require Integer
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.MockHW, as: MockHW
   @moduledoc """
@@ -11,9 +12,9 @@ defmodule Blockytalky.UserState do
   {[message queue], %{port_id => {new_value, old_value}}, %{var_name => value}}
   """
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @btu_id Application.get_env(:blockytalky, :id, "Unknown")
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
   @update_rate 30 #milliseconds
+  @max_history_size 1_000
   ####
   # External API
   ## UserCode state State
@@ -27,23 +28,20 @@ defmodule Blockytalky.UserState do
     #update messaging state
   end
   def upload_user_code(code_string) do
-    GenServer.call(__MODULE__, {:upload_user_code, code_string})
-    #backup usercode
-    {{y,mo,d},{h,mi,s}} = :calendar.universal_time
-    file_name = Enum.join([@btu_id,y,mo,d,h,mi,s], "_") <> ".ex"
-    File.write("#{@file_dir}/#{file_name}", code_string)
+    GenServer.cast(__MODULE__, {:upload_user_code, code_string})
   end
   def execute_user_code() do
     code_string = GenServer.call(__MODULE__, :get_user_code)
+      |> Map.get("code")
     Code.compile_string(code_string)
     loop_stream = Stream.repeatedly (fn ->
-      UserCode.loop()
+      Blockytalky.UserCode.loop()
       receive do
         _ -> :ok #only :updated for now
       end
     end)
     uc_pid = spawn (fn ->
-      UserCode.init()
+      Blockytalky.UserCode.init(:ok)
       for _ <- loop_stream, do: :ok
     end)
     GenServer.cast(__MODULE__, {:set_upid, uc_pid})
@@ -72,7 +70,10 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__,{:put_value, value, port_id})
   end
   def get_value(port_id) do
-    GenServer.call(__MODULE__, {:get_value, port_id})
+    case GenServer.call(__MODULE__, {:get_port_value, port_id}) do
+      [{_, {:ok, value}} | _ ] -> value
+      _ -> nil
+    end
   end
   @doc """
   applies the passed function with airity 3 to new value, and old value of
@@ -84,12 +85,24 @@ defmodule Blockytalky.UserState do
       iex> Blockytalky.UserScript.apply(fn(x,y,z) -> x > z and x < y end, 1, 10)
   """
   def apply(fun, port_id, value) do
-    {new_value, old_value} = GenServer.call(__MODULE__,{:get_value,port_id})
+    {new_value, old_value } = case GenServer.call(__MODULE__,{:get_port_value,port_id}) do
+      [{_current, nv}, {_prev, ov} | _tail] -> {nv, ov}
+      [{_current, nv} | _] -> {nv, nil}
+      _ -> {nil, nil}
+    end
     fun.(new_value, old_value, value)
   end
 
   def set_var(var_name, var_value), do: GenServer.cast(__MODULE__,{:set_var,var_name, var_value})
-  def get_var(var_name), do: GenServer.call(__MODULE__, {:get_var,var_name})
+  def get_var(var_name) do
+     case GenServer.call(__MODULE__, {:get_var,var_name}) do
+       [{_, value} | _ ] -> value
+       _ -> nil
+     end
+   end
+  def get_var_history(var_name) do
+    GenServer.call(__MODULE__, {:get_var,var_name})
+  end
   ####
   # Internal API
   defp update_bp_state do
@@ -117,23 +130,26 @@ defmodule Blockytalky.UserState do
     if upid do
       send upid, :updated
     end
-    push_to_clients()
+    if Integer.is_even(GenServer.call(__MODULE__, :get_loop_iteration)) do
+      push_to_clients()
+    end
+    GenServer.cast(__MODULE__, :inc_loop_iteration)
     loop()
   end
   defp push_to_clients do
     #push to clients
     #broadcase sensor / motor values
-    values_json = GenServer.call(__MODULE__,:get_value_map) |> strip_oks
+    values_json = GenServer.call(__MODULE__,:get_port_value_map) |> strip_oks
     #Logger.debug("#{inspect values_json}")
     Blockytalky.Endpoint.broadcast! "hardware:values", "all",  %{body: values_json}
   end
   defp strip_oks(map) do
-    list = for {key,value} <- map do
-      new_v = case value do
-        {{:ok, nv}, {:ok, ov}} -> nv
-        _ -> "NO_VAL"
+    list = for {key,data_list} <- map do
+      latest_value = case data_list do
+        [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
+        _ -> nil
       end
-      {key, new_v}
+      {key, latest_value}
     end
     Enum.into(list, %{})
   end
@@ -150,68 +166,77 @@ defmodule Blockytalky.UserState do
   def init(_) do
     Logger.info "Starting #{inspect __MODULE__}"
     #restore user code if possible
-    uc = case File.ls!(@file_dir) |> Enum.sort do
-          [] -> ""
-          [head | _] -> File.read("#{@file_dir}/#{head}")
+    uc = case File.ls!(@file_dir)  |> Enum.sort |> Enum.reverse do
+          [] -> %{"code" => "", "xml" => "<xml></xml>"}
+          [head | _] ->
+            file = File.read!("#{@file_dir}/#{head}")
+            file = JSX.decode!(file)
           _ -> ""
          end
-    #state = message queue, port_values, user defined var values, user_code_string, and user_code pid
-    state = {[],%{},%{},uc,nil}
+    #state = message queue, port_values, user defined var values, user_code_string, user_code pid, and loop iteration number (FRP)
+    #port_values var_values are both maps of ids to lists of tuples of the form: %{id => [{iteration_number, value} ... ] ... }
+    state = {[],%{},%{},uc,nil,0}
     {:ok, state}
   end
-  def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid}) when length(mq) > 0  do
+  def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid,l}) when length(mq) > 0  do
     rev_q = Enum.reverse(mq)
     [value | new_q_rev] = rev_q
     new_q = Enum.reverse(new_q_rev)
-    {:reply, {:ok, value}, {new_q,port_values, var_map, ucs, upid}}
+    {:reply, {:ok, value}, {new_q,port_values, var_map, ucs, upid,l}}
   end
   def handle_call(:dequeue_message, _from, s)  do
     {:reply, {:nomsg, :nomsg}, s}
   end
-  def handle_call({:get_value, port_id}, _from, s={_mq, port_values, _var_map, _ucs, _upid}) do
-    value = Map.get(port_values, port_id, {:noval, :noval})
+  def handle_call({:get_port_value, port_id}, _from, s={_mq, port_values, _var_map, _ucs, _upid,_l}) do
+    value = Map.get(port_values, port_id)
     {:reply, value, s}
   end
-  def handle_call(:get_value_map, _from, s={_mq, port_values, _var_map, _ucs, _upid}) do
+  def handle_call(:get_port_value_map, _from, s={_mq, port_values, _var_map, _ucs, _upid,_l}) do
     {:reply, port_values, s}
   end
-  def handle_call({:get_var, var_name}, _from, s={_mq, _port_values, var_map, _ucs, _upid}) do
+  def handle_call({:get_var, var_name}, _from, s={_mq, _port_values, var_map, _ucs, _upid,_l}) do
     value = Map.get(var_map, var_name)
     {:reply, value, s}
   end
-  def handle_call(:get_user_code, _from, s={_mq, _port_values, _var_map, ucs, _upid}) do
+  def handle_call(:get_user_code, _from, s={_mq, _port_values, _var_map, ucs, _upid,_l}) do
     {:reply, ucs, s}
   end
-  def handle_call(:get_upid, _from, s={_mq, _port_values, _var_map, _ucs, upid}) do
+  def handle_call(:get_upid, _from, s={_mq, _port_values, _var_map, _ucs, upid,_l}) do
     {:reply, upid, s}
   end
+  def handle_call(:get_loop_iteration, _from, s={_,_,_,_,_,l}) do
+    {:reply, l, s}
+  end
   #cast
-  def handle_cast({:put_value, value, port_id}, {mq,port_values, var_map, ucs, upid}) do
-    fetched_value = Map.get(port_values,port_id,{:noval,:noval})
-    updated = case fetched_value do
-      {:noval, :noval} ->
-        {value, value}
-      {new_value, old_value} ->
-        {value, new_value}
+  def handle_cast({:put_value, value, port_id}, {mq,port_values, var_map, ucs, upid,l}) do
+    updated = case Map.get(port_values, port_id) do
+      nil -> [{l,value}]
+      list -> [{l, value} | list] |> Enum.take(@max_history_size)
     end
     #Logger.debug("user state values: #{inspect updated}")
-    {:noreply, { mq , Map.put(port_values,port_id,updated), var_map, ucs, upid } }
+    {:noreply, { mq , Map.put(port_values,port_id,updated), var_map, ucs, upid, l } }
   end
-  def handle_cast({:queue_message, msg}, {mq, port_values, var_map, ucs, upid}) do
-    {:noreply, {[msg | mq], port_values, var_map, ucs, upid}}
+  def handle_cast({:queue_message, msg}, {mq, port_values, var_map, ucs, upid, l}) do
+    {:noreply, {[msg | mq], port_values, var_map, ucs, upid, l}}
   end
-  def handle_cast({:set_var,var_name, value}, {mq, port_values, var_map, ucs, upid}) do
-    var_map = Map.put(var_map, var_name, value)
-    {:noreply, {mq, port_values, var_map, ucs, upid}}
+  def handle_cast({:set_var,var_name, value}, {mq, port_values, var_map, ucs, upid, l}) do
+    updated = case Map.get(var_map, var_name) do
+      nil -> [{l,value}]
+      list -> [{l, value} | list] |> Enum.take(@max_history_size)
+      end
+    {:noreply, {mq, port_values, Map.put(var_map, var_name, updated), ucs, upid, l}}
   end
-  def handle_cast({:upload_code, code_string},{mq, port_values, var_map, ucs, upid}) do
-    {:noreply, {{mq, port_values, var_map, code_string, upid}}}
+  def handle_cast({:upload_user_code, code_map}, {mq, port_values, var_map, ucs, upid, l}) do
+    {:noreply, {mq, port_values, var_map, code_map, upid, l}}
   end
-  def handle_cast({:set_upid, pid}, {mq, port_values, var_map, ucs, upid}) do
-    {:noreply, {mq, port_values, var_map, ucs, pid}}
+  def handle_cast({:set_upid, pid}, {mq, port_values, var_map, ucs, upid, l}) do
+    {:noreply, {mq, port_values, var_map, ucs, upid, l}}
   end
-  def handle_cast(:clear_state,{_mq, _port_values, _var_map, ucs, _upid}) do
-    {:noreply, {[],%{},%{}, ucs, nil}}
+  def handle_cast(:clear_state,{_mq, _port_values, _var_map, ucs, _upid, l}) do
+    {:noreply, {[],%{},%{}, ucs, nil, 0}}
+  end
+  def handle_cast(:inc_loop_iteration, {mq,pv,vm,ucs,upid,l}) do
+    {:noreply,{mq,pv,vm,ucs,upid,(l+1)}}
   end
   def terminate(_reason, _state) do
     Logger.info "Terminating: #{inspect __MODULE__}"

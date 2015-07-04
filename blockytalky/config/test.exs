@@ -16,3 +16,5 @@ config :blockytalky, Blockytalky.Repo,
   password: "postgres",
   database: "blockytalky_test",
   size: 1 # Use a single connection for transactional tests
+config :blockytalky,
+  supported_hardware: [:mock]
