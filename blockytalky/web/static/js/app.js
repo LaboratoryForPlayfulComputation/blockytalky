@@ -86,6 +86,46 @@ $(".upload-button").click(function(){
 $(".download-button").click(function(){
   App.download_code();
 });
+//help buttons
+$(".tour-button").click(function(){
+  App.workspace.clear();
+});
+$(".clear-button").click(function(){
+  App.workspace.clear();
+});
+$(".save-button").click(function(){
+  var text = new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace));
+  var filename = $(".name-header").text() + "blockytalky_program.xml";
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+});
+$(document).on('change','#fileupload', function(e){
+  console.log("loading file:");
+  console.log(e);
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    console.log(contents);
+    Blockly.Xml.domToWorkspace(App.workspace, Blockly.Xml.textToDom(contents));
+  };
+  reader.readAsText(file);
+  e.targetvalue = null;
+});
+$(".shutdown-button").click(function(){
+  App.workspace.clear();
+});
+
 $(".sensor-select-option").click(function(){
   option = $(this).find("a")
   //get the sensor id and the type id and push on websocket
@@ -93,9 +133,11 @@ $(".sensor-select-option").click(function(){
 
 //global stuff
 window.App = App;
+$(document).ready(function() {
+    humane.log("Loading code from btu... please wait :)")
+});
 window.onload = function() {
   console.log("window on load fn");
-  humane.log("Loading code from btu... please wait :)")
   var load_code_on_init = window.setInterval(function(){
     if(uc_chan.canPush()){
         window.clearInterval(load_code_on_init);

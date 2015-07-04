@@ -19,13 +19,13 @@
   </a>
   <a class="item help-button" data-dropdown="hover-help" data-options="is_hover:true; hover_timeout:200">
     <i class="fi-info" ></i>
-    <label>More Options </label>
+    <label>More Options</label>
   </a>
   <ul id="hover-help" class="f-dropdown" data-dropdown-content>
-    <li><a href="#">Take a tour</a></li>
-    <li><a href="#">Clear Workspace</a></li>
-    <li><a href="#">Save Code to Computer</a></li>
-    <li><a href="#">Load Code from Computer</a></li>
-    <li><i class="fi-power" style="color: #444;"></i><a href="#">Power Down</a></li>
+    <li class="tour-button"><a href="#">Take a tour</a></li>
+    <li class="clear-button" ><a href="#">Clear Workspace</a></li>
+    <li class="save-button"><a href="#">Save Code to Computer</a></li>
+    <li class="load-button"><label for="fileupload"><a>Load Code from Computer</a></label><input id="fileupload" style="height: 0px; visibility: hidden;" type="file"/></li>
+    <li class="shutdown-button"><i class="fi-power" style="color: #444;"></i><a href="#">Power Down</a></li>
   </ul>
 </div>
