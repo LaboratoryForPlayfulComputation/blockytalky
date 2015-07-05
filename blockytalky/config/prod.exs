@@ -52,7 +52,7 @@ config :logger, [
 ####
 #custom configuration
 config :blockytalky,
-  supported_hardware: [:btbrickpi, :grovepi, :mock]
+  supported_hardware: [:btbrickpi]
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"
