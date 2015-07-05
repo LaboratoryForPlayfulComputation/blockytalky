@@ -5,6 +5,8 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.CommsModule, as: CM
   alias Blockytalky.CommsChannel, as: CC
+
+  require Logger
   @moduledoc """
   The function-version of the Blockytalky.DSL as an intermediate representation
   (or library if you prefer)
@@ -22,6 +24,7 @@ defmodule Blockytalky.DSL do
 
   The callback functions students can generate in the module that requires DSL are:
   start/0, continouously/0, when_sensor/0, while_sensor/0, handle_message/1
+  TODO Refactor me to use a gen server instead of an attribute accumulator + ast -> code -> ast
   """
 
   defmacro __before_compile__(env) do
@@ -29,11 +32,11 @@ defmodule Blockytalky.DSL do
     #pull functions from @attributes and wrap them in lambdas.
     start_funs = case Module.get_attribute(env.module, :once) do
       nil -> []
-      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], x]}]} end)
+      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], Code.string_to_quoted(x)]}]} end)
     end
     con_funs = case Module.get_attribute(env.module, :every_time) do
       nil -> []
-      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], x]}]} end)
+      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], Code.string_to_quoted(x)]}]} end)
     end
     #return two functions, a one-shot and a loop that is called by UserState
     quote do
@@ -56,7 +59,8 @@ defmodule Blockytalky.DSL do
     quote do
       import Blockytalky.DSL
       require Blockytalky.DSL
-      @before_compile Blockytalky.DSL
+      require Logger
+      @before_compile unquote(__MODULE__)
       Module.register_attribute(__MODULE__, :once, accumulate: true)
       Module.register_attribute(__MODULE__, :every_time, accumulate: true)
     end
@@ -66,12 +70,14 @@ defmodule Blockytalky.DSL do
   # The entry points of the user program. These get stored as asts in an @attribute (:once or :everytime)
   # and then run as lambas (anonymous callbacks) either in the init function or the loop function.
   defmacro start(do: body) do
+    body = Macro.to_string(body)
     quote bind_quoted: [ body: body ]
     do
       Module.put_attribute __MODULE__, :once, body
     end
   end
   defmacro repeatedly(do: body) do
+    body = Macro.to_string(body)
     quote bind_quoted: [ body: body ]
       do
       Module.put_attribute __MODULE__, :every_time, body
@@ -79,14 +85,18 @@ defmodule Blockytalky.DSL do
   end
   defmacro in_time(seconds, do: body) do
     quote do
-      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(seconds)
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(unquote(seconds))
       push_time_event({:at_time,time, fn -> unquote(body) end})
+      time = nil
     end
   end
-  defmacro for_time(seconds, do: body) do
+  defmacro for_time(seconds,clauses) do
+    do_body = Keyword.get(clauses, :do, nil)
+    after_body = Keyword.get(clauses, :after, :ok)
     quote do
-      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(seconds)
-      push_time_event({:until_time,time, fn -> unquote(body) end})
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(unquote(seconds))
+      push_time_event({:until_time, time, fn -> unquote(do_body) end, fn -> unquote(after_body) end})
+      time = nil
     end
   end
   @doc """
@@ -108,6 +118,7 @@ defmodule Blockytalky.DSL do
         )
     end
     #return:
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -117,12 +128,14 @@ defmodule Blockytalky.DSL do
       iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
   """
   defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+
     ast = quote do
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
         fn -> unquote(body) end
         )
       end
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -134,6 +147,7 @@ defmodule Blockytalky.DSL do
         fn -> unquote(body) end,
         true) #not in flag
       end
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -147,6 +161,7 @@ defmodule Blockytalky.DSL do
         )
     end
     #return:
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -158,6 +173,7 @@ defmodule Blockytalky.DSL do
         fn -> unquote(body) end
         )
       end
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -169,6 +185,7 @@ defmodule Blockytalky.DSL do
         fn -> unquote(body) end,
         true) #not in flag
       end
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -180,6 +197,7 @@ defmodule Blockytalky.DSL do
         unquote(body)
       end
     end
+    ast = Macro.to_string(ast)
     quote bind_quoted: [ast: ast] do
       Module.put_attribute __MODULE__, :every_time, ast
     end
@@ -190,7 +208,7 @@ defmodule Blockytalky.DSL do
   def get(var_name) do
     case US.get_var(var_name) do #runtime error message
     nil ->
-      Blockytalky.Endpoint.broadcast! "uc:command", "error", "#{var_name} has not been set!"
+      Blockytalky.Endpoint.broadcast! "uc:command", "error", %{body: "#{var_name} has not been set!"}
       nil
     v -> v
     end
@@ -201,7 +219,7 @@ defmodule Blockytalky.DSL do
   def get_var_history(var_name) do
     case US.get_var_history(var_name) do #runtime error message
       nil ->
-        Blockytalky.Endpoint.broadcast! "uc:command", "error", "#{var_name} has not been set!"
+        Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "#{var_name} has not been set!"}
         nil
       v -> v
     end
@@ -218,12 +236,12 @@ defmodule Blockytalky.DSL do
   # timer Events
   def process_time_events() do
     stack = get_sys_timer
-    |> Enum.filter(fn x -> do_timer_action(x) end)
+      |> Enum.filter(fn x -> do_timer_action(x) end)
     set(:sys_timer, stack)
   end
-  def push_time_event({type, time, fun}) do
+  def push_time_event(event) do
     stack = get_sys_timer
-    new_stack  = [{type, time, fun} | stack]
+    new_stack  = [event | stack]
     set(:sys_timer, new_stack)
   end
   defp get_sys_timer do
@@ -250,6 +268,17 @@ defmodule Blockytalky.DSL do
       do_fun.()
       true
     else
+      false
+    end
+
+  end
+  def do_timer_action({:until_time, time, do_fun, then_fun}) do
+    now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds
+    if now < time do
+      do_fun.()
+      true
+    else
+      then_fun.()
       false
     end
 
@@ -314,7 +343,7 @@ defmodule Blockytalky.DSL do
     if value in -100..100 do
       BP.set_motor_value(port_num, value)
     else
-      Blockytalky.Endpoint.broadcast "uc:command", "error", %{body: "Tried to set motor speed to value not in -100 to 100: #{inspect value}"}
+      Blockytalky.Endpoint.broadcast "uc:command", "error", %{"body" => "Tried to set motor speed to value not in -100 to 100: #{inspect value}"}
     end
   end
   ## Grove Pi
