@@ -79,13 +79,13 @@ defmodule Blockytalky.DSL do
   end
   defmacro in_time(seconds, do: body) do
     quote do
-      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + seconds
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(seconds)
       push_time_event({:at_time,time, fn -> unquote(body) end})
     end
   end
   defmacro for_time(seconds, do: body) do
     quote do
-      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + seconds
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + round(seconds)
       push_time_event({:until_time,time, fn -> unquote(body) end})
     end
   end

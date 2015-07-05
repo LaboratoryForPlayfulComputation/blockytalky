@@ -81,7 +81,7 @@ Blockly.Elixir.ORDER_NONE = 99;             // (...)
 Blockly.Elixir.PASS = '  :ok\n';
 
 /**
- * Initialise the database of variable names.
+ * Initialise the database of variable names and macros.
  * @param {!Blockly.Workspace} workspace Workspace to generate code from.
  */
 Blockly.Elixir.init = function(workspace) {
@@ -90,7 +90,7 @@ Blockly.Elixir.init = function(workspace) {
   // Create a dictionary mapping desired function names in definitions_
   // to actual function names (to avoid collisions with user functions).
   Blockly.Elixir.functionNames_ = Object.create(null);
-
+  Blockly.Elixir.macros_ = [];
   if (!Blockly.Elixir.variableDB_) {
     Blockly.Elixir.variableDB_ =
         new Blockly.Names(Blockly.Elixir.RESERVED_WORDS_);
@@ -114,9 +114,10 @@ Blockly.Elixir.finish = function(code) {
   }
   definitions = definitions.join('\n')
   header = 'defmodule Blockytalky.UserCode do\n' +
-            '  use Blockytalky.DSL '
-  footer = 'end\n'
-  return header + definitions + footer; //ignore code outside of definitions for now
+            '  use Blockytalky.DSL \n'
+  footer = '\nend\n'
+  macros = Blockly.Elixir.macros_.join('\n');
+  return header + definitions + macros + footer; //ignore code outside of definitions for now
 };
 
 /**

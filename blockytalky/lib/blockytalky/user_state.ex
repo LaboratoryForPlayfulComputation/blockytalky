@@ -13,7 +13,8 @@ defmodule Blockytalky.UserState do
   """
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
-  @update_rate 30 #milliseconds
+  @update_rate Application.get_env(:blockytalky, :update_rate)
+  @update_rate_hibernate Application.get_env(:blockytalky, :update_rate_hibernate)
   @max_history_size 1_000
   ####
   # External API
@@ -27,12 +28,15 @@ defmodule Blockytalky.UserState do
     #update music state
     #update messaging state
   end
-  def upload_user_code(code_string) do
-    GenServer.cast(__MODULE__, {:upload_user_code, code_string})
+  def upload_user_code(code_map) do
+    GenServer.cast(__MODULE__, {:upload_user_code, code_map})
     try do
+      code_string = code_map |> Map.get("code")
       Code.compile_string(code_string)
     rescue
-      _ -> Blockytalky.Endpoint.broadcast("uc:command", "error", %{body: "Failed to compile program"}) #user should never see this, but for now it is a nicity
+      e ->
+        Logger.debug "Error compiling user code: #{inspect e}"
+        Blockytalky.Endpoint.broadcast("uc:command", "error", %{body: "Failed to compile program"}) #user should never see this, but for now it is a nicity
     end
   end
   def execute_user_code() do
@@ -140,9 +144,9 @@ defmodule Blockytalky.UserState do
     end
   end
   def loop() do
-    :timer.sleep(@update_rate)
-    update_state()
     upid = GenServer.call(__MODULE__, :get_upid)
+    if upid == nil, do: :timer.sleep(@update_rate_hibernate), else: :timer.sleep(@update_rate)
+    update_state()
     if upid do
       send upid, :updated
     end

@@ -31,6 +31,7 @@
    var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
    // TODO: Assemble Elixir into code variable.
    var code = 'when_sensor "'+ dropdown_port +'" == '+ dropdown_status + ' do\n '+statements_do +'\n end';
+   Blockly.Elixir.macros_.push(code);
    return code;
  };
  Blockly.Blocks['when_sensor'] = {
@@ -56,6 +57,7 @@ Blockly.Elixir['when_sensor'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   // TODO: Assemble Elixir into code variable.
   var code = 'when_sensor "'+ dropdown_port +'" '+dropdown_comp+' '+ value_name + ' do\n '+statements_do +'\n end';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
 Blockly.Blocks['when_sensor_range'] = {
@@ -86,6 +88,7 @@ Blockly.Elixir['when_sensor_range'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   // TODO: Assemble Elixir into code variable.
   var code = 'when_sensor "'+dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
 
@@ -93,7 +96,7 @@ Blockly.Elixir['when_sensor_range'] = function(block) {
 Blockly.Blocks['while_touch'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("When touch sensor on port:")
+        .appendField("While touch sensor on port:")
         .appendField(new Blockly.FieldDropdown([["Port 1", "PORT_1"], ["Port 2", "PORT_2"], ["Port 3", "PORT_3"], ["Port 4", "PORT_4"]]), "port")
         .appendField(new Blockly.FieldDropdown([["is pressed", "1"], ["is released", "0"]]), "status");
     this.appendStatementInput("DO")
@@ -110,12 +113,13 @@ Blockly.Elixir['when_touch'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   // TODO: Assemble Elixir into code variable.
   var code = 'while_sensor "'+ dropdown_port +'" == '+ dropdown_status + ' do\n '+statements_do +'\n end';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
 Blockly.Blocks['while_sensor'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("When value of port:")
+        .appendField("While value of port:")
         .appendField(new Blockly.FieldDropdown([["Port 1", "PORT_1"], ["Port 2", "PORT_2"], ["Port 3", "PORT_3"], ["Port 4", "PORT_4"], ["Motor 1", "PORT_A"], ["Motor 2", "PORT_B"], ["Motor 3", "PORT_C"], ["Motor 4", "PORT_D"]]), "port")
         .appendField(new Blockly.FieldDropdown([["equals", "=="], ["does not equal", "!="], ["is less than", "<"], ["is less than or equal to", "<="], ["is greater than", ">"], ["is greater than or equal to", ">="]]), "comp");
     this.appendValueInput("NUM")
@@ -135,12 +139,13 @@ Blockly.Elixir['while_sensor'] = function(block) {
  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
  // TODO: Assemble Elixir into code variable.
  var code = 'while_sensor "'+ dropdown_port +'" '+dropdown_comp+' '+ value_name + ' do\n '+statements_do +'\n end';
+ Blockly.Elixir.macros_.push(code);
  return code;
 };
 Blockly.Blocks['while_sensor_range'] = {
  init: function() {
    this.appendDummyInput()
-       .appendField("When value of port:")
+       .appendField("While value of port:")
        .appendField(new Blockly.FieldDropdown([["Port 1", "PORT_1"], ["Port 2", "PORT_2"], ["Port 3", "PORT_3"], ["Port 4", "PORT_4"], ["Motor 1", "PORT_A"], ["Motor 2", "PORT_B"], ["Motor 3", "PORT_C"], ["Motor 4", "PORT_D"]]), "port");
    this.appendValueInput("NUM1")
        .setCheck("Number")
@@ -164,6 +169,7 @@ Blockly.Elixir['while_sensor_range'] = function(block) {
  var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
  var code = 'while_sensor "'+dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end';
+ Blockly.Elixir.macros_.push(code);
  return code;
 };
 
@@ -183,6 +189,7 @@ Blockly.Blocks['get_sensor'] = {
 Blockly.Elixir['get_sensor'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
   var code = 'get_sensor_value("'+dropdown_port+'")';
+  Blockly.Elixir.macros_.push(code);
   return [code, Blockly.Elixir.ORDER_NONE];
 };
 Blockly.Blocks['set_motor'] = {
@@ -205,5 +212,6 @@ Blockly.Elixir['set_motor'] = function(block) {
   var value_speed = Blockly.Elixir.valueToCode(block, 'SPEED', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
   var code = 'bp_set_motor_speed('+dropdown_name+','+value_speed+')';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };

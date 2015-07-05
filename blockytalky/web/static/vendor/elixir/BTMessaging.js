@@ -31,6 +31,7 @@
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   var value_to = Blockly.Elixir.valueToCode(block, 'to', Blockly.Elixir.ORDER_ATOMIC);
   var code = 'send_message('+value_msg+','+value_to+')\n';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
  //receive
@@ -52,6 +53,7 @@ Blockly.Elixir['receive'] = function(block) {
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'when_receive('+value_msg+') do\n '+statements_do+' end\n';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
  //say
@@ -72,5 +74,6 @@ Blockly.Elixir['say'] = function(block) {
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
   var code = 'say('+value_msg+')\n';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
