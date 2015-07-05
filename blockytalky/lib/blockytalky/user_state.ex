@@ -29,13 +29,17 @@ defmodule Blockytalky.UserState do
   end
   def upload_user_code(code_string) do
     GenServer.cast(__MODULE__, {:upload_user_code, code_string})
+    try do
+      Code.compile_string(code_string)
+    rescue
+      _ -> Blockytalky.Endpoint.broadcast("uc:command", "error", %{body: "Failed to compile program"}) #user should never see this, but for now it is a nicity
+    end
   end
   def execute_user_code() do
     stop_user_code(false) #stop currently running code before rerunning
     code_string = GenServer.call(__MODULE__, :get_user_code)
       |> Map.get("code")
     if(code_string != "") do
-      Code.compile_string(code_string)
       loop_stream = Stream.repeatedly (fn ->
         Blockytalky.UserCode.loop() # do one iteration of the loop
         receive do #wait for values to be updated to run again (FRP-like)
@@ -43,23 +47,23 @@ defmodule Blockytalky.UserState do
         end
       end)
       uc_pid = spawn (fn ->
-        Blockytalky.Endpoint.broadcast! "uc:command", "progress", %{body: "Program Running!"}
+        Blockytalky.Endpoint.broadcast("uc:command", "progress", %{body: "Program Running!"})
         Blockytalky.UserCode.init(:ok) #call init once, this is code such as "when I start"
         for _ <- loop_stream, do: :ok
       end)
       Logger.debug "running program: #{inspect uc_pid}"
       GenServer.cast(__MODULE__, {:set_upid, uc_pid})
     else
-      Blockytalky.Endpoint.broadcast! "uc:command", "error", %{body: "No program to run!"}
+      Blockytalky.Endpoint.broadcast("uc:command", "error", %{body: "No program to run!"})
     end
   end
   def stop_user_code(verbose \\ true) do
     upid = GenServer.call(__MODULE__, :get_upid)
     if upid do
       Process.exit(upid, :kill)
-      if verbose, do: Blockytalky.Endpoint.broadcast! "uc:command", "progress", %{body: "Program Stopped!"}
+      if verbose, do: Blockytalky.Endpoint.broadcast("uc:command", "progress", %{body: "Program Stopped!"})
     else
-      if verbose, do: Blockytalky.Endpoint.broadcast! "uc:command", "progress", %{body: "No code running."}
+      if verbose, do: Blockytalky.Endpoint.broadcast("uc:command", "progress", %{body: "No code running."})
     end
     GenServer.call(__MODULE__, :clear_state)
   end
@@ -68,7 +72,7 @@ defmodule Blockytalky.UserState do
   end
   @doc """
   returns {:ok, msg} if there is one,
-  returns {:nomsg,:nomsg} if the queue is empty
+  returns {:nosender,:nomsg} if the queue is empty
   """
   def dequeue_message do
     GenServer.call(__MODULE__, :dequeue_message)
@@ -153,13 +157,14 @@ defmodule Blockytalky.UserState do
     #broadcase sensor / motor values
     values_json = GenServer.call(__MODULE__,:get_port_value_map) |> strip_oks
     #Logger.debug("#{inspect values_json}")
-    Blockytalky.Endpoint.broadcast! "hardware:values", "all",  %{body: values_json}
+    Blockytalky.Endpoint.broadcast "hardware:values", "all",  %{body: values_json}
   end
   defp strip_oks(map) do
     list = for {key,data_list} <- map do
       latest_value = case data_list do
         [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
-        _ -> nil
+        [{_iteration, {:ok, nil}} | _ ] -> "-"
+        _ -> "-"
       end
       {key, latest_value}
     end
@@ -196,12 +201,12 @@ defmodule Blockytalky.UserState do
     new_q = Enum.reverse(new_q_rev)
     {:reply, {:ok, value}, {new_q,port_values, var_map, ucs, upid,l}}
   end
+  def handle_call(:dequeue_message, _from, s)  do
+    {:reply, {:nosender, :nomsg}, s}
+  end
   def handle_call(:clear_state, _from, {_mq, _port_values, _var_map, ucs, _upid, l}) do
     #we want this to be a call because we want to block progress on the caller (so that they don't try to query until this is done)
     {:reply,:ok, {[],%{},%{}, ucs, nil, 0}}
-  end
-  def handle_call(:dequeue_message, _from, s)  do
-    {:reply, {:nomsg, :nomsg}, s}
   end
   def handle_call({:get_port_value, port_id}, _from, s={_mq, port_values, _var_map, _ucs, _upid,_l}) do
     value = Map.get(port_values, port_id)

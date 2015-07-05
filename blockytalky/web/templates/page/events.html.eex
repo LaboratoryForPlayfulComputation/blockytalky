@@ -1,0 +1,10 @@
+<category name="Time">
+  <block name="when_start"></block>
+  <block name="repeatedly_do"></block>
+  <block name="for_time">
+
+  </block>
+  <block name="in_time">
+
+  </block>
+</category>

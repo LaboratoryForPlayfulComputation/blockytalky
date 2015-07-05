@@ -1,16 +1,8 @@
 <xml id="toolbox" style="display: none">
-   <category name="BrickPi">
-     <category name="Sensors">
-     </category>
-     <category name="Motors">
-     </category>
-   </category>
-   <category name="Events">
-   </category>
-   <category name="Messaging">
-   </category>
-   <category name="Music">
-   </category>
+   <%= render Blockytalky.PageView, "sensors.html" %>
+  <%= render Blockytalky.PageView, "events.html" %>
+   <%= render Blockytalky.PageView, "messaging.html" %>
+   <%= render Blockytalky.PageView, "music.html" %>
    <sep></sep>
    <category name="Logic">
      <category name="If">

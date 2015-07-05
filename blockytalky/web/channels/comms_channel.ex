@@ -23,4 +23,8 @@ defmodule Blockytalky.CommsChannel do
     push socket, "message", msg
     {:noreply, socket}
   end
+  def handle_in("say", msg, socket) do
+    push socket, "message", msg
+    {:noreply, socket}
+  end
 end

@@ -15,7 +15,12 @@ defmodule Blockytalky.BrickPi do
 
   def get_sensor_value(port_id) do
     port_num = BrickPiState.get_sensor_type_constants[port_id]
-    value = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
+    type = BrickPiState.get_sensor_type(port_id)
+    value = case type do
+      "TYPE_SENSOR_NONE" -> nil
+      _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
+    end
+
     type = BrickPiState.get_sensor_type(port_id)
     #normalize from brickpi to blockytalky values here:
     case type do

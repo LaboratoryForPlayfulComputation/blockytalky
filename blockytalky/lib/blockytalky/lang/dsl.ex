@@ -25,50 +25,122 @@ defmodule Blockytalky.DSL do
   """
 
   defmacro __before_compile__(env) do
-    start_funs = case Module.get_attribute(env.module, :start) do
+    ## Collapse the multiple macro invocations into one function callback
+    #pull functions from @attributes and wrap them in lambdas.
+    start_funs = case Module.get_attribute(env.module, :once) do
       nil -> []
       x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], x]}]} end)
     end
-    con_funs = case Module.get_attribute(env.module, :continouously) do
+    con_funs = case Module.get_attribute(env.module, :every_time) do
       nil -> []
       x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], x]}]} end)
     end
-    when_sensor_funs = case Module.get_attribute(env.module, :when_sensor) do
-      nil -> []
-      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], x]}]} end)
-    end
-
+    #return two functions, a one-shot and a loop that is called by UserState
     quote do
       def init(_) do
+        set(:sys_timer,[])
         unquote(start_funs) |> Enum.map(fn(x) -> x.() end)
       end
       def loop() do
+        #loop over timer stack global var and see if it is time to do those lambdas
+        process_time_events
+        dequeued_message = get_message() #get the latest message for all of the receive if blocks
         unquote(con_funs) |> Enum.map(fn(x) -> x.() end)
-        unquote(when_sensor_funs) |> Enum.map(fn(x) -> x.() end)
       end
     end
   end
 
   defmacro __using__(_) do
+    #expand when student code does `use Blockytalky.DSL`
+    #register all the @attributes that will accumulate the macro function definitions
     quote do
       import Blockytalky.DSL
       require Blockytalky.DSL
       @before_compile Blockytalky.DSL
-      Module.register_attribute(__MODULE__, :when_sensor, accumulate: true)
-      Module.register_attribute(__MODULE__, :while_sensor, accumulate: true)
-      Module.register_attribute(__MODULE__, :receive_message, accumulate: true)
-      Module.register_attribute(__MODULE__, :start, accumulate: true)
-      Module.register_attribute(__MODULE__, :continuously, accumulate: true)
+      Module.register_attribute(__MODULE__, :once, accumulate: true)
+      Module.register_attribute(__MODULE__, :every_time, accumulate: true)
     end
   end
 
+  ####
+  # The entry points of the user program. These get stored as asts in an @attribute (:once or :everytime)
+  # and then run as lambas (anonymous callbacks) either in the init function or the loop function.
+  defmacro start(do: body) do
+    quote bind_quoted: [ body: body ]
+    do
+      Module.put_attribute __MODULE__, :once, body
+    end
+  end
+  defmacro repeatedly(do: body) do
+    quote bind_quoted: [ body: body ]
+      do
+      Module.put_attribute __MODULE__, :every_time, body
+    end
+  end
+  defmacro in_time(seconds, do: body) do
+    quote do
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + seconds
+      push_time_event({:at_time,time, fn -> unquote(body) end})
+    end
+  end
+  defmacro for_time(seconds, do: body) do
+    quote do
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds) + seconds
+      push_time_event({:until_time,time, fn -> unquote(body) end})
+    end
+  end
+  @doc """
+  ## Example
+      iex> when_sensor "PORT_1" > 100, do: set("item",10)
+  """
   defmacro when_sensor({op,m,[port_id,value]}, do: body) do
+    #need to swap varable calls for when in case the variable changes between loops,
+    #but the sensor port doesn't change
     value = case value do
       {:get, meta, opts} -> {:get_var_history, meta, opts}
-      _ -> false
+      x -> x
     end
     ast = quote do
-      when_bp_sensor_value_compare(unquote(port_id),
+      when_sensor_value_compare(unquote(port_id),
+        fn x,y -> unquote({op,[content: Elixir, import: Kernel],[:x,:y]}) end,
+        unquote(value), #could be a constant or a var/var history [{iteration,value}...]
+        fn -> unquote(body) end
+        )
+    end
+    #return:
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
+    end
+  end
+  @doc """
+  ## Example
+      iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
+  """
+  defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+    ast = quote do
+      when_sensor_value_range(unquote(port_id),
+        unquote(range), #could be a constant or a var
+        fn -> unquote(body) end
+        )
+      end
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
+    end
+  end
+  defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+    ast = quote do
+      when_sensor_value_range(unquote(port_id),
+        unquote(range), #could be a constant or a var
+        fn -> unquote(body) end,
+        true) #not in flag
+      end
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
+    end
+  end
+  defmacro while_sensor({op,m,[port_id,value]}, do: body)do
+    ast = quote do
+      when_sensor_value_compare(unquote(port_id),
         fn x,y -> unquote({op,[content: Elixir, import: Kernel],[:x,:y]}) end,
         unquote(value), #could be a constant or a var
         fn -> unquote(body) end
@@ -76,91 +148,186 @@ defmodule Blockytalky.DSL do
     end
     #return:
     quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :when_sensor, ast
+      Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro while_sensor do
-    quote do
-
+  defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+    ast = quote do
+      while_sensor_value_range(unquote(port_id),
+        unquote(range), #could be a constant or a var
+        fn -> unquote(body) end
+        )
+      end
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro start(do: body) do
-    quote bind_quoted: [ body: body ]
-    do
-      Module.put_attribute __MODULE__, :start, body
+  defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+    ast = quote do
+      while_sensor_value_range(unquote(port_id),
+        unquote(range), #could be a constant or a var
+        fn -> unquote(body) end,
+        true) #not in flag
+      end
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro continuously(do: body) do
-    quote bind_quoted: [ body: body ]
-      do
-      Module.put_attribute __MODULE__, :continouously, body
+  defmacro when_receive(msg, do: body) do
+    #msg could be get("var")
+    ast = quote do
+      if(unquote(msg) == dequeued_message) do #dequeue message is set at the beginning of the loop
+        unquote(body)
+      end
+    end
+    quote bind_quoted: [ast: ast] do
+      Module.put_attribute __MODULE__, :every_time, ast
     end
   end
   ## Events
   ## Variables
   def set(var_name, value), do: US.set_var(var_name, value)
-  def get(var_name), do: US.get_var(var_name)
-  def get_var_history(var_name), do: get_var_history(var_name)
-  ## Brick pi
-  #set sensor type
-  def bp_set_sensor_type(port_num, type_string), do: BP.set_sensor_type(port_num, type_string)
+  def get(var_name) do
+    case US.get_var(var_name) do #runtime error message
+    nil ->
+      Blockytalky.Endpoint.broadcast! "uc:command", "error", "#{var_name} has not been set!"
+      nil
+    v -> v
+    end
+  end
+  @doc """
+  [{iteration, var_value}, ...]
+  """
+  def get_var_history(var_name) do
+    case US.get_var_history(var_name) do #runtime error message
+      nil ->
+        Blockytalky.Endpoint.broadcast! "uc:command", "error", "#{var_name} has not been set!"
+        nil
+      v -> v
+    end
+ end
+  ## HW
+
   #get sensor value
-  def bp_get_sensor_value(port_num) do
+  def get_sensor_value(port_num) do
      US.get_value(port_num)
   end
+
+  ####
+  # Helper functions called by macros
+  # timer Events
+  def process_time_events() do
+    stack = get_sys_timer
+    |> Enum.filter(fn x -> do_timer_action(x) end)
+    set(:sys_timer, stack)
+  end
+  def push_time_event({type, time, fun}) do
+    stack = get_sys_timer
+    new_stack  = [{type, time, fun} | stack]
+    set(:sys_timer, new_stack)
+  end
+  defp get_sys_timer do
+    case get(:sys_timer) do
+      nil -> []
+      v -> v
+    end
+  end
+  @doc """
+  In both of the following cases, if they return false, pop off of the stack
+  """
+  def do_timer_action({:at_time, time, fun}) do
+    now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds
+    if now > time do
+      fun.()
+      false
+    else
+      true
+    end
+  end
+  def do_timer_action({:until_time, time, do_fun}) do
+    now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds
+    if now < time do
+      do_fun.()
+      true
+    else
+      false
+    end
+
+  end
   #when sensor value is <comp> <value>, do: <body>
-  def when_bp_sensor_value_compare(port_id, comp_fun, value, body_fun) do
+  def when_sensor_value_compare(port_id, comp_fun, value, body_fun) do
     #this is confusing, refactor this to be less awful.
     #Purpose: compare the change in the sensor value to a variable or constant, and if true, apply some body function
+    #handles the edge case that the sensor stayed the same, but the value being compared against changed thus making the "when" trigger.
     {apply_fun, value} = case value do
-      [{i, latest_value},{j, previous_value}] when j == (i-1) -> {fn(x,y,z) -> comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
-      v -> {fn(x,y,z) -> comp_fun.(x,z) and not comp_fun.(y,z) end, v}
+      [{i, latest_value},{j, previous_value} | _ ] when j == (i-1) ->
+        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
+      [{_, only_value}] ->
+        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, only_value}
+      v ->
+        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, v}
     end
     is_valid = US.apply(
-                (fn(x,y,z) -> comp_fun.(x,z) and not comp_fun.(y,z) end ),
+                apply_fun,
                 port_id,
                 value
                 )
     if is_valid, do: body_fun.()
   end
-  def while_bp_sensor_value_compare(port_num, comp_fun, value, fun) do
+  def while_sensor_value_compare(port_num, comp_fun, value, fun) do
     is_valid = US.apply(
-                (fn(x,_y,z) -> comp_fun.(x,z) end ),
+                (fn(x,_y,z) -> x != nil and comp_fun.(x,z) end ),
                 port_num,
                 value
                 )
     if is_valid, do: fun.()
   end
   #when sensor value is <within | out of> range, do: <body>
-  def when_bp_sensor_value_range(port_num, range, fun) do
+  def when_sensor_value_range(port_num, range, fun, not_in \\ false) do
+    check_function = if not_in do
+       fn(x,y,z) -> x != nil and not x in z and  y in z end
+     else
+       fn(x,y,z) -> x != nil and x in z and not y in z end
+     end
     is_valid = US.apply(
-                (fn(x,y,z) -> x in z and not y in z end),
+                check_function,
                 port_num,
                 range
                 )
     if is_valid, do: fun.()
   end
-  def while_bp_sensor_value_range(port_num, range, fun) do
+  def while_sensor_value_range(port_num, range, fun, not_in \\ false) do
+    check_function = if not_in do
+       fn(x,y,z) -> x != nil and not x in z end
+     else
+       fn(x,y,z) -> x != nil and x in z end
+     end
     is_valid = US.apply(
-                (fn(x,_y,z) -> x in z end),
+                (fn(x,_y,z) -> x != nil and x in z end),
                 port_num,
                 range
                 )
     if is_valid, do: fun.()
   end
   #set motor speed
-  def bp_set_motor_speed(port_num, value), do: BP.set_motor_value(port_num, value)
-  #get encoder value
-  def bp_get_encoder_value(port_num), do: BP.get_encoder_value(port_num)
+  def bp_set_motor_speed(port_num, value) do
+    if value in -100..100 do
+      BP.set_motor_value(port_num, value)
+    else
+      Blockytalky.Endpoint.broadcast "uc:command", "error", %{body: "Tried to set motor speed to value not in -100 to 100: #{inspect value}"}
+    end
+  end
   ## Grove Pi
   ## Comms
-  # send message <msg> to <unit>
+  # message <msg> to <unit>
   def send_message(msg, to), do: CM.send_message(msg,to)
   def get_message() do
-    {msg, _sender} = US.dequeue_message
+    {_sender, msg} = US.dequeue_message
     msg
   end
-  # when I receive message <msg> do: <body>
+  def say(msg) do
+    Blockytalky.Endpoint.broadcast "comms:message", "say", %{"body" => msg}
+  end
   ## Music
   # motif <motif name> do: <music program>
   # cue <motif> in <num> beats

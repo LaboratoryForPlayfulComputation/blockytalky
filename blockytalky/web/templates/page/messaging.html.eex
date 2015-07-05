@@ -1,0 +1,32 @@
+<category name="BT Messaging">
+  <block type="text">
+    <field name="TEXT">hello</field>
+  </block>
+  <block type="say">
+  <value name="msg">
+    <block type="text">
+      <field name="TEXT">hello</field>
+    </block>
+  </value>
+  </block>
+  <block type="send">
+    <value name="msg">
+      <block type="text">
+        <field name="TEXT">hello</field>
+      </block>
+    </value>
+    <value name="to">
+      <block type="text">
+        <field name="TEXT">walle</field>
+      </block>
+    </value>
+  </block>
+  <block type="receive">
+    <value name="msg">
+      <block type="text">
+        <field name="TEXT">hello</field>
+      </block>
+    </value>
+  </block>
+
+</category>

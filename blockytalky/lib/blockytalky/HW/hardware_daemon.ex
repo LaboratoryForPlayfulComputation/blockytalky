@@ -21,7 +21,7 @@ defmodule Blockytalky.HardwareDaemon do
   @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
   #these are the sensors and types we will support.  Adding to this list will automatically generate views and options in the web app.
   @basic_sensor_types [
-    %{:id => "TYPE_SENSOR_RAW", :label => "None"},
+    %{:id => "TYPE_SENSOR_NONE", :label => "None"},
     %{:id => "TYPE_SENSOR_TOUCH", :label => "Touch"},
     %{:id => "TYPE_SENSOR_ULTRASONIC_CONT", :label => "Ultrasonic (Distance)"},
     %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Light (ambient)"},

@@ -42,11 +42,14 @@ hw_chan.on("sensor_changed", payload => {
 comm_chan.on("message", payload => {
   humane.log("received message: " + payload.body);
 });
+comm_chan.on("say", payload => {
+  humane.log("say:" + payload.body);
+})
 uc_chan.on("progress", payload => {
-  humane.log("System: " + payload.body)
+  humane.log("System: " + payload.body);
 });
 uc_chan.on("error", payload => {
-  humane.error("System Error: " + payload.body)
+  humane.error("System Error: " + payload.body);
 });
 /* App object */
 var App = {
