@@ -1,11 +1,13 @@
 <category name="Music">
+  <category name="Config">
+    <block type="sync_to_parent">
+  </category>
   <category name="Motifs">
-    <block name="defmotif"></block>
-    <block name="play_synth"></block>
-    <block name="rest"></block>
-    <block name="wait_for"></block>
-    <block name="loop"></block>
-    <block name="loop"></block>
+    <block type="defmotif"></block>
+    <block type="play_synth"></block>
+    <block type="rest"></block>
+    <block type="wait_for"></block>
+    <block type="loop"></block>
   </category>
   <!--
   <category name="Instruments">

@@ -137,3 +137,22 @@ Blockly.Elixir['cue'] = function(block) {
   var code = '...';
   return code;
 };
+Blockly.Blocks['sync_to_parent'] = {
+  init: function() {
+    this.appendValueInput("PARENT")
+        .setCheck("String")
+        .appendField("sync to BTU");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(290);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['sync_to_parent'] = function(block) {
+  var value_parent = Blockly.Elixir.valueToCode(block, 'PARENT', Blockly.Elixir.ORDER_ATOMIC);
+  // TODO: Assemble Elixir into code variable.
+  var code = '...';
+  return code;
+};
