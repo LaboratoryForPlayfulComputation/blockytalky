@@ -10,42 +10,40 @@
  goog.provide('Blockly.Elixir.events');
 
  goog.require('Blockly.Elixir');
-Blockly.Blocks['when_start'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("When I start");
-    this.appendStatementInput("DO")
-        .setCheck(null)
-        .appendField("do:");
-    this.setInputsInline(true);
-    this.setColour(160);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  }
-};
-Blockly.Elixir['when_start'] = function(block) {
-  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'start do\n '+statements_do+' \n end';
-  return code;
-};
-Blockly.Blocks['repeatedly_do'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Repeatedly");
-    this.appendStatementInput("DO")
-        .setCheck(null)
-        .appendField("do:");
-    this.setInputsInline(true);
-    this.setColour(20);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  }
-};
-Blockly.Elixir['repeatedly_do'] = function(block) {
-  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'repeatedly do\n '+statements_do+' \n end';
-  return code;
-};
+ Blockly.Blocks['when_start'] = {
+   init: function() {
+     this.appendDummyInput()
+         .appendField("When I start");
+     this.appendStatementInput("DO")
+         .setCheck(null)
+         .appendField("do:");
+     this.setColour(160);
+     this.setTooltip('');
+     this.setHelpUrl('http://www.example.com/');
+   }
+ };
+ Blockly.Elixir['when_start'] = function(block) {
+   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
+   var code = 'start do\n '+ statements_do +' \nend';
+   return code;
+ };
+ Blockly.Blocks['repeatedly_do'] = {
+   init: function() {
+     this.appendDummyInput()
+         .appendField("Repeatedly");
+     this.appendStatementInput("DO")
+         .setCheck(null)
+         .appendField("do:");
+     this.setColour(20);
+     this.setTooltip('');
+     this.setHelpUrl('http://www.example.com/');
+   }
+ };
+ Blockly.Elixir['repeatedly_do'] = function(block) {
+   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
+   var code = 'repeatedly do\n '+ statements_do +' \nend';
+   return code;
+ };
 Blockly.Blocks['for_time'] = {
   init: function() {
     this.appendValueInput("TIME")
@@ -58,6 +56,7 @@ Blockly.Blocks['for_time'] = {
         .appendField("repeatedly do:");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
+    this.setNextStatement(false, null);
     this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');

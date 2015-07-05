@@ -1,10 +1,18 @@
 <category name="Time">
-  <block name="when_start"></block>
-  <block name="repeatedly_do"></block>
-  <block name="for_time">
-
+  <block type="when_start"></block>
+  <block type="repeatedly_do"></block>
+  <block type="for_time">
+    <value name="TIME">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
   </block>
-  <block name="in_time">
-
+  <block type="in_time">
+    <value name="TIME">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
   </block>
 </category>
