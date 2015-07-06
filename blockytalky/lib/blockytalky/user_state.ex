@@ -166,8 +166,8 @@ defmodule Blockytalky.UserState do
   defp strip_oks(map) do
     list = for {key,data_list} <- map do
       latest_value = case data_list do
-        [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
         [{_iteration, {:ok, nil}} | _ ] -> "-"
+        [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
         _ -> "-"
       end
       {key, latest_value}

@@ -79,7 +79,8 @@ defmodule Blockytalky.BrickPiState do
   state to reflect that new type. The state looks like:
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
-  @file  "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/sensors.json"
+  @sensor_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/"
+  @file  "sensors.json"
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
   def start_link() do
@@ -89,8 +90,10 @@ defmodule Blockytalky.BrickPiState do
     # {:ok, %{"TYPE_NAME"=> value, ...},[:"1":num, ...]}
     map = _get_sensor_type_constants
     #reload last known configuration of sensor types
-    sensor_types = case File.read(@file) do
-      {:ok, text} -> JSX.decode(text)
+    File.mkdir(@sensor_dir)
+    File.touch("#{@sensor_dir}/#{@file}")
+    sensor_types = case File.read("#{@sensor_dir}/#{@file}") do
+      {:ok, text} when text != "" -> JSX.decode(text)
       _ -> %{}
     end
     {:ok, {map, sensor_types}}
