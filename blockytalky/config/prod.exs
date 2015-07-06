@@ -13,7 +13,8 @@ use Mix.Config
 # which you typically run after static files are built.
 config :blockytalky, Blockytalky.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com"]
+  url: [host: "example.com"],
+  cache_static_manifest: "priv/static/manifest.json"
 
 # ## SSL Support
 #

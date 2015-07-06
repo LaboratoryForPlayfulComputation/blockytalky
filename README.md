@@ -52,7 +52,11 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
 - optional dev tools
   - `sudo apt-get install inotify-tools`
 
-  # Run
+  # Run for production
   - `sudo MIX_ENV=prod PORT=80 mix phoenix.server`
   - run with REPL:
+    - compile:
+      - `http://www.phoenixframework.org/v0.14.0/docs/deployment`
+      - `sudo brunch build --production`
+      - `sudo mix phoenix.digest`
     - `sudo MIX_ENV=prod PORT=80 iex -S mix phoenix.server`
