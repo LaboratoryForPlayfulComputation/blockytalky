@@ -39,6 +39,7 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
 - run npm in case brunch isn't working
   - cd blockytalky_elixir/blockytalky
   - npm install
+    - You also may need to run `npm install node-sass` separately because of a bad github link.
 - install blockytalky deps
   - (cd blockytalky_elixir/blockytalky)
   - sudo mix deps.get
@@ -54,3 +55,8 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
     - sets up syslog to have a blockytalky.log file in `/var/logs`
 - optional dev tools
   - `sudo apt-get install inotify-tools`
+
+  # Run
+  - `sudo MIX_ENV=prod PORT=80 mix phoenix.server`
+  - run with REPL:
+    - `sudo MIX_ENV=prod PORT=80 iex -S mix phoenix.server`
