@@ -34,15 +34,18 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
 - install hex
   - mix local.hex
 - install phoenix tasks
-  - `mix archive.install https://github.com/phoenixframework/phoenix/releases/download/v0.14.0/phoenix_new-0.14.0.ez`
+  - `sudo mix archive.install https://github.com/phoenixframework/phoenix/releases/download/v0.14.0/phoenix_new-0.14.0.ez`
   - replace the v number with whatever version of pheonix blockytalky currently has
 - run npm in case brunch isn't working
   - cd blockytalky_elixir/blockytalky
   - npm install
 - install blockytalky deps
   - (cd blockytalky_elixir/blockytalky)
-  - mix deps.get
-  - mix compile
+  - sudo mix deps.get
+  - sudo mix compile
+- install python
+  - sudo apt-get install python-dev
+  - sudo apt-get install python-pip
 - install python deps for brick pi and file logging setup  mix tasks
   - (cd blockytalky_elixir/blockytalky)
   - sudo mix pythonDeps
