@@ -80,7 +80,7 @@ defmodule Blockytalky.BrickPiState do
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
   @sensor_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/"
-  @file  "sensors.json"
+  @sensor_file "sensors.json"
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
   def start_link() do
@@ -91,8 +91,8 @@ defmodule Blockytalky.BrickPiState do
     map = _get_sensor_type_constants
     #reload last known configuration of sensor types
     File.mkdir(@sensor_dir)
-    File.touch("#{@sensor_dir}/#{@file}")
-    sensor_types = case File.read("#{@sensor_dir}/#{@file}") do
+    File.touch("#{@sensor_dir}/#{@sensor_file}")
+    sensor_types = case File.read("#{@sensor_dir}/#{@sensor_file}") do
       {:ok, text} when text != "" -> JSX.decode(text)
       _ -> %{}
     end
@@ -101,22 +101,22 @@ defmodule Blockytalky.BrickPiState do
   # () -> {:ok,%{"type"=>num...}}
   def get_sensor_type_constants, do: GenServer.call(__MODULE__, {:get_sensor_type_constants})
   #int * "key" -> ()
-  def set_sensor_type(port_id, sensor_type), do: GenServer.call(__MODULE__, {:set_sensor_type, port_id, sensor_type})
+  def set_sensor_type(port_id, sensor_type), do: GenServer.cast(__MODULE__, {:set_sensor_type, port_id, sensor_type})
   # int -> "key"
   def get_sensor_type(port_id), do: GenServer.call(__MODULE__, {:get_sensor_type, port_id})
 
   def handle_call({:get_sensor_type_constants}, _from, state={constants, _sensor_port_types}) do
-    {:reply,{:ok, constants}, state}
+    {:reply,constants, state}
   end
   def handle_call({:get_sensor_type, port_id}, _from, state={constants, sensor_types}) do
     type = Map.get(sensor_types,port_id,@no_sensor)
-    {:reply, {:ok, type}, state}
+    {:reply,type, state}
   end
   def handle_cast({:set_sensor_type,port_id, sensor_type},{constants, sensor_types}) do
     sensor_types = Map.put(sensor_types,port_id, sensor_type)
     #backup sensor types
     {status, json} = JSX.encode sensor_types
-    if status == :ok, do: File.write(@file, json)
+    if status == :ok, do: File.write(@sensor_file, json)
     {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do

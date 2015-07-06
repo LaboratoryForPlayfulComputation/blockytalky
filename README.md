@@ -44,15 +44,11 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
   - (cd blockytalky_elixir/blockytalky)
   - sudo mix deps.get
   - sudo mix compile
-- install python
-  - sudo apt-get install python-dev
-  - sudo apt-get install python-pip
-- install python deps for brick pi and file logging setup  mix tasks
+- run `chmod +x install.sh && sudo install.sh` from DexterInd.
+  - `https://github.com/DexterInd/BrickPi/tree/master/Setup%20Files`
+- enable logging
   - (cd blockytalky_elixir/blockytalky)
-  - sudo mix pythonDeps
-    - installs brickpi and grovepi python drivers onto your rpi
   - sudo mix fileLogging
-    - sets up syslog to have a blockytalky.log file in `/var/logs`
 - optional dev tools
   - `sudo apt-get install inotify-tools`
 
