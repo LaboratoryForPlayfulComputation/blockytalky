@@ -54,6 +54,7 @@ defmodule Blockytalky.UserCodeChannel do
       val
     end
     file_name = Enum.join([@btu_id,y,mo,d,h,mi,s], "_") <> ".json"
+    File.mkdir(@file_dir)
     case File.write("#{@file_dir}/#{file_name}", JSX.encode!(map) |> JSX.prettify!) do
       {_, reason} -> Blockytalky.Endpoint.broadcast! "uc:command", "error",  %{body: reason}
       _           -> Blockytalky.Endpoint.broadcast! "uc:command", "progress",  %{body: "Code uploaded!"}

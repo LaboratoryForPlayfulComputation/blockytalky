@@ -187,6 +187,7 @@ defmodule Blockytalky.UserState do
   def init(_) do
     Logger.info "Starting #{inspect __MODULE__}"
     #restore user code if possible
+    File.mkdir(@file_dir)
     uc = case File.ls!(@file_dir)  |> Enum.sort |> Enum.reverse do
           [] -> %{"code" => "", "xml" => "<xml></xml>"}
           [head | _] ->
