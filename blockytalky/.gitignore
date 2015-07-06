@@ -15,10 +15,10 @@ erl_crash.dump
 # comment this depending on your deployment strategy.
 #/priv/static/css
 #/priv/static/js
-/priv/static/js/app.js
-/priv/static/css/app.css
-/priv/static/js/app.js.map
-/priv/static/css/app.css.map
+#/priv/static/js/app.js
+#/priv/static/css/app.css
+#/priv/static/js/app.js.map
+#/priv/static/css/app.css.map
 # The config/prod.secret.exs file by default contains sensitive
 # data and you should not commit it into version control.
 #
