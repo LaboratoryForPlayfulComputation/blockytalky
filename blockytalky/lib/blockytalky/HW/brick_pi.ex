@@ -19,10 +19,14 @@ defmodule Blockytalky.BrickPi do
     value = case type do
       "TYPE_SENSOR_NONE" -> nil
       _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
-    end
+      end
 
     type = BrickPiState.get_sensor_type(port_id)
     #normalize from brickpi to blockytalky values here:
+    value = case value do
+      {:ok, v} -> v
+      v -> v
+    end
     case type do
       _ -> value
     end
@@ -48,7 +52,12 @@ defmodule Blockytalky.BrickPi do
       iex>Blockytalky.BrickPi.get_sensor_type(0)
       {:ok, "TYPE_SENSOR_TOUCH"}
    """
-   def get_sensor_type(port_id), do: BrickPiState.get_sensor_type(port_id)
+   def get_sensor_type(port_id) do
+    case BrickPiState.get_sensor_type(port_id) do
+      {:ok, value} -> value
+      value -> value
+    end
+   end
    def get_sensor_type_constants, do: BrickPiState.get_sensor_type_constants
    def set_motor_value(port_id, value) do
     new_value = _normalize(value, [low: -100, high: 100], [low: -255, high: 255])
