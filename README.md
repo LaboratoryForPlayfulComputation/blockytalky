@@ -34,7 +34,7 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
 - install hex
   - mix local.hex
 - install phoenix tasks
-  - `sudo mix archive.install https://github.com/phoenixframework/phoenix/releases/download/v0.11.0/phoenix_new-0.11.0.ez`
+  - `mix archive.install https://github.com/phoenixframework/phoenix/releases/download/v0.14.0/phoenix_new-0.14.0.ez`
   - replace the v number with whatever version of pheonix blockytalky currently has
 - run npm in case brunch isn't working
   - cd blockytalky_elixir/blockytalky
@@ -49,3 +49,5 @@ You can install the plugins with: `vagrant plugin install <plugin-name>``
     - installs brickpi and grovepi python drivers onto your rpi
   - sudo mix fileLogging
     - sets up syslog to have a blockytalky.log file in `/var/logs`
+- optional dev tools
+  - `sudo apt-get install inotify-tools`
