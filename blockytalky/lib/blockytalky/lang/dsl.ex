@@ -112,7 +112,7 @@ defmodule Blockytalky.DSL do
     end
     ast = quote do
       when_sensor_value_compare(unquote(port_id),
-        fn x,y -> unquote({op,[content: Elixir, import: Kernel],[:x,:y]}) end,
+        fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
         unquote(value), #could be a constant or a var/var history [{iteration,value}...]
         fn -> unquote(body) end
         )
@@ -155,7 +155,7 @@ defmodule Blockytalky.DSL do
   defmacro while_sensor({op,m,[port_id,value]}, do: body)do
     ast = quote do
       when_sensor_value_compare(unquote(port_id),
-        fn x,y -> unquote({op,[content: Elixir, import: Kernel],[:x,:y]}) end,
+        fn x,y -> unquote({op,[context: UserCode, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
         unquote(value), #could be a constant or a var
         fn -> unquote(body) end
         )
