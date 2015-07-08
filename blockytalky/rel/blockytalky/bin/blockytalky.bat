@@ -16,7 +16,7 @@
 :: Set variables that describe the release
 @set rel_name=blockytalky
 @set rel_vsn=0.1.2
-@set erts_vsn=6.4
+@set erts_vsn=6.1
 @set erl_opts=
 
 :: Discover the release root directory from the directory
