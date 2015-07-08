@@ -22,6 +22,7 @@ If running on windows, after initializing for the first time, restart windows as
 - Install brunch io and npm
   - `cd blockytalky`
   - `rm -rf node_modules`
+      - NOTE: for vagrant, you need to make a symlink to somewhere not shared so that the folder name being too long doesn't crash: `mkdir ~/node_modules && ln -s ~/node_modules node_modules`
   - `npm install`
   - `sudo npm install -g brunch`
 - install mix packages:
@@ -53,7 +54,6 @@ If running on windows, after initializing for the first time, restart windows as
 - run npm in case brunch isn't working
   - cd blockytalky_elixir/blockytalky
   - `rm -rf node_modules` if any exist currently
-    - NOTE: for vagrant, you need to make a symlink to somewhere not shared so that the folder name being too long doesn't crash: `mkdir ~/node_modules && ln -s ~/node_modules node_modules`
   - `sudo npm cache clean`
   - `sudo npm install`
   - `sudo npm install -g brunch`
@@ -79,7 +79,8 @@ If running on windows, after initializing for the first time, restart windows as
     - make sure to change the dev config options (specifically supported hardware) if you are deving on the pi and want to test brickpi or grovepi support
 # Deploy for production
     - resource: http://www.phoenixframework.org/v0.14.0/docs/advanced-deployment
-    - on dev machine: `sudo brunch build --production && sudo MIX_ENV=prod mix release` will generate a new /rel folder
+    - on dev machine: `brunch build --production && MIX_ENV=prod mix release` will generate a new /rel folder
+      - don't use sudo with `mix release` or else it will have permission issues
       - I do not currently recommend building a release on the pi itself because `brunch build --production` seems to take too long or hang
       - you can run `npm list` to make sure brunch will succeed in its build. if you are missing dependencies, then node install did not work correctly. This is a big issue on VMs and the solution of making the node_modules dir a symlink to somewhere else on the system (not a windows file system).
     - on raspberry pi: `sudo mix blockytalky.deploy` which automates:
