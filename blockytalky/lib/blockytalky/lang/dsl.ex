@@ -4,7 +4,7 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.CommsModule, as: CM
-  alias Blockytalky.CommsChannel, as: CC
+  #alias Blockytalky.CommsChannel, as: CC
 
   require Logger
   @moduledoc """
@@ -103,7 +103,7 @@ defmodule Blockytalky.DSL do
   ## Example
       iex> when_sensor "PORT_1" > 100, do: set("item",10)
   """
-  defmacro when_sensor({op,m,[port_id,value]}, do: body) do
+  defmacro when_sensor({op,_m,[port_id,value]}, do: body) do
     #need to swap varable calls for when in case the variable changes between loops,
     #but the sensor port doesn't change
     value = case value do
@@ -127,7 +127,7 @@ defmodule Blockytalky.DSL do
   ## Example
       iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
   """
-  defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+  defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
 
     ast = quote do
       when_sensor_value_range(unquote(port_id),
@@ -140,7 +140,7 @@ defmodule Blockytalky.DSL do
       Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+  defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     ast = quote do
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
@@ -166,7 +166,7 @@ defmodule Blockytalky.DSL do
       Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+  defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     ast = quote do
       while_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
@@ -178,7 +178,7 @@ defmodule Blockytalky.DSL do
       Module.put_attribute __MODULE__, :every_time, ast
     end
   end
-  defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [left,right]}]}, do: body) do
+  defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     ast = quote do
       while_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
@@ -327,9 +327,9 @@ defmodule Blockytalky.DSL do
   end
   def while_sensor_value_range(port_num, range, fun, not_in \\ false) do
     check_function = if not_in do
-       fn(x,y,z) -> x != nil and not x in z end
+       fn(x,_y,z) -> x != nil and not x in z end
      else
-       fn(x,y,z) -> x != nil and x in z end
+       fn(x,_y,z) -> x != nil and x in z end
      end
     is_valid = US.apply(
                 (fn(x,_y,z) -> x != nil and x in z end),

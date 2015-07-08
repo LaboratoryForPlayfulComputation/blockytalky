@@ -2,7 +2,7 @@ defmodule Blockytalky.HardwareChannel do
   use Phoenix.Channel
   alias Blockytalky.MockHW, as: MockHW
   alias Blockytalky.BrickPi, as: BP
-  alias Blockytalky.UserState, as: US
+  #alias Blockytalky.UserState, as: US
   alias Blockytalky.HardwareDaemon, as: HD
   require Logger
   @moduledoc """
@@ -39,7 +39,7 @@ defmodule Blockytalky.HardwareChannel do
     #switch hardware state and tell appropriate python module
     case hw do
       "btbrickpi" ->
-        BrickPi.set_sensor_type(port_id, sensor_type)
+        BP.set_sensor_type(port_id, sensor_type)
       "mock" ->
         MockHW.set_sensor_type(port_id, sensor_type)
         _ -> :ok

@@ -31,6 +31,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell, path: "non_chefable_scripts.sh"
   config.vm.provider "virtualbox" do |v|
     v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
+    v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
   end
 
   #blockytalky default port forwarding

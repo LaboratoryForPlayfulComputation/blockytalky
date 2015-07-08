@@ -128,11 +128,17 @@ defmodule Blockytalky.UserState do
   defp update_bp_state do
     sensor_ports = ~w/PORT_1 PORT_2 PORT_3 PORT_4/
     motor_ports = ~w/PORT_A PORT_B PORT_C PORT_D/
-    for x <- sensor_ports do
-      put_value(x,BP.get_sensor_value(x))
+    _ = for x <- sensor_ports do
+      case BP.get_sensor_value(x) do
+        :undefined -> :ok # if no value, drop it for now
+        v -> put_value(v,x) #value, port
+      end
     end
-    for x <- motor_ports do
-      put_value(x, BP.get_encoder_value(x))
+    _ = for x <- motor_ports do
+      case BP.get_encoder_value(x) do
+        :undefined -> :ok # if no value, drop it for now
+        v -> put_value(v,x)#value, port
+      end
     end
   end
   defp update_mock_state do
@@ -166,8 +172,8 @@ defmodule Blockytalky.UserState do
   defp strip_oks(map) do
     list = for {key,data_list} <- map do
       latest_value = case data_list do
-        [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
         [{_iteration, {:ok, nil}} | _ ] -> "-"
+        [{_iteration, {:ok, v}} | _ ] -> v #get the latest value
         _ -> "-"
       end
       {key, latest_value}
@@ -252,10 +258,10 @@ defmodule Blockytalky.UserState do
       end
     {:noreply, {mq, port_values, Map.put(var_map, var_name, updated), ucs, upid, l}}
   end
-  def handle_cast({:upload_user_code, code_map}, {mq, port_values, var_map, ucs, upid, l}) do
+  def handle_cast({:upload_user_code, code_map}, {mq, port_values, var_map, _ucs, upid, l}) do
     {:noreply, {mq, port_values, var_map, code_map, upid, l}}
   end
-  def handle_cast({:set_upid, pid}, {mq, port_values, var_map, ucs, upid, l}) do
+  def handle_cast({:set_upid, pid}, {mq, port_values, var_map, ucs, _upid, l}) do
     {:noreply, {mq, port_values, var_map, ucs, pid, l}}
   end
   def handle_cast(:inc_loop_iteration, {mq,pv,vm,ucs,upid,l}) do
