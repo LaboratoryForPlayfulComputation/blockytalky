@@ -12,7 +12,7 @@ REL_DIR="$RELEASES_DIR/$REL_VSN"
 REL_LIB_DIR="$RELEASE_ROOT_DIR/lib"
 ERL_OPTS=""
 PIPE_DIR="$RELEASE_ROOT_DIR/tmp/erl_pipes/blockytalky/"
-ERTS_DIR=""
+ERTS_DIR="/usr/lib/erlang/erts-6.1"
 ROOTDIR=""
 
 GENERATED_CONFIG_DIR="${RELEASE_ROOT_DIR}/running-config"
