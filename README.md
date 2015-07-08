@@ -22,6 +22,7 @@ If running on windows, after initializing for the first time, restart windows as
 - Install brunch io and npm
   - `cd blockytalky`
   - `rm -rf node_modules`
+      - NOTE: for vagrant, you need to make a symlink to somewhere not shared so that the folder name being too long doesn't crash: `mkdir ~/node_modules && ln -s ~/node_modules node_modules`
   - `npm install`
   - `sudo npm install -g brunch`
 - install mix packages:
@@ -53,7 +54,6 @@ If running on windows, after initializing for the first time, restart windows as
 - run npm in case brunch isn't working
   - cd blockytalky_elixir/blockytalky
   - `rm -rf node_modules` if any exist currently
-    - NOTE: for vagrant, you need to make a symlink to somewhere not shared so that the folder name being too long doesn't crash: `mkdir ~/node_modules && ln -s ~/node_modules node_modules`
   - `sudo npm cache clean`
   - `sudo npm install`
   - `sudo npm install -g brunch`
