@@ -82,6 +82,7 @@ If running on windows, after initializing for the first time, restart windows as
     - on dev machine: `brunch build --production && MIX_ENV=prod mix release` will generate a new /rel folder
       - don't use sudo with `mix release` or else it will have permission issues
       - I do not currently recommend building a release on the pi itself because `brunch build --production` seems to take too long or hang
+      - note, the app in /rel will not be packaged with its own erlang and will instead use the systems erlang at `/usr/lib/erlang` because we assume cross compilation (compiled on x86_64 -> run on rpi/arm)
       - you can run `npm list` to make sure brunch will succeed in its build. if you are missing dependencies, then node install did not work correctly. This is a big issue on VMs and the solution of making the node_modules dir a symlink to somewhere else on the system (not a windows file system).
     - on raspberry pi: `sudo mix blockytalky.deploy` which automates:
       - pulls the blockytalky release that matches the current version in mix.exs
