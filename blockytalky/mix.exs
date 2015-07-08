@@ -3,7 +3,7 @@ defmodule Blockytalky.Mixfile do
 
   def project do
     [app: :blockytalky,
-     version: "0.0.1",
+     version: "0.1.2",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix] ++ Mix.compilers,
@@ -40,7 +40,8 @@ defmodule Blockytalky.Mixfile do
      {:httpoison, "~> 0.7"},
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
-     { :socket, git: "https://github.com/meh/elixir-socket.git"}
+     { :socket, git: "https://github.com/meh/elixir-socket.git"},
+     {:exrm, "~> 0.15.3"}
    ]
   end
 end

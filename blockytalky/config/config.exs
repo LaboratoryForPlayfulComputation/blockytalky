@@ -17,9 +17,8 @@ config :blockytalky, Blockytalky.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
-
 config :blockytalky,
-  id: "lpc_btu",
+  id: {:system, "HOSTNAME"}, #reads the hostname environment variable
   dax: "ws://btrouter.getdown.org:8005/dax",
   music: true, #set to true if sonic pi is running / this is a synth unit
   music_port: 9090,
