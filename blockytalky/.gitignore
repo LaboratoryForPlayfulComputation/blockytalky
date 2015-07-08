@@ -33,3 +33,6 @@ erl_crash.dump
 
 # compiled python
 /lib/hw_apis/*.pyc
+
+#compiled erts
+/rel/blockytalky/erts-*
