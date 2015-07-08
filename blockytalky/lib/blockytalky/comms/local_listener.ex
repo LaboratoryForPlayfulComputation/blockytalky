@@ -12,7 +12,7 @@ defmodule Blockytalky.LocalListener do
   @udp_multicast_delay 10_000 #milliseconds
   @udp_multicast_port 9999
   @local_ip_expiration 60_000 #milliseconds
-  @btu_id Application.get_env(:blockytalky, :id, "Unknown")
+  @btu_id Blockytalky.RuntimeUtils.btu_id
   def start_link() do # () -> {:ok, pid}
 
     {:ok, _pid} =  GenServer.start_link(__MODULE__,[], name: __MODULE__)

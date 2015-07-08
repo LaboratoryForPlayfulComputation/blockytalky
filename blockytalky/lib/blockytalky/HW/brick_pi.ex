@@ -33,7 +33,10 @@ defmodule Blockytalky.BrickPi do
   end
   def get_encoder_value(port_id) do
      port_num = BrickPiState.get_sensor_type_constants[port_id]
-     PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num])
+     case PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num]) do
+       {:ok, v} -> v
+       _ -> nil
+     end
    end
   @doc """
   ##Example

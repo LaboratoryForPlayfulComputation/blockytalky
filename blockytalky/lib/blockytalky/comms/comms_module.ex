@@ -7,7 +7,7 @@ defmodule Blockytalky.CommsModule do
   In charge of local and remote messaging between
   BTUs, App Inventor Apps, and music synths.
   """
-  @btu_id Application.get_env(:blockytalky, :id, "Unknown")
+  @btu_id Blockytalky.RuntimeUtils.btu_id
 
   ####
   #External APIs
