@@ -1,0 +1,463 @@
+#!/bin/sh
+
+set -e
+
+SCRIPT_DIR="$(dirname "$0")"
+RELEASE_ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REL_NAME="blockytalky"
+REL_VSN="0.1.2"
+ERTS_VSN="6.4"
+RELEASES_DIR="$RELEASE_ROOT_DIR/releases"
+REL_DIR="$RELEASES_DIR/$REL_VSN"
+REL_LIB_DIR="$RELEASE_ROOT_DIR/lib"
+ERL_OPTS=""
+PIPE_DIR="$RELEASE_ROOT_DIR/tmp/erl_pipes/blockytalky/"
+RUNNER_LOG_DIR="${RUNNER_LOG_DIR:-$RELEASE_ROOT_DIR/log}"
+ERTS_DIR=""
+ROOTDIR=""
+
+find_erts_dir() {
+    local erts_dir="$RELEASE_ROOT_DIR/erts-$ERTS_VSN"
+    if [ -d "$erts_dir" ]; then
+        ERTS_DIR="$erts_dir";
+        ROOTDIR="$RELEASE_ROOT_DIR"
+    else
+        local erl="$(which erl)"
+        local code="io:format(\"~s\", [code:root_dir()])."
+        local erl_root="$("$erl" -noshell -eval "$code" -s init stop)"
+        ERTS_DIR="$erl_root/erts-$ERTS_VSN"
+        ROOTDIR="$erl_root"
+    fi
+}
+
+# Connect to a remote node
+relx_rem_sh() {
+    # Generate a unique id used to allow multiple remsh to the same node
+    # transparently
+    id="remsh$(relx_gen_id)-${NAME}"
+
+    # Get the node's ticktime so that we use the same thing
+    TICKTIME="$(relx_nodetool rpcterms net_kernel get_net_ticktime)"
+
+    # Setup Erlang remote shell command to control node
+    #exec "$ERTS_DIR/bin/erl" "$NAME_TYPE" "$id" -remsh "$NAME" -boot start_clean \
+         #-setcookie "$COOKIE" -kernel net_ticktime "$TICKTIME"
+
+    # Setup Elixir remote shell command to control node
+    exec "$BINDIR/erl" \
+        -pa "$ROOTDIR"/lib/*/ebin "$ROOTDIR"/lib/consolidated \
+        -hidden -noshell \
+        -boot start_clean -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" \
+        -kernel net_ticktime "$TICKTIME" \
+        -user Elixir.IEx.CLI "$NAME_TYPE" "$id" -setcookie "$COOKIE" \
+        -extra --no-halt +iex -"$NAME_TYPE" "$id" --cookie "$COOKIE" --remsh "$NAME"
+}
+
+# Generate a random id
+relx_gen_id() {
+    od -X /dev/urandom | head -n1 | cut -d ' ' -f2
+}
+
+# Control a node
+relx_nodetool() {
+    command="$1"; shift
+    "$BINDIR/escript" "$ROOTDIR/bin/nodetool" "$NAME_TYPE" "$NAME" \
+                                 -setcookie "$COOKIE" "$command" "$@"
+}
+
+# Run an escript in the node's environment
+relx_escript() {
+    shift; local scriptpath="$1"; shift
+    export RELEASE_ROOT_DIR
+    "$BINDIR/escript" "$ROOTDIR/$scriptpath" $@
+}
+
+# Output a start command for the last argument of run_erl
+relx_start_command() {
+    printf "exec \"%s\" \"%s\"" "$RELEASE_ROOT_DIR/bin/$REL_NAME" \
+           "$START_OPTION"
+}
+
+# Convert .conf to sys.config using conform escript
+generate_config() {
+    local conf_file="$REL_DIR/$REL_NAME.conf"
+    local schema_file="$REL_DIR/$REL_NAME.schema.exs"
+    local sys_config="$REL_DIR/sys.config"
+    if [ -f "$schema_file" ]; then
+        result="$("$BINDIR/escript" "$ROOTDIR"/bin/conform --conf "$conf_file" --schema "$schema_file" --config "$sys_config" --output-dir "$REL_DIR")"
+        exit_status="$?"
+        if [ "$exit_status" -ne 0 ]; then
+            exit "$exit_status"
+        fi
+    fi
+}
+
+# Use $CWD/vm.args if exists, otherwise releases/VSN/vm.args
+if [ -z "$VMARGS_PATH" ]; then
+    if [ -f "$RELEASE_ROOT_DIR/vm.args" ]; then
+        VMARGS_PATH="$RELEASE_ROOT_DIR/vm.args"
+        USE_DIR="$RELEASE_ROOT_DIR"
+    else
+        USE_DIR="$REL_DIR"
+        VMARGS_PATH="$REL_DIR/vm.args"
+    fi
+fi
+
+if [ $RELX_REPLACE_OS_VARS ]; then
+    awk '{while(match($0,"[$]{[^}]*}")) {var=substr($0,RSTART+2,RLENGTH -3);gsub("[$]{"var"}",ENVIRON[var])}}1' < $VMARGS_PATH > $VMARGS_PATH.2.config
+    VMARGS_PATH=$VMARGS_PATH.2.config
+fi
+
+# Make sure log directory exists
+mkdir -p "$RUNNER_LOG_DIR"
+
+# Make sure the current user has write permission
+if ! [ -w $RUNNER_LOG_DIR ] ; then 
+    echo "Unable to write to $RUNNER_LOG_DIR. Quitting."
+    exit 1
+fi
+
+if [ -z "$CONFIG_PATH" ]; then
+    if [ -f "$USE_DIR/sys.config" ]; then
+        CONFIG_PATH="$USE_DIR/sys.config"
+    else
+        CONFIG_PATH="$REL_DIR/sys.config"
+    fi
+fi
+
+if [ $RELX_REPLACE_OS_VARS ]; then
+    awk '{while(match($0,"[$]{[^}]*}")) {var=substr($0,RSTART+2,RLENGTH -3);gsub("[$]{"var"}",ENVIRON[var])}}1' < $CONFIG_PATH > $CONFIG_PATH.2.config
+    CONFIG_PATH=$CONFIG_PATH.2.config
+fi
+
+# Extract the target node name from node.args
+NAME_ARG=$(egrep '^-s?name' "$VMARGS_PATH")
+if [ -z "$NAME_ARG" ]; then
+    echo "vm.args needs to have either -name or -sname parameter."
+    exit 1
+fi
+
+# Extract the name type and name from the NAME_ARG for REMSH
+NAME_TYPE="$(echo "$NAME_ARG" | awk '{print $1}')"
+NAME="$(echo "$NAME_ARG" | awk '{print $2}')"
+
+# User can specify an sname without @hostname
+# This will fail when creating remote shell
+# So here we check for @ and add @hostname if missing
+case $NAME in
+    *@*)
+        # Nothing to do
+        ;;
+    *)
+        # Add @hostname
+        case $NAME_TYPE in
+            -sname)
+                NAME=$NAME@`hostname -s`
+                ;;
+            -name)
+                NAME=$NAME@`hostname -f`
+                ;;
+        esac
+        ;;
+esac
+
+PIPE_DIR="${PIPE_DIR:-/tmp/erl_pipes/$NAME/}"
+
+# Extract the target cookie
+COOKIE_ARG="$(grep '^-setcookie' "$VMARGS_PATH")"
+if [ -z "$COOKIE_ARG" ]; then
+    echo "vm.args needs to have a -setcookie parameter."
+    exit 1
+fi
+
+# Extract cookie name from COOKIE_ARG
+COOKIE="$(echo "$COOKIE_ARG" | awk '{print $2}')"
+
+find_erts_dir
+export ROOTDIR="$RELEASE_ROOT_DIR"
+export BINDIR="$ERTS_DIR/bin"
+export EMU="beam"
+export PROGNAME="erl"
+export LD_LIBRARY_PATH="$ERTS_DIR/lib:$LD_LIBRARY_PATH"
+ERTS_LIB_DIR="$ERTS_DIR/../lib"
+
+cd "$ROOTDIR"
+
+# Check the first argument for instructions
+case "$1" in
+    start|start_boot)
+        # Make sure the config is generated first
+        generate_config
+        # Make sure there is not already a node running
+        #RES=`$NODETOOL ping`
+        #if [ "$RES" = "pong" ]; then
+        #    echo "Node is already running!"
+        #    exit 1
+        #fi
+        # Save this for later
+        CMD="$1"
+        case "$1" in
+            start)
+                shift
+                START_OPTION="console"
+                HEART_OPTION="start"
+                ;;
+            start_boot)
+                shift
+                START_OPTION="console_boot"
+                HEART_OPTION="start_boot"
+                ;;
+        esac
+        RUN_PARAM="$@"
+
+        # Set arguments for the heart command
+        set -- "$SCRIPT_DIR/$REL_NAME" "$HEART_OPTION"
+        [ "$RUN_PARAM" ] && set -- "$@" "$RUN_PARAM"
+
+        # Export the HEART_COMMAND
+        HEART_COMMAND="$RELEASE_ROOT_DIR/bin/$REL_NAME $CMD"
+        export HEART_COMMAND
+
+        mkdir -p "$PIPE_DIR"
+        
+        # Make sure the current user has write permission
+        if ! [ -w $PIPE_DIR ] ; then 
+            echo "Unable to write to $PIPE_DIR. Quitting."
+            exit 1
+        fi
+
+        "$BINDIR/run_erl" -daemon "$PIPE_DIR" "$RUNNER_LOG_DIR" \
+                          "$(relx_start_command)"
+        ;;
+
+    stop)
+        # Wait for the node to completely stop...
+        case $(uname -s) in
+            Linux|Darwin|FreeBSD|DragonFly|NetBSD|OpenBSD)
+                # PID COMMAND
+                PID=$(ps ax -o pid= -o command=|
+                      grep "$RELEASE_ROOT_DIR/.*/[b]eam"|awk '{print $1}')
+                ;;
+            SunOS)
+                # PID COMMAND
+                PID=$(ps -ef -o pid= -o args=|
+                      grep "$RELEASE_ROOT_DIR/.*/[b]eam"|awk '{print $1}')
+                ;;
+            CYGWIN*)
+                # UID PID PPID TTY STIME COMMAND
+                PID=$(ps -efw|grep "$RELEASE_ROOT_DIR/.*/[b]eam"|awk '{print $2}')
+                ;;
+        esac
+        relx_nodetool "stop"
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        while $(kill -0 "$PID" 2>/dev/null);
+        do
+            sleep 1
+        done
+        ;;
+
+    restart)
+        # Make sure the config is generated first
+        generate_config
+        ## Restart the VM without exiting the process
+        relx_nodetool "restart"
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        ;;
+
+    reboot)
+        # Make sure the config is generated first
+        generate_config
+        ## Restart the VM completely (uses heart to restart it)
+        relx_nodetool "reboot"
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        ;;
+
+    ping)
+        ## See if the VM is alive
+        relx_nodetool "ping"
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        ;;
+
+    escript)
+        ## Run an escript under the node's environment
+        relx_escript $@
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        ;;
+
+    rpc)
+        ## Execute a command in MFA format on the remote node
+        if [ -z "$3" ]; then
+            echo "RPC requires module, function, and a string of the arguments to be evaluated."
+            echo "The argument string must evaluate to a valid Erlang term."
+            echo "Examples: rpc calendar valid_date \"{2013,3,12}.\""
+            echo "          rpc erlang now"
+            exit 1
+        fi
+        if [ -z "$4" ]; then
+            relx_nodetool "rpcterms" "$2" "$3"
+        else
+            relx_nodetool "rpcterms" "$2" "$3" "$4"
+        fi
+        exit_status="$?"
+        if [ "$exit_status" -ne 0 ]; then
+            exit $exit_status
+        fi
+        ;;
+
+    attach)
+        # Make sure a node IS running
+        relx_nodetool "ping" > /dev/null
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            echo "Node is not running!"
+            exit $exit_status
+        fi
+
+        shift
+        exec "$BINDIR/to_erl" "$PIPE_DIR"
+        ;;
+
+    remote_console)
+        # Make sure a node IS running
+        relx_nodetool "ping" > /dev/null
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            echo "Node is not running!"
+            exit $exit_status
+        fi
+
+        shift
+        relx_rem_sh
+        ;;
+
+    upgrade|downgrade|install)
+        # Make sure the config is generated first
+        generate_config
+        if [ -z "$2" ]; then
+            echo "Missing package argument"
+            echo "Usage: $REL_NAME $1 {package base name}"
+            echo "NOTE {package base name} MUST NOT include the .tar.gz suffix"
+            exit 1
+        fi
+
+        # Make sure a node IS running
+        relx_nodetool "ping" > /dev/null
+        exit_status=$?
+        if [ "$exit_status" -ne 0 ]; then
+            echo "Node is not running!"
+            exit $exit_status
+        fi
+
+        exec "$BINDIR/escript" "$ROOTDIR/bin/install_upgrade.escript" \
+             "$REL_NAME" "$NAME" "$COOKIE" "$2"
+        ;;
+
+    console|console_clean|console_boot)
+        # Make sure the config is generated first
+        generate_config
+        # .boot file typically just $REL_NAME (ie, the app name)
+        # however, for debugging, sometimes start_clean.boot is useful.
+        # For e.g. 'setup', one may even want to name another boot script.
+        case "$1" in
+            console)
+                if [ -f "$REL_DIR/$REL_NAME.boot" ]; then
+                    BOOTFILE="$REL_DIR/$REL_NAME"
+                else
+                    BOOTFILE="$REL_DIR/start"
+                fi
+                ;;
+            console_clean)
+                BOOTFILE="$ROOTDIR/bin/start_clean"
+                ;;
+            console_boot)
+                shift
+                BOOTFILE="$1"
+                shift
+                ;;
+        esac
+        # Setup beam-required vars
+        EMU="beam"
+        PROGNAME="${0#*/}"
+
+        export EMU
+        export PROGNAME
+
+        # Store passed arguments since they will be erased by `set`
+        ARGS="$@"
+
+        # Build an array of arguments to pass to exec later on
+        # Build it here because this command will be used for logging.
+        set -- "$BINDIR/erlexec" -boot "$BOOTFILE" \
+            -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" \
+            -env ERL_LIBS "$REL_LIB_DIR" -config "$CONFIG_PATH" \
+            -pa "$REL_LIB_DIR/consolidated" \
+            -args_file "$VMARGS_PATH" \
+            -user Elixir.IEx.CLI -extra --no-halt +iex
+
+        # Dump environment info for logging purposes
+        echo "Exec: $@" -- ${1+$ARGS}
+        echo "Root: $ROOTDIR"
+
+        # Log the startup
+        echo "$RELEASE_ROOT_DIR"
+        logger -t "$REL_NAME[$$]" "Starting up"
+
+        # Start the VM
+        exec "$@" -- ${1+$ARGS}
+        ;;
+
+    foreground)
+        # Make sure the config is generated first
+        generate_config
+        # start up the release in the foreground for use by runit
+        # or other supervision services
+
+        [ -f "$REL_DIR/$REL_NAME.boot" ] && BOOTFILE="$REL_NAME" || BOOTFILE="start"
+        FOREGROUNDOPTIONS="-noshell -noinput +Bd"
+
+        # Setup beam-required vars
+        EMU="beam"
+        PROGNAME="${0#*/}"
+
+        export EMU
+        export PROGNAME
+
+        # Store passed arguments since they will be erased by `set`
+        ARGS="$@"
+
+        # Build an array of arguments to pass to exec later on
+        # Build it here because this command will be used for logging.
+        set -- "$BINDIR/erlexec" $FOREGROUNDOPTIONS \
+            -boot "$REL_DIR/$BOOTFILE" -mode embedded -config "$CONFIG_PATH" \
+            -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" \
+            -args_file "$VMARGS_PATH"
+
+        # Dump environment info for logging purposes
+        echo "Exec: $@" -- ${1+$ARGS}
+        echo "Root: $ROOTDIR"
+
+        # Start the VM
+        exec "$@" -- ${1+$ARGS}
+        ;;
+    *)
+        echo "Usage: $REL_NAME {start|start_boot <file>|foreground|stop|restart|reboot|ping|rpc <m> <f> [<a>]|console|console_clean|console_boot <file>|attach|remote_console|upgrade|escript}"
+        exit 1
+        ;;
+esac
+
+exit 0
