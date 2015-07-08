@@ -8,7 +8,7 @@ defmodule Blockytalky.DaxListener do
   CommsModule receive channel
   """
   @dax_router Application.get_env(:blockytalky, :dax, "ws://0.0.0.0:8005/dax")
-  @btu_id Application.get_env(:blockytalky, :id, "Unknown")
+  @btu_id Blockytalky.RuntimeUtils.btu_id
 
   def start_link() do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)  #return this

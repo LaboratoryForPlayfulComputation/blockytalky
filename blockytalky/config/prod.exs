@@ -14,8 +14,8 @@ use Mix.Config
 #Blockytalky note: following these instructions for deployment:
 #http://www.phoenixframework.org/v0.14.0/docs/advanced-deployment
 config :blockytalky, Blockytalky.Endpoint,
-  http: [port: {:system, "PORT"}],
-  url: [host: {:system, "HOSTNAME"}],
+  http: [port: (System.get_env("PORT") || 80)],
+  url: [host: "localhost"],
   cache_static_manifest: "priv/static/manifest.json",
   server: true
 

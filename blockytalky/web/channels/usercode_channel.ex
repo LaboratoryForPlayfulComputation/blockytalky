@@ -3,7 +3,7 @@ defmodule Blockytalky.UserCodeChannel do
   alias Blockytalky.UserState, as: US
   require Logger
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @btu_id Application.get_env(:blockytalky, :id, "Unknown")
+  @btu_id Blockytalky.RuntimeUtils.btu_id
   def join("uc:" <> _any, _auth_msg, socket) do
     {:ok, socket}
   end

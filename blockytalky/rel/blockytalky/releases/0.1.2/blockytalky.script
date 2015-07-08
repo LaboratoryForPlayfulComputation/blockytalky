@@ -1,4 +1,4 @@
-%% script generated at {2015,7,8} {13,54,44}
+%% script generated at {2015,7,8} {16,14,3}
 {script,
     {"blockytalky","0.1.2"},
     [{preLoaded,
@@ -398,9 +398,10 @@
           'Elixir.Blockytalky.PageView','Elixir.Blockytalky.PythonQuerier',
           'Elixir.Blockytalky.Release','Elixir.Blockytalky.Repo',
           'Elixir.Blockytalky.Router','Elixir.Blockytalky.Router.Helpers',
-          'Elixir.Blockytalky.SonicPi','Elixir.Blockytalky.UserCodeChannel',
-          'Elixir.Blockytalky.UserState','Elixir.Blockytalky.Web',
-          'Elixir.Mix.Tasks.FileLogging','Elixir.Mix.Tasks.PythonDeps']},
+          'Elixir.Blockytalky.RuntimeUtils','Elixir.Blockytalky.SonicPi',
+          'Elixir.Blockytalky.UserCodeChannel','Elixir.Blockytalky.UserState',
+          'Elixir.Blockytalky.Web','Elixir.Mix.Tasks.FileLogging',
+          'Elixir.Mix.Tasks.PythonDeps']},
      {path,["$ROOT/lib/iex-1.0.4/ebin"]},
      {primLoad,
          ['Elixir.IEx','Elixir.IEx.App','Elixir.IEx.Autocomplete',
@@ -1306,6 +1307,7 @@
                         'Elixir.Blockytalky.Release',
                         'Elixir.Blockytalky.Repo','Elixir.Blockytalky.Router',
                         'Elixir.Blockytalky.Router.Helpers',
+                        'Elixir.Blockytalky.RuntimeUtils',
                         'Elixir.Blockytalky.SonicPi',
                         'Elixir.Blockytalky.UserCodeChannel',
                         'Elixir.Blockytalky.UserState',

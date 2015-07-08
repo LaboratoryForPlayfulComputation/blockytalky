@@ -25,6 +25,7 @@
                         'Elixir.Blockytalky.Release',
                         'Elixir.Blockytalky.Repo','Elixir.Blockytalky.Router',
                         'Elixir.Blockytalky.Router.Helpers',
+                        'Elixir.Blockytalky.RuntimeUtils',
                         'Elixir.Blockytalky.SonicPi',
                         'Elixir.Blockytalky.UserCodeChannel',
                         'Elixir.Blockytalky.UserState',
