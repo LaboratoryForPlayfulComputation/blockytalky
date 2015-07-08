@@ -80,6 +80,7 @@ If running on windows, after initializing for the first time, restart windows as
 # Deploy for production
     - resource: http://www.phoenixframework.org/v0.14.0/docs/advanced-deployment
     - on dev machine: `brunch build --production && MIX_ENV=prod mix phoenix.digest && MIX_ENV=prod mix release` will generate a new /rel folder
+      - make sure `ERTS_VSN` in rel/blockytalky/bin/blocktalky is the same as the ERTS on the pi you are deploying to. We are using 6.1. you can check in ``/usr/lib/erlang/erts-<vsn>`
       - don't use sudo with `mix release` or else it will have permission issues
       - look at the docs for the release tool for more info `https://github.com/bitwalker/exrm`
       - I do not currently recommend building a release on the pi itself because `brunch build --production` seems to take too long or hang
