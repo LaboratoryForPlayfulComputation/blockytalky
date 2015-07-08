@@ -12,9 +12,18 @@ REL_DIR="$RELEASES_DIR/$REL_VSN"
 REL_LIB_DIR="$RELEASE_ROOT_DIR/lib"
 ERL_OPTS=""
 PIPE_DIR="$RELEASE_ROOT_DIR/tmp/erl_pipes/blockytalky/"
-RUNNER_LOG_DIR="${RUNNER_LOG_DIR:-$RELEASE_ROOT_DIR/log}"
 ERTS_DIR=""
 ROOTDIR=""
+
+GENERATED_CONFIG_DIR="${RELEASE_ROOT_DIR}/running-config"
+# Check for $RELEASE_MUTABLE_DIR
+if [ -n "${RELEASE_MUTABLE_DIR}" ]; then
+    PIPE_DIR="${RELEASE_MUTABLE_DIR}/erl_pipes/"
+    RUNNER_LOG_DIR="${RUNNER_LOG_DIR:-${RELEASE_MUTABLE_DIR}/log}"
+    GENERATED_CONFIG_DIR="${RELEASE_MUTABLE_DIR}/running-config"
+fi
+
+RUNNER_LOG_DIR="${RUNNER_LOG_DIR:-$RELEASE_ROOT_DIR/log}"
 
 find_erts_dir() {
     local erts_dir="$RELEASE_ROOT_DIR/erts-$ERTS_VSN"
@@ -25,7 +34,7 @@ find_erts_dir() {
         local erl="$(which erl)"
         local code="io:format(\"~s\", [code:root_dir()])."
         local erl_root="$("$erl" -noshell -eval "$code" -s init stop)"
-        ERTS_DIR="$erl_root/erts-$ERTS_VSN"
+        ERTS_DIR=$(ls -d $erl_root/erts-* | sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -k 5,5 -g | tail -n 1)
         ROOTDIR="$erl_root"
     fi
 }
@@ -80,27 +89,53 @@ relx_start_command() {
 
 # Convert .conf to sys.config using conform escript
 generate_config() {
-    local conf_file="$REL_DIR/$REL_NAME.conf"
     local schema_file="$REL_DIR/$REL_NAME.schema.exs"
-    local sys_config="$REL_DIR/sys.config"
+    if [ -z "$RELEASE_CONFIG_FILE" ]; then
+        local conform_file="$RELEASE_CONFIG_DIR/$REL_NAME.conf"
+    else
+        if [ -r "$RELEASE_CONFIG_FILE" ]; then
+            local conform_file="$RELEASE_CONFIG_FILE"
+        else
+            echo "$RELEASE_CONFIG_FILE not found"
+            exit 1
+        fi
+    fi
     if [ -f "$schema_file" ]; then
-        result="$("$BINDIR/escript" "$ROOTDIR"/bin/conform --conf "$conf_file" --schema "$schema_file" --config "$sys_config" --output-dir "$REL_DIR")"
-        exit_status="$?"
-        if [ "$exit_status" -ne 0 ]; then
-            exit "$exit_status"
+        if [ -f "$conform_file" ]; then
+            echo "using $conform_file to populate \"$GENERATED_CONFIG_DIR\"."            
+            result="$("$BINDIR/escript" "$ROOTDIR"/bin/conform --conf "$conform_file" --schema "$schema_file" --config "$SYS_CONFIG" --output-dir "$GENERATED_CONFIG_DIR")"
+            exit_status="$?"
+            if [ "$exit_status" -ne 0 ]; then
+                exit "$exit_status"
+            fi
+            if [ ! -r "${GENERATED_CONFIG_DIR}/sys.config" ]; then
+                echo "conform succeeded, but not sys.config generated at \"${GENERATED_CONFIG_DIR}/sys.config\"."
+                exit 1
+            fi
+        else
+            echo "$conform_file not found in $RELEASE_CONFIG_DIR"
+            exit 1
         fi
     fi
 }
 
-# Use $CWD/vm.args if exists, otherwise releases/VSN/vm.args
-if [ -z "$VMARGS_PATH" ]; then
-    if [ -f "$RELEASE_ROOT_DIR/vm.args" ]; then
-        VMARGS_PATH="$RELEASE_ROOT_DIR/vm.args"
-        USE_DIR="$RELEASE_ROOT_DIR"
-    else
-        USE_DIR="$REL_DIR"
-        VMARGS_PATH="$REL_DIR/vm.args"
-    fi
+# Make directory for mutable configs exists
+mkdir -pv "$GENERATED_CONFIG_DIR"
+
+# Use configs from environment if defined, otherwise releases/VSN
+if [ -z "$RELEASE_CONFIG_DIR" ]; then
+    RELEASE_CONFIG_DIR=$REL_DIR
+fi
+
+SYS_CONFIG="$GENERATED_CONFIG_DIR/sys.config"
+VMARGS_PATH="$GENERATED_CONFIG_DIR/vm.args"
+
+# If first run, take dafault sys.config and vm.args
+if [ ! -f "$SYS_CONFIG" ]; then
+    cp "$RELEASE_CONFIG_DIR/sys.config" "$GENERATED_CONFIG_DIR/sys.config"
+fi
+if [ ! -f "$VMARGS_PATH" ]; then
+    cp "$RELEASE_CONFIG_DIR/vm.args" "$GENERATED_CONFIG_DIR/vm.args"
 fi
 
 if [ $RELX_REPLACE_OS_VARS ]; then
@@ -117,17 +152,9 @@ if ! [ -w $RUNNER_LOG_DIR ] ; then
     exit 1
 fi
 
-if [ -z "$CONFIG_PATH" ]; then
-    if [ -f "$USE_DIR/sys.config" ]; then
-        CONFIG_PATH="$USE_DIR/sys.config"
-    else
-        CONFIG_PATH="$REL_DIR/sys.config"
-    fi
-fi
-
 if [ $RELX_REPLACE_OS_VARS ]; then
-    awk '{while(match($0,"[$]{[^}]*}")) {var=substr($0,RSTART+2,RLENGTH -3);gsub("[$]{"var"}",ENVIRON[var])}}1' < $CONFIG_PATH > $CONFIG_PATH.2.config
-    CONFIG_PATH=$CONFIG_PATH.2.config
+    awk '{while(match($0,"[$]{[^}]*}")) {var=substr($0,RSTART+2,RLENGTH -3);gsub("[$]{"var"}",ENVIRON[var])}}1' < $SYS_CONFIG > SYS_CONFIG.2.config
+    SYS_CONFIG=$SYS_CONFIG.2.config
 fi
 
 # Extract the target node name from node.args
@@ -364,7 +391,25 @@ case "$1" in
         fi
 
         exec "$BINDIR/escript" "$ROOTDIR/bin/install_upgrade.escript" \
-             "$REL_NAME" "$NAME" "$COOKIE" "$2"
+             "install" "$REL_NAME" "$NAME" "$COOKIE" "$2"
+        ;;
+
+    unpack)
+        if [ -z "$2" ]; then
+            echo "Missing package argument"
+            echo "Usage: $REL_NAME $1 {package base name}"
+            echo "NOTE {package base name} MUST NOT include the .tar.gz suffix"
+            exit 1
+        fi
+
+        # Make sure a node IS running
+        if ! relx_nodetool "ping" > /dev/null; then
+            echo "Node is not running!"
+            exit 1
+        fi
+
+        exec "$BINDIR/escript" "$ROOTDIR/bin/install_upgrade.escript" \
+             "unpack" "$REL_NAME" "$NAME" "$COOKIE" "$2"
         ;;
 
     console|console_clean|console_boot)
@@ -404,7 +449,7 @@ case "$1" in
         # Build it here because this command will be used for logging.
         set -- "$BINDIR/erlexec" -boot "$BOOTFILE" \
             -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" \
-            -env ERL_LIBS "$REL_LIB_DIR" -config "$CONFIG_PATH" \
+            -env ERL_LIBS "$REL_LIB_DIR" -config "$SYS_CONFIG" \
             -pa "$REL_LIB_DIR/consolidated" \
             -args_file "$VMARGS_PATH" \
             -user Elixir.IEx.CLI -extra --no-halt +iex
@@ -443,7 +488,7 @@ case "$1" in
         # Build an array of arguments to pass to exec later on
         # Build it here because this command will be used for logging.
         set -- "$BINDIR/erlexec" $FOREGROUNDOPTIONS \
-            -boot "$REL_DIR/$BOOTFILE" -mode embedded -config "$CONFIG_PATH" \
+            -boot "$REL_DIR/$BOOTFILE" -mode embedded -config "$SYS_CONFIG" \
             -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" \
             -args_file "$VMARGS_PATH"
 
