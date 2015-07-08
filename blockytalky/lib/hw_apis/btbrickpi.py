@@ -31,7 +31,7 @@ def set_sensor_type(port_num, sensor_type):
 def get_encoder_value(port_num):
     BrickPiUpdateValues()
     return BrickPi.Encoder[port_num]
-def set_motor_value(port_num):
-    BrickPi.MotorSpeed[port_num]
+def set_motor_value(port_num, value):
+    BrickPi.MotorSpeed[port_num] = value
     BrickPiUpdateValues()
     return
