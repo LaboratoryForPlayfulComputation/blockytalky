@@ -16,42 +16,6 @@ defmodule Blockytalky.DSL do
   We ``should`` do type checking / correctness checking here!
   """
   ## Macros
-  @doc """
-  this initialize macro sets up the init function (for start_link), and a
-  private run function. This is so if the kids specify callbacks such as
-  when I start do ... end => :start, we only have them run once, and then
-  run does a recursion optimization to loop forever.
-
-  The callback functions students can generate in the module that requires DSL are:
-  start/0, continouously/0, when_sensor/0, while_sensor/0, handle_message/1
-  TODO Refactor me to use a gen server instead of an attribute accumulator + ast -> code -> ast
-  """
-
-  defmacro __before_compile__(env) do
-    ## Collapse the multiple macro invocations into one function callback
-    #pull functions from @attributes and wrap them in lambdas.
-    start_funs = case Module.get_attribute(env.module, :once) do
-      nil -> []
-      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], Code.string_to_quoted(x)]}]} end)
-    end
-    con_funs = case Module.get_attribute(env.module, :every_time) do
-      nil -> []
-      x -> x |> Enum.map(fn x -> {:fn, [], [{:->, [], [[], Code.string_to_quoted(x)]}]} end)
-    end
-    #return two functions, a one-shot and a loop that is called by UserState
-    quote do
-      def init(_) do
-        set(:sys_timer,[])
-        unquote(start_funs) |> Enum.map(fn(x) -> x.() end)
-      end
-      def loop() do
-        #loop over timer stack global var and see if it is time to do those lambdas
-        process_time_events
-        dequeued_message = get_message() #get the latest message for all of the receive if blocks
-        unquote(con_funs) |> Enum.map(fn(x) -> x.() end)
-      end
-    end
-  end
 
   defmacro __using__(_) do
     #expand when student code does `use Blockytalky.DSL`
@@ -60,9 +24,18 @@ defmodule Blockytalky.DSL do
       import Blockytalky.DSL
       require Blockytalky.DSL
       require Logger
-      @before_compile unquote(__MODULE__)
-      Module.register_attribute(__MODULE__, :once, accumulate: true)
-      Module.register_attribute(__MODULE__, :every_time, accumulate: true)
+      def init(_) do
+        set(:sys_timer,[])
+        GenServer.call(Blockytalky.UserState, {:get_funs,:init})
+        |> Enum.map(fn x -> x.() end)
+      end
+      def loop() do
+        #loop over timer stack global var and see if it is time to do those lambdas
+        process_time_events
+        dequeued_message = get_message() #get the latest message for all of the receive if blocks
+        GenServer.call(Blockytalky.UserState, {:get_funs,:loop})
+        |> Enum.map(fn x -> x.() end)
+      end
     end
   end
 
@@ -70,17 +43,13 @@ defmodule Blockytalky.DSL do
   # The entry points of the user program. These get stored as asts in an @attribute (:once or :everytime)
   # and then run as lambas (anonymous callbacks) either in the init function or the loop function.
   defmacro start(do: body) do
-    body = Macro.to_string(body)
-    quote bind_quoted: [ body: body ]
-    do
-      Module.put_attribute __MODULE__, :once, body
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :init, fn -> unquote(body) end})
     end
   end
   defmacro repeatedly(do: body) do
-    body = Macro.to_string(body)
-    quote bind_quoted: [ body: body ]
-      do
-      Module.put_attribute __MODULE__, :every_time, body
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn -> unquote(body) end})
     end
   end
   defmacro in_time(seconds, do: body) do
@@ -110,17 +79,14 @@ defmodule Blockytalky.DSL do
       {:get, meta, opts} -> {:get_var_history, meta, opts}
       x -> x
     end
-    ast = quote do
-      when_sensor_value_compare(unquote(port_id),
-        fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
-        unquote(value), #could be a constant or a var/var history [{iteration,value}...]
-        fn -> unquote(body) end
-        )
-    end
-    #return:
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        when_sensor_value_compare(unquote(port_id),
+          fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
+          unquote(value), #could be a constant or a var/var history [{iteration,value}...]
+          fn -> unquote(body) end
+          )
+        end})
     end
   end
   @doc """
@@ -128,78 +94,67 @@ defmodule Blockytalky.DSL do
       iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
   """
   defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-
-    ast = quote do
+  quote do
+    GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
-        fn -> unquote(body) end
-        )
-      end
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+        fn -> unquote(body) end)
+        end}
+      )
     end
   end
   defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-    ast = quote do
-      when_sensor_value_range(unquote(port_id),
-        unquote(range), #could be a constant or a var
-        fn -> unquote(body) end,
-        true) #not in flag
-      end
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        when_sensor_value_range(unquote(port_id),
+          unquote(range), #could be a constant or a var
+          fn -> unquote(body) end,
+          true) #not in flag
+        end}
+      )
     end
   end
   defmacro while_sensor({op,m,[port_id,value]}, do: body)do
-    ast = quote do
-      when_sensor_value_compare(unquote(port_id),
-        fn x,y -> unquote({op,[context: UserCode, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
-        unquote(value), #could be a constant or a var
-        fn -> unquote(body) end
-        )
-    end
-    #return:
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        when_sensor_value_compare(unquote(port_id),
+          fn x,y -> unquote({op,[context: UserCode, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
+          unquote(value), #could be a constant or a var
+          fn -> unquote(body) end
+          )
+        end}
+      )
     end
   end
   defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-    ast = quote do
-      while_sensor_value_range(unquote(port_id),
-        unquote(range), #could be a constant or a var
-        fn -> unquote(body) end
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        when_sensor_value_range(unquote(port_id),
+          unquote(range), #could be a constant or a var
+          fn -> unquote(body) end)
+          end}
         )
       end
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
-    end
   end
   defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-    ast = quote do
-      while_sensor_value_range(unquote(port_id),
-        unquote(range), #could be a constant or a var
-        fn -> unquote(body) end,
-        true) #not in flag
-      end
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        when_sensor_value_range(unquote(port_id),
+          unquote(range), #could be a constant or a var
+          fn -> unquote(body) end,
+          true) #not in flag
+        end}
+      )
     end
   end
   defmacro when_receive(msg, do: body) do
     #msg could be get("var")
-    ast = quote do
-      if(unquote(msg) == dequeued_message) do #dequeue message is set at the beginning of the loop
-        unquote(body)
-      end
-    end
-    ast = Macro.to_string(ast)
-    quote bind_quoted: [ast: ast] do
-      Module.put_attribute __MODULE__, :every_time, ast
+    quote do
+      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+        if(unquote(msg) == dequeued_message) do #dequeue message is set at the beginning of the loop
+          unquote(body)
+        end
+      end})
     end
   end
   ## Events
@@ -289,7 +244,7 @@ defmodule Blockytalky.DSL do
     #Purpose: compare the change in the sensor value to a variable or constant, and if true, apply some body function
     #handles the edge case that the sensor stayed the same, but the value being compared against changed thus making the "when" trigger.
     {apply_fun, value} = case value do
-      [{i, latest_value},{j, previous_value} | _ ] when j == (i-1) ->
+      [{i, latest_value},{j, previous_value} | _ ] ->
         {fn(x,y,z) -> x != nil and comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
       [{_, only_value}] ->
         {fn(x,y,z) -> x != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, only_value}
