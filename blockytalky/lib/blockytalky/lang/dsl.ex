@@ -79,11 +79,18 @@ defmodule Blockytalky.DSL do
       {:get, meta, opts} -> {:get_var_history, meta, opts}
       _ -> value
     end
-    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
+    compare = case op do
+      :> -> quote do fn x,y -> x > y end end
+      :>= -> quote do fn x,y -> x >= y end end
+      :< -> quote do fn x,y -> x < y end end
+      :<= -> quote do fn x,y -> x <= y end end
+      :== -> quote do fn x,y -> x == y end end
+      :!= -> quote do fn x,y -> x != y end end
+    end
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
-          fn x,y -> unquote(compare) end,
+          unquote(compare),
           unquote(value), #could be a constant or a var/var history [{iteration,value}...]
           fn -> unquote(body) end
           )
@@ -116,11 +123,18 @@ defmodule Blockytalky.DSL do
     end
   end
   defmacro while_sensor({op,_,[port_id,value]}, do: body) do
-    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
+    compare = case op do
+      :> -> quote do fn x,y -> x > y end end
+      :>= -> quote do fn x,y -> x >= y end end
+      :< -> quote do fn x,y -> x < y end end
+      :<= -> quote do fn x,y -> x <= y end end
+      :== -> quote do fn x,y -> x == y end end
+      :!= -> quote do fn x,y -> x != y end end
+    end
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         while_sensor_value_compare(unquote(port_id),
-          fn x,y -> unquote(compare) end,
+          unquote(compare),
           unquote(value), #could be a constant or a var
           fn -> unquote(body) end
           )
