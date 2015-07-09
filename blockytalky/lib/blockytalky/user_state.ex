@@ -77,7 +77,7 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__, {:queue_message, msg})
   end
   @doc """
-  returns {:ok, msg} if there is one,
+  returns {sender, msg} if there is one,
   returns {:nosender,:nomsg} if the queue is empty
   """
   def dequeue_message do
@@ -93,7 +93,7 @@ defmodule Blockytalky.UserState do
   end
   def get_value(port_id) do
     case GenServer.call(__MODULE__, {:get_port_value, port_id}) do
-      [{_, {:ok, value}} | _ ] -> value
+      [{_, value} | _ ] -> value
       _ -> nil
     end
   end
