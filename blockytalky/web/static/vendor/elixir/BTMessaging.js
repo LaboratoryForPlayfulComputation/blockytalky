@@ -73,6 +73,5 @@ Blockly.Elixir['say'] = function(block) {
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
   var code = 'say('+value_msg+')\n';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };

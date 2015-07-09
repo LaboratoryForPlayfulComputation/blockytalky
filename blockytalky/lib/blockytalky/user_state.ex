@@ -138,7 +138,8 @@ defmodule Blockytalky.UserState do
     end
     _ = for x <- motor_ports do
       case BP.get_encoder_value(x) do
-        :undefined -> :ok # if no value, drop it for now
+        :undefined -> :ok # if no value returned from python, drop it for now
+        nil -> :ok #same with values dropped purposefully
         v -> put_value(v,x)#value, port
       end
     end
