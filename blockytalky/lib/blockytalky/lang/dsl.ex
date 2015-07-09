@@ -77,7 +77,7 @@ defmodule Blockytalky.DSL do
     #but the sensor port doesn't change
     value = case value do
       {:get, meta, opts} -> {:get_var_history, meta, opts}
-      x -> x
+      _ -> value
     end
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
