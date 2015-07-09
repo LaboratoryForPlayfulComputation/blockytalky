@@ -210,7 +210,7 @@ defmodule Blockytalky.UserState do
     {:ok, state}
   end
   def handle_call(:dequeue_message, _from, {[], port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
-    {:reply, {:nosender, :nomsg}, s}
+    {:reply, {:nosender, :nomsg}, {[], port_values, var_map, ucs, upid,l, init_funs, loop_funs}}
   end
   def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
     rev_q = Enum.reverse(mq)
