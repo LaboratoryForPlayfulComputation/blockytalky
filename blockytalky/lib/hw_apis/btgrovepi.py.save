@@ -1,0 +1,73 @@
+
+from grovepi import *
+
+A0_type = "analog"
+A1_type = "analog"
+A2_type = "analog"
+D2_type = "digital"
+D3_type = "digitalPWM"
+D4_type = "digital"
+D5_type = "digitalPWM"
+D6_type = "digitalPWM"
+D7_type = "digital"
+D8_type = "digital"
+
+NO_SENSOR = -1
+#def setup(sensorA0 = NO_SENSOR, sensorA1 = NO_SENSOR, sensorA2 = NO_SENSOR, sensorD2 = NO_SENSOR, sensorD3 = NO_SENSOR, sensorD4 = NO_SENSOR, sensorD5 = NO_SENSOR, sensorD6 = NO_SENSOR, sensorD7 = NO_SENSOR, sensorD8 = NO_SENSOR):
+def setup(ports) #parameter: array with indices represnting ports and vals
+		#representing sensor types
+    #loop through and check all
+    for port in ports:
+	if 	
+	
+
+    return
+
+def get_sensor_value(port_num,sensor_type,sensor_io):
+    if sensor_io == "ULTRASONIC":
+	return ultrasonicRead(port_num)
+    if sensor_io == "DHT":
+	return dht(port_num,0)
+
+    if sensor_type == "analog":
+	return analogRead(port_num)
+    elif sensor_type == "digital":
+	return digitalRead(port_num)
+    else:
+	 return -1
+def set_sensor_type(port_num, sensor_io): #sets the pinmode if applicable
+    if (sensor_io != "DHT" and sensor_io != "ULTRASONIC"):
+	pinMode(port_num,sensor_io)
+    return
+def set_component(port_num,value,component_type):
+    if component_type == "digital":
+	set_digital_component(port_num,value)
+    elif component_type == "analog":
+	set_analog_component(port_num,value)
+    else:
+	set_pwm_component(port_num,value)
+    return
+
+def set_digital_component(port_num,value):
+    #can set with true/false or with 0/1
+    if value == True:
+	digitalWrite(port_num,1)
+    elif value == False:
+	digitalWrite(port_num,0)
+    else:
+	digitalWrite(port_num,value)
+    return
+def set_analog_component(port_num,value):
+    analogWrite(port_num,value)
+    return
+def set_pwm_component(port_num,value):
+    analogWrite(port_num,value)
+    return
+
+def get_port_type(port_num): #analog vs digital
+    type = "digital" #default/filler
+    return type
+
+def get_port_io(port_num): #input vs output vs dht vs ultrasonic
+    io = "INPUT" #default/filler
+    return io
