@@ -44,12 +44,12 @@ defmodule Blockytalky.DSL do
   # and then run as lambas (anonymous callbacks) either in the init function or the loop function.
   defmacro start(do: body) do
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :init, fn -> unquote(body) end})
+      GenServer.call(Blockytalky.UserState, {:push_fun, :init, fn -> unquote(body) end})
     end
   end
   defmacro repeatedly(do: body) do
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn -> unquote(body) end})
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn -> unquote(body) end})
     end
   end
   defmacro in_time(seconds, do: body) do
@@ -88,7 +88,7 @@ defmodule Blockytalky.DSL do
       :!= -> quote do fn x,y -> x != y end end
     end
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
           unquote(compare),
           unquote(value), #could be a constant or a var/var history [{iteration,value}...]
@@ -103,7 +103,7 @@ defmodule Blockytalky.DSL do
   """
   defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
   quote do
-    GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+    GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
         fn -> unquote(body) end)
@@ -113,7 +113,7 @@ defmodule Blockytalky.DSL do
   end
   defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         when_sensor_value_range(unquote(port_id),
           unquote(range), #could be a constant or a var
           fn -> unquote(body) end,
@@ -132,7 +132,7 @@ defmodule Blockytalky.DSL do
       :!= -> quote do fn x,y -> x != y end end
     end
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         while_sensor_value_compare(unquote(port_id),
           unquote(compare),
           unquote(value), #could be a constant or a var
@@ -144,7 +144,7 @@ defmodule Blockytalky.DSL do
   end
   defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         while_sensor_value_range(unquote(port_id),
           unquote(range), #could be a constant or a var
           fn -> unquote(body) end)
@@ -154,7 +154,7 @@ defmodule Blockytalky.DSL do
   end
   defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         while_sensor_value_range(unquote(port_id),
           unquote(range), #could be a constant or a var
           fn -> unquote(body) end,
@@ -166,7 +166,7 @@ defmodule Blockytalky.DSL do
   defmacro when_receive(msg, do: body) do
     #msg could be get("var")
     quote do
-      GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
+      GenServer.call(Blockytalky.UserState, {:push_fun, :loop, fn ->
         if(unquote(msg) == dequeued_message) do #dequeue message is set at the beginning of the loop
           unquote(body)
         end
