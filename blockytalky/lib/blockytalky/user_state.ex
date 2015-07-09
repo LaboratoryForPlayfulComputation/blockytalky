@@ -77,7 +77,7 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__, {:queue_message, msg})
   end
   @doc """
-  returns {sender, msg} if there is one,
+  returns {:ok, msg} if there is one,
   returns {:nosender,:nomsg} if the queue is empty
   """
   def dequeue_message do

@@ -46,6 +46,7 @@ defmodule Blockytalky.CommsModule do
         Blockytalky.Endpoint.broadcast! "comms:sync", "network_sync",  %{body: msg}
       _ ->
         {sender, body} = msg
+        US.queue_message(body)
         Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: body}
     end
   end
