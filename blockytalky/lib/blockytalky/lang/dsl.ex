@@ -80,7 +80,7 @@ defmodule Blockytalky.DSL do
       _ -> value
     end
     quote do
-      compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]
+      compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
           fn x,y -> unquote(compare) end,
@@ -116,7 +116,7 @@ defmodule Blockytalky.DSL do
     end
   end
   defmacro while_sensor({op,[context: context | _ ],[port_id,value]}, do: body)do
-    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]
+    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         while_sensor_value_compare(unquote(port_id),
