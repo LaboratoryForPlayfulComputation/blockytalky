@@ -79,8 +79,8 @@ defmodule Blockytalky.DSL do
       {:get, meta, opts} -> {:get_var_history, meta, opts}
       _ -> value
     end
+    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
     quote do
-      compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
           fn x,y -> unquote(compare) end,
