@@ -2,6 +2,7 @@ defmodule Blockytalky.CommsModule do
   use Supervisor
   alias Blockytalky.DaxListener, as: DL
   alias Blockytalky.LocalListener, as: LL
+  alias Blockytalky.UserState, as: US
   require Logger
   @moduledoc """
   In charge of local and remote messaging between
