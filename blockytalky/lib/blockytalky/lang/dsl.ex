@@ -82,7 +82,7 @@ defmodule Blockytalky.DSL do
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
-          fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
+          fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],Elixir},{:y,[], Elixir}]}) end,
           unquote(value), #could be a constant or a var/var history [{iteration,value}...]
           fn -> unquote(body) end
           )

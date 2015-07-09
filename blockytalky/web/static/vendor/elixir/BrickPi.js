@@ -107,7 +107,7 @@ Blockly.Blocks['while_touch'] = {
     this.setHelpUrl('http://www.example.com/');
   }
 };
-Blockly.Elixir['when_touch'] = function(block) {
+Blockly.Elixir['while_touch'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
   var dropdown_status = block.getFieldValue('status');
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
@@ -189,7 +189,6 @@ Blockly.Blocks['get_sensor'] = {
 Blockly.Elixir['get_sensor'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
   var code = 'get_sensor_value("'+dropdown_port+'")';
-  Blockly.Elixir.macros_.push(code);
   return [code, Blockly.Elixir.ORDER_NONE];
 };
 Blockly.Blocks['set_motor'] = {
@@ -212,6 +211,5 @@ Blockly.Elixir['set_motor'] = function(block) {
   var value_speed = Blockly.Elixir.valueToCode(block, 'SPEED', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
   var code = 'bp_set_motor_speed('+dropdown_name+','+value_speed+')';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };

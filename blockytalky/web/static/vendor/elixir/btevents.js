@@ -68,7 +68,6 @@ Blockly.Elixir['for_time'] = function(block) {
   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'for_time('+value_time+') do\n '+statements_do+' \n end';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };
 Blockly.Blocks['in_time'] = {
@@ -93,6 +92,5 @@ Blockly.Elixir['in_time'] = function(block) {
   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'in_time('+value_time+') do\n '+statements_do+' \n end';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };

@@ -31,7 +31,6 @@
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   var value_to = Blockly.Elixir.valueToCode(block, 'to', Blockly.Elixir.ORDER_ATOMIC);
   var code = 'send_message('+value_msg+','+value_to+')\n';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };
  //receive
