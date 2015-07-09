@@ -32,7 +32,7 @@ defmodule Blockytalky.DSL do
       def loop() do
         #loop over timer stack global var and see if it is time to do those lambdas
         process_time_events
-        dequeued_message = get_message() #get the latest message for all of the receive if blocks
+        set(:sys_message, get_message()) #get the latest message for all of the receive if blocks, msg is :nomsg if nothing in queue
         GenServer.call(Blockytalky.UserState, {:get_funs,:loop})
         |> Enum.map(fn x -> x.() end)
       end
@@ -167,7 +167,7 @@ defmodule Blockytalky.DSL do
     #msg could be get("var")
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
-        if(unquote(msg) == dequeued_message) do #dequeue message is set at the beginning of the loop
+        if(unquote(msg) == get(:sys_message)) do #dequeue message is set at the beginning of the loop
           unquote(body)
         end
       end})
