@@ -209,14 +209,14 @@ defmodule Blockytalky.UserState do
     state = {[],%{},%{},uc,nil,0,[],[]}
     {:ok, state}
   end
-  def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid,l, init_funs, loop_funs}) when length(mq) > 0  do
+  def handle_call(:dequeue_message, _from, {[], port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
+    {:reply, {:nosender, :nomsg}, s}
+  end
+  def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
     rev_q = Enum.reverse(mq)
     [value | new_q_rev] = rev_q
     new_q = Enum.reverse(new_q_rev)
     {:reply, {:ok, value}, {new_q,port_values, var_map, ucs, upid,l, init_funs, loop_funs}}
-  end
-  def handle_call(:dequeue_message, _from, s)  do
-    {:reply, {:nosender, :nomsg}, s}
   end
   def handle_call(:clear_state, _from, {_mq, _port_values, _var_map, ucs, _upid, l, init_funs, loop_funs}) do
     #we want this to be a call because we want to block progress on the caller (so that they don't try to query until this is done)
