@@ -188,7 +188,7 @@ Blockly.Blocks['get_sensor'] = {
 };
 Blockly.Elixir['get_sensor'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
-  var code = 'get_sensor_value("'+dropdown_port+'")';
+  var code = 'get_sensor_value("'+dropdown_port+'")\n';
   return [code, Blockly.Elixir.ORDER_NONE];
 };
 Blockly.Blocks['set_motor'] = {
@@ -210,6 +210,6 @@ Blockly.Elixir['set_motor'] = function(block) {
   var dropdown_name = block.getFieldValue('NAME');
   var value_speed = Blockly.Elixir.valueToCode(block, 'SPEED', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
-  var code = 'bp_set_motor_speed('+dropdown_name+','+value_speed+')';
+  var code = 'bp_set_motor_speed('+dropdown_name+','+value_speed+')\n';
   return code;
 };
