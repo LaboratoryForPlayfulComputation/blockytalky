@@ -18,7 +18,9 @@ defmodule Blockytalky.BrickPi do
     type = BrickPiState.get_sensor_type(port_id)
     value = case type do
       "TYPE_SENSOR_NONE" -> nil
-      "TYPE_SENSOR_ULTRASONIC_SS" when value == -1 -> 255 #turn the error case into a max (default) case
+      "TYPE_SENSOR_ULTRASONIC_SS" ->
+        v = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num]) #turn the error case into a max (default) case
+        if v = -1, do: 255
       _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
       end
 
