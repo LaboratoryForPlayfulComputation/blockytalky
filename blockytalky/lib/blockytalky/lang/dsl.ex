@@ -115,7 +115,7 @@ defmodule Blockytalky.DSL do
       )
     end
   end
-  defmacro while_sensor({op,[context: context | _ ],[port_id,value]}, do: body)do
+  defmacro while_sensor({op,_,[port_id,value]}, do: body) do
     compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
