@@ -80,9 +80,10 @@ defmodule Blockytalky.DSL do
       _ -> value
     end
     quote do
+      compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}]}]}
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
         when_sensor_value_compare(unquote(port_id),
-          fn x,y -> unquote({op,[content: Elixir, import: Kernel],[{:x,[],Elixir},{:y,[], Elixir}]}) end,
+          fn x,y -> unquote(compare) end,
           unquote(value), #could be a constant or a var/var history [{iteration,value}...]
           fn -> unquote(body) end
           )
@@ -114,11 +115,12 @@ defmodule Blockytalky.DSL do
       )
     end
   end
-  defmacro while_sensor({op,m,[port_id,value]}, do: body)do
+  defmacro while_sensor({op,[context: context | _ ],[port_id,value]}, do: body)do
+    compare = {op, [context: Elixir, import: Kernel], [{:x, [], Elixir}, {:y, [], Elixir}]}]}]}
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
-        when_sensor_value_compare(unquote(port_id),
-          fn x,y -> unquote({op,[context: UserCode, import: Kernel],[{:x,[],UserCode},{:y,[], UserCode}]}) end,
+        while_sensor_value_compare(unquote(port_id),
+          fn x,y -> unquote(compare) end,
           unquote(value), #could be a constant or a var
           fn -> unquote(body) end
           )
@@ -129,7 +131,7 @@ defmodule Blockytalky.DSL do
   defmacro while_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
-        when_sensor_value_range(unquote(port_id),
+        while_sensor_value_range(unquote(port_id),
           unquote(range), #could be a constant or a var
           fn -> unquote(body) end)
           end}
@@ -139,7 +141,7 @@ defmodule Blockytalky.DSL do
   defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
     quote do
       GenServer.call(Blockytalky.UserCode, {:push_fun, :loop, fn ->
-        when_sensor_value_range(unquote(port_id),
+        while_sensor_value_range(unquote(port_id),
           unquote(range), #could be a constant or a var
           fn -> unquote(body) end,
           true) #not in flag
