@@ -43,12 +43,13 @@ defmodule Blockytalky.BrickPi do
       iex>Blockytalky.BrickPi.set_sensor_type("PORT_1","TYPE_SENSOR_TOUCH")
   """
   def set_sensor_type(port_id, sensor_type) do
-     BrickPiState.set_sensor_type(port_id, sensor_type)
-     num_type = BrickPiState.get_sensor_type_constants[sensor_type]
-     port_num = BrickPiState.get_sensor_type_constants[port_id]
-     PythonQuerier.run(:btbrickpi, :set_sensor_type, [port_num, num_type])
-
-   end
+     if sensor_type != "TYPE_SENSOR_NONE" do
+       BrickPiState.set_sensor_type(port_id, sensor_type)
+       num_type = BrickPiState.get_sensor_type_constants[sensor_type]
+       port_num = BrickPiState.get_sensor_type_constants[port_id]
+       PythonQuerier.run(:btbrickpi, :set_sensor_type, [port_num, num_type])
+    end
+  end
    @doc """
    ##Example
       iex>Blockytalky.BrickPi.set_sensor_type(0,"TYPE_SENSOR_TOUCH")
