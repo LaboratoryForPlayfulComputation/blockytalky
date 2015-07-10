@@ -4,7 +4,7 @@ defmodule Blockytalky.PythonQuerier do
 
   require Logger
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   @moduledoc """
   This is a Gen Server implementation that's job is to run the python scripts
   for interfacing with the BTU hardware (brick pi, grove pi, etc).

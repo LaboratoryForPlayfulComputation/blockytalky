@@ -9,7 +9,7 @@ defmodule Blockytalky.BrickPi do
   ####
   #config
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   ####
   #External API
 

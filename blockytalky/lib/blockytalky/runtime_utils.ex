@@ -7,4 +7,9 @@ defmodule Blockytalky.RuntimeUtils do
       String.strip(hostname)
     end
   end
+  def supported_hardware do
+    System.get_env("HW")
+    || Application.get_env(:blockytalky, :supported_hardware)
+    || [:mock]
+  end
 end

@@ -40,4 +40,4 @@ config :blockytalky, Blockytalky.Repo,
   ####
   #custom configuration
   config :blockytalky,
-    supported_hardware: [:btbrickpi]
+    supported_hardware: [:mock]

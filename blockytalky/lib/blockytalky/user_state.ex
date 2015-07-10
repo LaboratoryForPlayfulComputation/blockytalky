@@ -12,7 +12,7 @@ defmodule Blockytalky.UserState do
 
   """
   @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   @update_rate Application.get_env(:blockytalky, :update_rate)
   @update_rate_hibernate Application.get_env(:blockytalky, :update_rate_hibernate)
   @max_history_size 1_000

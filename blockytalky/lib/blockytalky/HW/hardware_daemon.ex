@@ -18,7 +18,7 @@ defmodule Blockytalky.HardwareDaemon do
   ####
   #config
   @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   #these are the sensors and types we will support.  Adding to this list will automatically generate views and options in the web app.
   @basic_sensor_types [
     %{:id => "TYPE_SENSOR_NONE", :label => "None"},
