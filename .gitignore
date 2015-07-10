@@ -1,3 +1,4 @@
 vagrant vm private files
 /.vagrant
 blockytalky/data/sensors.json
+erlang/*

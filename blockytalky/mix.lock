@@ -7,7 +7,7 @@
   "erlport": {:git, "https://github.com/hdima/erlport.git", "4041c0810f798cba9fa528ebca90556f0ae50645", []},
   "erlware_commons": {:hex, :erlware_commons, "0.13.0"},
   "exjsx": {:git, "https://github.com/talentdeficit/exjsx.git", "d3572b488f10e3b83fadb1fc595fc87f84c35809", []},
-  "exrm": {:hex, :exrm, "0.18.1"},
+  "exrm": {:git, "https://github.com/bitwalker/exrm.git", "9ba09ff7e519f92b9f109904a508a982310e6372", [tag: "0.18.4"]},
   "fs": {:hex, :fs, "0.9.2"},
   "getopt": {:hex, :getopt, "0.8.2"},
   "hackney": {:hex, :hackney, "1.1.0"},
