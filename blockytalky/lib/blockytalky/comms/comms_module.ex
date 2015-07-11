@@ -8,7 +8,6 @@ defmodule Blockytalky.CommsModule do
   In charge of local and remote messaging between
   BTUs, App Inventor Apps, and music synths.
   """
-  @btu_id Blockytalky.RuntimeUtils.btu_id
 
   ####
   #External APIs
@@ -63,6 +62,7 @@ defmodule Blockytalky.CommsModule do
   # Supervisor implementation
   # CH17 Programming Elixir
   def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     #try to connect to
     comms_children = [
       worker(DL, [], restart: :transient),

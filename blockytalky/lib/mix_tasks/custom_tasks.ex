@@ -56,7 +56,7 @@ defmodule Mix.Tasks.PythonDeps do
     Mix.shell.info "Installing Grove Pi globally"
     System.cmd "python", ["setup.py", "install"], [cd: "#{deps_dir}/grovepi/Software/Python/"]
     # copy for local use: such as reading constants.
-    System.cmd "cp", ["#{deps_dir}/brickpi/BrickPi.py", "#{__DIR__}/../hw_apis"]
+    System.cmd "cp", ["#{deps_dir}/brickpi/BrickPi.py", Application.app_dir(:blockytalky, "priv/hw_apis")]
     System.cmd "cp", ["#{deps_dir}/grovepi/Software/Python/grovepi.py","#{__DIR__}/../hw_apis"]
 
     Mix.shell.info "Done! Cleaning up..."

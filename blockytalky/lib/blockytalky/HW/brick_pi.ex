@@ -6,10 +6,7 @@ defmodule Blockytalky.BrickPi do
   @moduledoc """
   API for BrickPi calls.
   """
-  ####
-  #config
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
+
   ####
   #External API
 
@@ -95,20 +92,21 @@ defmodule Blockytalky.BrickPiState do
   state to reflect that new type. The state looks like:
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
-  @sensor_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/"
+  @sensor_dir "priv/data"
   @sensor_file "sensors.json"
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
+  @script_dir "priv/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
   def start_link() do
     {:ok, _pid} = GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
   def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     # {:ok, %{"TYPE_NAME"=> value, ...},[:"1":num, ...]}
     map = _get_sensor_type_constants
     #reload last known configuration of sensor types
-    File.mkdir(@sensor_dir)
-    File.touch("#{@sensor_dir}/#{@sensor_file}")
-    sensor_types = case File.read("#{@sensor_dir}/#{@sensor_file}") do
+    File.mkdir(Application.app_dir(:blockytalky, @sensor_dir))
+    File.touch("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}")
+    sensor_types = case File.read("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}") do
       {:ok, text} when text != "" -> JSX.decode(text)
       _ -> %{}
     end
@@ -152,7 +150,7 @@ defmodule Blockytalky.BrickPiState do
 
   defp _get_sensor_type_constants(list, file \\ nil) do
     #open file
-    unless file, do: file = File.open!("#{@script_dir}/BrickPi.py")
+    unless file, do: file = File.open!("#{Application.app_dir(:blockytalky, @script_dir)}/BrickPi.py")
     #parse through to find constant declarations at the top of the file
     line = IO.read(file, :line) |> String.strip
     #match = ~r/^([A-Z_]+)(\s*)=(\s*)(((0x)*)[0-9]|[A-Z_]+)/

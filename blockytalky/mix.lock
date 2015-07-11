@@ -26,6 +26,6 @@
   "providers": {:hex, :providers, "1.4.1"},
   "ranch": {:hex, :ranch, "1.1.0"},
   "relx": {:hex, :relx, "3.1.0"},
-  "socket": {:git, "https://github.com/meh/elixir-socket.git", "b943c8f382aad03faea6bdadbd8d07239bc02886", []},
+  "socket": {:git, "https://github.com/meh/elixir-socket.git", "b943c8f382aad03faea6bdadbd8d07239bc02886", [ref: "b943c8f382aad03faea6bdadbd8d07239bc02886"]},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
   "syslog": {:git, "https://github.com/smpallen99/syslog.git", "5653b00c51395ba24d1d2181f8e81fb856749869", []}}

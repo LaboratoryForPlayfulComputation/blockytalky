@@ -17,8 +17,6 @@ defmodule Blockytalky.HardwareDaemon do
 
   ####
   #config
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   #these are the sensors and types we will support.  Adding to this list will automatically generate views and options in the web app.
   @basic_sensor_types [
     %{:id => "TYPE_SENSOR_NONE", :label => "None"},
@@ -45,7 +43,7 @@ defmodule Blockytalky.HardwareDaemon do
   #External API
 
   def get_sensor_names do
-    @sensor_data |> Enum.filter(fn x-> String.to_atom(Map.get(x, :hw)) in @supported_hardware end)
+    @sensor_data |> Enum.filter(fn x-> String.to_atom(Map.get(x, :hw)) in Blockytalky.RuntimeUtils.supported_hardware end)
   end
   def get_sensor_type_label_for_id(sensor_id) do
     sensor = @basic_sensor_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
@@ -78,10 +76,11 @@ defmodule Blockytalky.HardwareDaemon do
   end
 
   def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     #create python instances
-    Logger.debug "creating python instance at the #{inspect @script_dir} directory"
+    Logger.debug "creating python instances"
     #create hw child process instances and spin them up
-    hw_children = for hw <- @supported_hardware do
+    hw_children = for hw <- Blockytalky.RuntimeUtils.supported_hardware do
       case hw do
         :btbrickpi ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),

@@ -3,8 +3,7 @@ defmodule Blockytalky.PythonQuerier do
   use GenServer
 
   require Logger
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
+  @script_dir "priv/hw_apis"
   @moduledoc """
   This is a Gen Server implementation that's job is to run the python scripts
   for interfacing with the BTU hardware (brick pi, grove pi, etc).
@@ -21,7 +20,7 @@ defmodule Blockytalky.PythonQuerier do
   ####
   #External API - should only be called by HardwareDaemon
   def start_link(python_module) do
-    {:ok, python_env} = :python.start([{:python_path,String.to_char_list(@script_dir)}])
+    {:ok, python_env} = :python.start([{:python_path,String.to_char_list(Application.app_dir(:blockytalky, @script_dir))}])
     Logger.debug "PythonQuerier: Started with module: #{inspect python_module}"
     status = {:ok, _pid} = GenServer.start_link(__MODULE__, {python_env, python_module}, name: python_module)
     #run setup on init.
@@ -32,19 +31,18 @@ defmodule Blockytalky.PythonQuerier do
   @doc """
   nice wrapper for casting :run on the genserver.
   """
-  def run(name,method,args) when name in @supported_hardware, do: GenServer.cast(name, {:run, method, args})
-  def run(name,_,_), do: _run_error(name)
+  def run(name,method,args), do: GenServer.cast(name, {:run, method, args})
   @doc """
-  nice wrapper for calling :run on the genserver.
+  nice wrapper for calling :run_result on the genserver. takes the python module name as an Atom,
+   method (function) name, and [args]
   """
-  def run_result(name,method, args) when name in @supported_hardware, do: GenServer.call( name, {:run, method, args})
-  def run_result(name,_,_), do: _run_error(name)
-  defp _run_error(name), do: {:error, "Hardware: #{inspect name} is not supported in this environment. Please use supported hardware: #{inspect @supported_hardware}"}
+  def run_result(name,method, args), do: GenServer.call( name, {:run, method, args})
   ####
   #GenServer implementation
   # See: Ch16 of Programming Elixir
 
   def init(python_env, python_module) do
+    Logger.info "Initializing #{inspect __MODULE__} :: #{inspect python_module}"
     #return state
     {:ok, {python_env, python_module}}
   end

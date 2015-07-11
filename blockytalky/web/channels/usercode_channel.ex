@@ -2,8 +2,7 @@ defmodule Blockytalky.UserCodeChannel do
   use Phoenix.Channel
   alias Blockytalky.UserState, as: US
   require Logger
-  @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @btu_id Blockytalky.RuntimeUtils.btu_id
+  @file_dir "priv/usercode"
   def join("uc:" <> _any, _auth_msg, socket) do
     {:ok, socket}
   end
@@ -53,9 +52,9 @@ defmodule Blockytalky.UserCodeChannel do
       [val | _ ] = :io_lib.format('~2..0B~n', [x]) #format to 2 digits
       val
     end
-    file_name = Enum.join([@btu_id,y,mo,d,h,mi,s], "_") <> ".json"
-    File.mkdir(@file_dir)
-    case File.write("#{@file_dir}/#{file_name}", JSX.encode!(map) |> JSX.prettify!) do
+    file_name = Enum.join([Blockytalky.RuntimeUtils.btu_id,y,mo,d,h,mi,s], "_") <> ".json"
+    File.mkdir(Application.app_dir(:blockytalky, @file_dir))
+    case File.write("#{Application.app_dir(:blockytalky, @file_dir)}/#{file_name}", JSX.encode!(map) |> JSX.prettify!) do
       {_, reason} -> Blockytalky.Endpoint.broadcast! "uc:command", "error",  %{body: reason}
       _           -> Blockytalky.Endpoint.broadcast! "uc:command", "progress",  %{body: "Code uploaded!"}
     end

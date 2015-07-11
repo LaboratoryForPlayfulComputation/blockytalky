@@ -1,11 +1,6 @@
 defmodule Blockytalky.MockHW do
   alias Blockytalky.PythonQuerier, as: PythonQuerier
   require Logger
-
-  ####
-  #config
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Blockytalky.RuntimeUtils.supported_hardware
   def port_map, do: %{"MOCK_1" => 0, "MOCK_2" => 1, "MOCK_3" => 2, "MOCK_4" => 3}
   ####
   # External API

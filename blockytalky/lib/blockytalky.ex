@@ -1,6 +1,5 @@
 defmodule Blockytalky do
   use Application
-  @music Application.get_env(:blockytalky, :music, false) #config setting
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -21,7 +20,7 @@ defmodule Blockytalky do
       #TODO: User Code / DSL Supervisor
       worker(Blockytalky.UserState,[])
     ]
-    if @music, do: children ++ [worker(Blockytalky.Music, [])]
+    if Blockytalky.RuntimeUtils.music, do: children ++ [worker(Blockytalky.Music, [])]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
