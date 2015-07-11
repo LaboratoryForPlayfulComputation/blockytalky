@@ -12,7 +12,7 @@ defmodule Blockytalky.Music do
   ####
   #External API
   @doc """
-  Adds a btu_id to send a :network_sync 
+  Adds a btu_id to send a :network_sync
   """
   def add_child(btu_id) do
     GenServer.cast(__MODULE__, {:add_dependant, btu_id})
@@ -64,10 +64,10 @@ defmodule Blockytalky.Music do
   # CH. 16
   def start_link() do
     udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
-    Logger.info "Starting #{inspect __MODULE__}"
     {:ok, _pid} = GenServer.start_link(__MODULE__, udp_conn)
   end
   def init(udp_conn) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     send_music_program(SonicPi.init)
     listener_pid = spawn listen(udp_conn)
     music_dependants = []

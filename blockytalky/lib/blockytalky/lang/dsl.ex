@@ -25,6 +25,7 @@ defmodule Blockytalky.DSL do
       require Blockytalky.DSL
       require Logger
       def init(_) do
+        Logger.info "Initializing #{inspect __MODULE__}"
         set(:sys_timer,[])
         GenServer.call(Blockytalky.UserState, {:get_funs,:init})
         |> Enum.map(fn x -> x.() end)

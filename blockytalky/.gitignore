@@ -32,7 +32,7 @@ erl_crash.dump
 #/config/prod.secret.exs
 
 # compiled python
-/lib/hw_apis/*.pyc
+/priv/hw_apis/*.pyc
 
 #compiled erts
 /rel/blockytalky/erts-*

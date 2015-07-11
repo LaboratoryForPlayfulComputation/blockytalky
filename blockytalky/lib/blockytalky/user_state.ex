@@ -11,8 +11,7 @@ defmodule Blockytalky.UserState do
   state looks like:
 
   """
-  @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+  @file_dir "priv/usercode"
   @update_rate Application.get_env(:blockytalky, :update_rate)
   @update_rate_hibernate Application.get_env(:blockytalky, :update_rate_hibernate)
   @max_history_size 1_000
@@ -21,9 +20,9 @@ defmodule Blockytalky.UserState do
   ## UserCode state State
   def update_state() do
     #update mock state
-    if :mock in @supported_hardware, do: update_mock_state()
+    if :mock in Blockytalky.RuntimeUtils.supported_hardware, do: update_mock_state()
     #update brickpi state
-    if :btbrickpi in @supported_hardware, do: update_bp_state()
+    if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware, do: update_bp_state()
     #update grove state
     #update music state
     #update messaging state
@@ -194,13 +193,13 @@ defmodule Blockytalky.UserState do
   end
 
   def init(_) do
-    Logger.info "Starting #{inspect __MODULE__}"
+    Logger.info "Initializing #{inspect __MODULE__}"
     #restore user code if possible
-    File.mkdir(@file_dir)
-    uc = case File.ls!(@file_dir)  |> Enum.sort |> Enum.reverse do
+    File.mkdir(Application.app_dir(:blockytalky, @file_dir ))
+    uc = case File.ls!(Application.app_dir(:blockytalky, @file_dir ))  |> Enum.sort |> Enum.reverse do
           [] -> %{"code" => "", "xml" => "<xml></xml>"}
           [head | _] ->
-            file = File.read!("#{@file_dir}/#{head}")
+            file = File.read!("#{Application.app_dir(:blockytalky, @file_dir )}/#{head}")
             file = JSX.decode!(file)
           _ -> ""
          end

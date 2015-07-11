@@ -1,0 +1,16 @@
+%% -*- erlang -*-
+{"5.3.5",
+ [
+  {<<"5\\.3\\.[1-4]($|\\..*)">>, [{restart_application, ssl}]},
+  {<<"5\\.[0-2]($|\\..*)">>, [{restart_application, ssl}]},
+  {<<"4\\..*">>, [{restart_application, ssl}]},
+  {<<"3\\..*">>, [{restart_application, ssl}]}
+ ], 
+ [
+  {<<"5\\.3\\.[1-4]($|\\..*)">>, [{restart_application, ssl}]},
+  {<<"5\\.[0-2]($|\\..*)">>, [{restart_application, ssl}]},
+  {<<"4\\..*">>, [{restart_application, ssl}]},
+  {<<"3\\..*">>, [{restart_application, ssl}]}
+ ]
+}.
+

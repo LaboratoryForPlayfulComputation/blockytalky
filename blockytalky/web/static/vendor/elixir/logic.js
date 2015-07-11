@@ -48,7 +48,7 @@ Blockly.Elixir['controls_if'] = function(block) {
         Blockly.Elixir.PASS;
     code += 'true -> \n' + branch;
   }
-  code += 'end \n'
+  code += '\n true -> :ok \n' + 'end \n'
   return code;
 };
 

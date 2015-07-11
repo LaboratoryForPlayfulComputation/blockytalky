@@ -18,7 +18,8 @@ defmodule Blockytalky.Mixfile do
   def application do
     [mod: {Blockytalky, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex, :httpoison, :syslog]]
+                    :phoenix_ecto, :postgrex, :httpoison, :syslog,
+                    :erlport,:osc, :exjsx, :socket]]
   end
 
   # Specifies which paths to compile per environment
@@ -40,8 +41,8 @@ defmodule Blockytalky.Mixfile do
      {:httpoison, "~> 0.7"},
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
-     { :socket, git: "https://github.com/meh/elixir-socket.git"},
-     {:exrm, "~> 0.18.0"}
+     { :socket, git: "https://github.com/meh/elixir-socket.git", ref: "b943c8f382aad03faea6bdadbd8d07239bc02886"},
+     {:exrm, git: "https://github.com/bitwalker/exrm.git", tag: "0.18.4"}
    ]
   end
 end
