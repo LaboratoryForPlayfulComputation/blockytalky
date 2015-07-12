@@ -35,4 +35,4 @@ erl_crash.dump
 /priv/hw_apis/*.pyc
 
 #compiled erts
-/rel/blockytalky/erts-*
+/rel/blockytalky

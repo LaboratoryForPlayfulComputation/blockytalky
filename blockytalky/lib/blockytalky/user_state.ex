@@ -12,8 +12,6 @@ defmodule Blockytalky.UserState do
 
   """
   @file_dir "priv/usercode"
-  @update_rate Application.get_env(:blockytalky, :update_rate)
-  @update_rate_hibernate Application.get_env(:blockytalky, :update_rate_hibernate)
   @max_history_size 1_000
   ####
   # External API
@@ -153,7 +151,7 @@ defmodule Blockytalky.UserState do
   end
   def loop() do
     upid = GenServer.call(__MODULE__, :get_upid)
-    if upid == nil, do: :timer.sleep(@update_rate_hibernate), else: :timer.sleep(@update_rate)
+    if upid == nil, do: :timer.sleep(Application.get_env(:blockytalky, :update_rate_hibernate)), else: :timer.sleep(Application.get_env(:blockytalky, :update_rate))
     update_state()
     if upid do
       send upid, :updated

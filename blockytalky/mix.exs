@@ -3,7 +3,7 @@ defmodule Blockytalky.Mixfile do
 
   def project do
     [app: :blockytalky,
-     version: "0.1.3",
+     version: "0.1.4",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix] ++ Mix.compilers,
@@ -19,7 +19,7 @@ defmodule Blockytalky.Mixfile do
     [mod: {Blockytalky, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
                     :phoenix_ecto, :postgrex, :httpoison, :syslog,
-                    :erlport,:osc, :exjsx, :socket]]
+                    :erlport,:osc, :exjsx, :socket, :crypto]]
   end
 
   # Specifies which paths to compile per environment
