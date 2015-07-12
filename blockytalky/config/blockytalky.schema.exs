@@ -1,16 +1,28 @@
 [
   mappings: [
-    "blockytalky.Elixir.Blockytalky.Endpoint.url.host": [
+    "url.host": [
       doc: "url for path realization",
       to: "blockytalky.Elixir.Blockytalky.Endpoint.url.host",
       datatype: :binary,
       default: "localhost"
     ],
-    "blockytalky.Elixir.Blockytalky.Endpoint.http.port": [
+    "http.port": [
       doc: "http port to run endpoint on",
       to: "blockytalky.Elixir.Blockytalky.Endpoint.http.port",
       datatype: :integer,
       default: 80
+    ],
+    "cache_static_manifest": [
+      doc: "static manifest for brunch built files",
+      to: "blockytalky.Elixir.Blockytalky.Endpoint.cache_static_manifest",
+      datatype: :binary,
+      default: "priv/static/manifest.json"
+    ],
+    "server": [
+      doc: "whether the server should start auto-magically without mix phoenix.server",
+      to: "blockytalky.Elixir.Blockytalky.Endpoint.server",
+      datatype: :atom,
+      default: true
     ],
     "blockytalky.dax": [
       doc: "location of comms webservice",

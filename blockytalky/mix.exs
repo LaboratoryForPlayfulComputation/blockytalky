@@ -19,7 +19,7 @@ defmodule Blockytalky.Mixfile do
     [mod: {Blockytalky, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
                     :phoenix_ecto, :postgrex, :httpoison, :syslog,
-                    :erlport,:osc, :exjsx, :socket]]
+                    :erlport,:osc, :exjsx, :socket, :crypto]]
   end
 
   # Specifies which paths to compile per environment
