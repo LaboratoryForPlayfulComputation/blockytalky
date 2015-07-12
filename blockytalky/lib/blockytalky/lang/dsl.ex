@@ -262,11 +262,11 @@ defmodule Blockytalky.DSL do
     #handles the edge case that the sensor stayed the same, but the value being compared against changed thus making the "when" trigger.
     {apply_fun, value} = case value do
       [{i, latest_value},{j, previous_value} | _ ] ->
-        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
+        {fn(x,y,z) -> x != nil and y != nil and comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
       [{_, only_value}] ->
-        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, only_value}
+        {fn(x,y,z) -> x != nil and y != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, only_value}
       v ->
-        {fn(x,y,z) -> x != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, v}
+        {fn(x,y,z) -> x != nil and y != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, v}
     end
     is_valid = US.apply(
                 apply_fun,
@@ -286,9 +286,9 @@ defmodule Blockytalky.DSL do
   #when sensor value is <within | out of> range, do: <body>
   def when_sensor_value_range(port_num, range, fun, not_in \\ false) do
     check_function = if not_in do
-       fn(x,y,z) -> x != nil and not x in z and  y in z end
+       fn(x,y,z) -> x != nil and y != nil and not x in z and  y in z end
      else
-       fn(x,y,z) -> x != nil and x in z and not y in z end
+       fn(x,y,z) -> x != nil and y != nil and x in z and not y in z end
      end
     is_valid = US.apply(
                 check_function,
