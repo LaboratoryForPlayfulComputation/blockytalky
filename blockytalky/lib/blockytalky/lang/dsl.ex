@@ -73,7 +73,7 @@ defmodule Blockytalky.DSL do
   ## Example
       iex> when_sensor "PORT_1" > 100, do: set("item",10)
   """
-  defmacro when_sensor({op,_m,[port_id,value]}, do: body) do
+  defmacro when_sensor({op,_m,[port_id,value]}, do: body) when op in [:<, :<=, :>, :>=, :==, :!= ] do
     #need to swap varable calls for when in case the variable changes between loops,
     #but the sensor port doesn't change
     value = case value do
@@ -123,7 +123,7 @@ defmodule Blockytalky.DSL do
       )
     end
   end
-  defmacro while_sensor({op,_,[port_id,value]}, do: body) do
+  defmacro while_sensor({op,_,[port_id,value]}, do: body) when op in [:<, :<=, :>, :>=, :==, :!= ] do
     compare = case op do
       :> -> quote do fn x,y -> x > y end end
       :>= -> quote do fn x,y -> x >= y end end
