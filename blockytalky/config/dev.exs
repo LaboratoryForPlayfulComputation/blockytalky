@@ -7,9 +7,9 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :blockytalky, Blockytalky.Endpoint,
-  http: [port: 80],
+  http: [port: 4000],
   debug_errors: true,
-  code_reloader: false,
+  code_reloader: true,
   cache_static_lookup: false,
   watchers: [node: ["node_modules/brunch/bin/brunch", "watch"]]
 
