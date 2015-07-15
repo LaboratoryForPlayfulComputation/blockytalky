@@ -33,17 +33,21 @@ defmodule Blockytalky.Music do
       iex> Blockytalky.Music.send_music_program(Blockytalky.SonicPi.cue(:my_cue))
   """
   def send_music_program(program) do
+    send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program)
+  end
+  def send_music_program(udp_conn, program) do
     #pack program as osc message
     m = {:message, '/run-code',[String.to_char_list(program)]}
         |> :osc_lib.encode
     #send program via udp to sonic pi port
-    GenServer.call(__MODULE__, :get_udp_conn)
-    |> Socket.Datagram.send! m, {"127.0.0.1", @sonicpi_port}
+    udp_conn
+    |> Socket.Datagram.send!( m, {"127.0.0.1", @sonicpi_port})
   end
   ####
   #Internal API
   #all messages come from sonic_pi, any message from another BTU will come from the comms module
   defp listen(udp_conn) do
+    Logger.debug "Starting Music Listener"
     #listen for udp message
     {data, ip} = udp_conn |> Socket.Datagram.recv!
         Logger.debug "Got message from sonicpi: #{inspect data}"
@@ -65,13 +69,13 @@ defmodule Blockytalky.Music do
   # GenServer Implementation
   # CH. 16
   def start_link() do
-    udp_conn = Socket.UDP.open! listen_port, broadcast: true
-    {:ok, _pid} = GenServer.start_link(__MODULE__, udp_conn)
+    {:ok, _pid} = GenServer.start_link(__MODULE__,[], name: __MODULE__)
   end
-  def init(udp_conn) do
+  def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
-    send_music_program(SonicPi.init)
-    listener_pid = spawn listen(udp_conn)
+    udp_conn = Socket.UDP.open! listen_port, broadcast: true
+    _task = Task.async fn -> send_music_program(udp_conn, SonicPi.init) end
+    listener_pid = spawn fn -> listen(udp_conn) end
     music_dependants = []
     maestro_parent = :self
     {:ok, {udp_conn, listener_pid, music_dependants, maestro_parent}}
