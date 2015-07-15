@@ -112,7 +112,7 @@ defmodule Blockytalky.SonicPi do
   The SonicPi specific DSL code-string for playing a pitch.
   """
   def play_synth(pitch, duration) do
-    "play #{pitch}, duration: #{duration}"
+    "play #{pitch}, sustain: #{duration}"
   end
   def sleep(duration) do
     "sleep #{duration}"
