@@ -195,10 +195,8 @@ defmodule Blockytalky.UserState do
     #restore user code if possible
     File.mkdir(Application.app_dir(:blockytalky, @file_dir ))
     filter = fn file ->
-      case file do
-        Blockytalky.RuntimeUtils.btu_id <> _ -> true
-        _                                    -> false
-      end
+      file |>
+        String.starts_with?(Blockytalky.RuntimeUtils.btu_id)
     end
     savefiles =
       File.ls!(Application.app_dir(:blockytalky, @file_dir ))

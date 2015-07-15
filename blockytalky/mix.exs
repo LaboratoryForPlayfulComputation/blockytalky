@@ -41,8 +41,8 @@ defmodule Blockytalky.Mixfile do
      {:httpoison, "~> 0.7"},
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
-     { :socket, git: "https://github.com/meh/elixir-socket.git", ref: "b943c8f382aad03faea6bdadbd8d07239bc02886"},
-     {:exrm, git: "https://github.com/bitwalker/exrm.git", tag: "0.18.4"}
+     { :socket, git: "https://github.com/meh/elixir-socket.git"},
+     {:exrm, git: "https://github.com/bitwalker/exrm.git", tag: "0.18.5"}
    ]
   end
 end

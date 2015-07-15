@@ -1,8 +1,12 @@
 <xml id="toolbox" style="display: none">
-   <%= render Blockytalky.PageView, "sensors.html" %>
-  <%= render Blockytalky.PageView, "events.html" %>
+   <%= if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware do %>
+    <%= render Blockytalky.PageView, "sensors.html" %>
+   <% end %>
+   <%= render Blockytalky.PageView, "events.html" %>
    <%= render Blockytalky.PageView, "messaging.html" %>
-   <!-- <%= render Blockytalky.PageView, "music.html" %> -->
+   <%= if Application.get_env(:blockytalky, :music) do %>
+    <%= render Blockytalky.PageView, "music.html" %>
+   <% end %>
    <sep></sep>
    <category name="Logic">
      <category name="If">
