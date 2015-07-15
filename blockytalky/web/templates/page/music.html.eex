@@ -1,13 +1,15 @@
 <category name="Music">
-  <category name="Config">
-    <block type="sync_to_parent">
+  <category name="Actions">
+    <block type="sync_to_parent"></block>
+    <!-- <block type="set_tempo"> -->
+    <block type="cue"></block>
   </category>
   <category name="Motifs">
     <block type="defmotif"></block>
     <block type="play_synth"></block>
     <block type="rest"></block>
     <block type="wait_for"></block>
-    <block type="loop"></block>
+    <!-- <block type="loop"></block> -->
   </category>
   <!--
   <category name="Instruments">

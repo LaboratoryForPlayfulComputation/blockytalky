@@ -8,12 +8,14 @@ defmodule Blockytalky.Music do
   (in_thread) or killed ($threadvar.kill)
   """
   @sonicpi_port 4557
-  @listen_port  Application.get_env(:blockytalky, :music_port, 9090)
   ####
   #External API
   @doc """
   Adds a btu_id to send a :network_sync
   """
+  def listen_port do
+    Application.get_env(:blockytalky, :music_port, 9090)
+  end
   def add_child(btu_id) do
     GenServer.cast(__MODULE__, {:add_dependant, btu_id})
   end
@@ -63,7 +65,7 @@ defmodule Blockytalky.Music do
   # GenServer Implementation
   # CH. 16
   def start_link() do
-    udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
+    udp_conn = Socket.UDP.open! listen_port, broadcast: true
     {:ok, _pid} = GenServer.start_link(__MODULE__, udp_conn)
   end
   def init(udp_conn) do

@@ -8,7 +8,7 @@ defmodule Blockytalky.SonicPi do
     sleep 0.75
     play <pitch>
   """
-  @listen_port  Application.get_env(:blockytalky, :music_port, 9090)
+  def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
   ####
   #System-y functions
   def public_cues do
@@ -22,8 +22,23 @@ defmodule Blockytalky.SonicPi do
     $tempo = #{val}
     """
   end
-  def maestro_beat_pattern(network, beats_per_measure) do
-    sync_to_network = if network, do: "sync :network_sync", else: "#"
+  def maestro_beat_pattern(parent, beats_per_measure) do
+    sync_to_network = case parent do
+      false -> "#"
+      name -> #Ruby code to listen until the parent sends up a sync message
+      """
+      loop do
+        msg = u2.recvfrom(2048) # "[hostname,tempo[..args..]]"
+        msg_payload = msg[0].split(",")
+        host=msg_payload[0]
+        t=msg_payload[1]
+        if(host == $parent)
+          $tempo = t
+          break
+        end
+      end
+      """
+    end
     beat_signaling = cond do
       beats_per_measure > 2 ->
       Enum.reduce(2..beats_per_measure,"",fn(x,acc) -> """
@@ -37,9 +52,11 @@ defmodule Blockytalky.SonicPi do
     #return program:
     """
     u1 = UDPSocket.new
-    #{sync_to_network}
+    u2 = UDPSocket.new
+    u2.bind("127.0.0.1", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
     live_loop :down_beat do
+      #{sync_to_network}
       use_bpm $tempo
       sleep 0.50
       use_bpm $tempo
@@ -49,10 +66,9 @@ defmodule Blockytalky.SonicPi do
     live_loop :beat_pattern do
       sync :down_beat
       cue  :beat1
-      u1.send :network_sync, 0, '127.0.0.1', #{@listen_port}
+      u1.send "#{Blockytalky.RuntimeUtils.btu_id},$tempo", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
-
     """
   end
   # stop motif with $motif_name.kill
@@ -63,9 +79,8 @@ defmodule Blockytalky.SonicPi do
     end
     """
   end
-  def start_motif(motif_name, sync \\ :down_beat)  do
+  def start_motif(motif_name)  do
     """
-    sync #{sync}
     $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
       $#{motif_name}.() #lambda
     end
@@ -93,4 +108,16 @@ defmodule Blockytalky.SonicPi do
   end
   ####
   #User-y functions, e.g. motif body pieces
+  @doc """
+  The SonicPi specific DSL code-string for playing a pitch.
+  """
+  def play_synth(pitch, duration) do
+    "play #{pitch}, duration: #{duration}"
+  end
+  def sleep(duration) do
+    "sleep #{duration}"
+  end
+  def sync(flag) do
+    "sync #{flag}"
+  end
 end

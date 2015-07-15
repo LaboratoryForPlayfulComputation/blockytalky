@@ -17,7 +17,7 @@ Blockly.Blocks['defmotif'] = {
         .setCheck("String")
         .appendField("Create the motif:");
     this.appendStatementInput("DO")
-        .setCheck("music")
+        .setCheck(['Music'])
         .appendField("as:");
     this.setColour(290);
     this.setTooltip('');
@@ -27,7 +27,8 @@ Blockly.Blocks['defmotif'] = {
 Blockly.Elixir['defmotif'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\en';
+  var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
 
@@ -43,8 +44,8 @@ Blockly.Blocks['play_synth'] = {
     this.appendDummyInput()
         .appendField("beats");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, "music");
-    this.setNextStatement(true,"music");
+    this.setPreviousStatement(true, 'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -64,8 +65,8 @@ Blockly.Blocks['rest'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([["beats", ":beats"], ["measures", ":measures"], ["option", "OPTIONNAME"]]), "UNITS");
     this.setInputsInline(true);
-    this.setPreviousStatement(true,"music");
-    this.setNextStatement(true,"music");
+    this.setPreviousStatement(true,'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -83,8 +84,8 @@ Blockly.Blocks['wait_for'] = {
         .appendField("wait for:")
         .appendField(new Blockly.FieldDropdown([["downbeat", ":down_beat"], ["upbeat", ":up_beat"], ["beat 1", ":beat1"], ["beat 2", ":beat2"], ["beat 3", ":beat3"], ["beat 4", ":beat4"]]), "UNITS");
     this.setInputsInline(true);
-    this.setPreviousStatement(true,"music");
-    this.setNextStatement(true,"music");
+    this.setPreviousStatement(true,'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');

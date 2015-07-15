@@ -18,7 +18,7 @@
          .appendField(new Blockly.FieldDropdown([["Port 1", "PORT_1"], ["Port 2", "PORT_2"], ["Port 3", "PORT_3"], ["Port 4", "PORT_4"]]), "port")
          .appendField(new Blockly.FieldDropdown([["is pressed", "1"], ["is released", "0"]]), "status");
      this.appendStatementInput("DO")
-         .setCheck(null);
+         .setCheck(['BP','Event','Message']);
      this.setInputsInline(true);
      this.setColour(160);
      this.setTooltip('');
@@ -43,7 +43,7 @@
      this.appendValueInput("NUM")
          .setCheck("Number");
      this.appendStatementInput("DO")
-         .setCheck(null);
+         .setCheck(['BP','Event','Message']);
      this.setInputsInline(true);
      this.setColour(160);
      this.setTooltip('');
@@ -73,7 +73,7 @@ Blockly.Blocks['when_sensor_range'] = {
     this.appendValueInput("NUM2")
         .setCheck("Number");
     this.appendStatementInput("DO")
-        .setCheck(null);
+        .setCheck(['BP','Event','Message']);
     this.setInputsInline(true);
     this.setColour(160);
     this.setTooltip('');
@@ -100,7 +100,7 @@ Blockly.Blocks['while_touch'] = {
         .appendField(new Blockly.FieldDropdown([["Port 1", "PORT_1"], ["Port 2", "PORT_2"], ["Port 3", "PORT_3"], ["Port 4", "PORT_4"]]), "port")
         .appendField(new Blockly.FieldDropdown([["is pressed", "1"], ["is released", "0"]]), "status");
     this.appendStatementInput("DO")
-        .setCheck(null);
+        .setCheck(['BP','Event','Message']);
     this.setInputsInline(true);
     this.setColour(20);
     this.setTooltip('');
@@ -125,7 +125,7 @@ Blockly.Blocks['while_sensor'] = {
     this.appendValueInput("NUM")
         .setCheck("Number");
     this.appendStatementInput("DO")
-        .setCheck(null);
+        .setCheck(['BP','Event','Message']);
     this.setInputsInline(true);
     this.setColour(20);
     this.setTooltip('');
@@ -155,7 +155,7 @@ Blockly.Blocks['while_sensor_range'] = {
    this.appendValueInput("NUM2")
        .setCheck("Number");
    this.appendStatementInput("DO")
-       .setCheck(null);
+       .setCheck(['BP','Event','Message']);
    this.setInputsInline(true);
    this.setColour(20);
    this.setTooltip('');
@@ -199,8 +199,8 @@ Blockly.Blocks['set_motor'] = {
         .appendField(new Blockly.FieldDropdown([["1", "\"PORT_A\""], ["2", "\"PORT_B\""], ["3", "\"PORT_C\""], ["4", "\"PORT_D\""]]), "NAME")
         .appendField("speed to:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, ['BP','Event','Message']);
+    this.setNextStatement(true, 'BP');
     this.setColour(120);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
