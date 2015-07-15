@@ -341,9 +341,9 @@ defmodule Blockytalky.DSL do
     end
     turns into:
     def motif("melody") do
-      my_motif = []
-      my_motif = my_motif ++ ["play # { get(:pitch) }, duration: 4"]
-      my_motif #return value
+      var!(my_motif) = []
+      var!(my_motif) = var!(my_motif) ++ ["play # { get(:pitch) }, duration: 4"]
+      var!(my_motif) #return value
     end
     We need it to be a lambda so that
   """
@@ -351,9 +351,9 @@ defmodule Blockytalky.DSL do
     #do compile time checks here
     quote do
       def motif(unquote(name)) do
-        my_motif = []
+        var!(my_motif) = []
         unquote(body)
-        my_motif #return value
+        var!(my_motif) #return value
       end
     end
   end
@@ -363,13 +363,13 @@ defmodule Blockytalky.DSL do
   """
   defmacro play_synth(pitch,duration) do
     quote do
-      my_motif = my_motif ++ [SP.play_synth(unquote(pitch), unquote(duration))]
-      my_motif = my_motif ++ [SP.sleep(unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(unquote(pitch), unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
   defmacro rest(duration) do
     quote do
-      my_motif = my_motif ++ [SP.sleep(unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
   @doc """
@@ -378,7 +378,7 @@ defmodule Blockytalky.DSL do
   """
   defmacro wait_for(music_event) do
     quote do
-      my_motif = my_motif ++ [SP.sync(unquote(music_event))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sync(unquote(music_event))]
     end
   end
   @doc """
