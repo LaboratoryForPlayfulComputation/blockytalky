@@ -9,6 +9,7 @@ defmodule Blockytalky.SonicPi do
     play <pitch>
   """
   def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #System-y functions
   def public_cues do
@@ -68,6 +69,12 @@ defmodule Blockytalky.SonicPi do
       cue  :beat1
       u1.send "#{Blockytalky.RuntimeUtils.btu_id},$tempo", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
+    end
+    u3 = UDPSocket.new
+    u3.bind("127.0.0.1", #{eval_port})
+    live_loop eval_loop do
+      msg = u3.recvfrom(65655)
+      eval(msg[0])
     end
     """
   end

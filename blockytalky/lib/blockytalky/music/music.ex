@@ -8,6 +8,7 @@ defmodule Blockytalky.Music do
   (in_thread) or killed ($threadvar.kill)
   """
   @sonicpi_port 4557
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #External API
   @doc """
@@ -35,13 +36,18 @@ defmodule Blockytalky.Music do
   def send_music_program(program) do
     send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program)
   end
-  def send_music_program(udp_conn, program) do
+  def send_music_program(udp_conn, program, use_eval_port // false) do
     #pack program as osc message
-    m = {:message, '/run-code',[String.to_char_list(program)]}
-        |> :osc_lib.encode
-    #send program via udp to sonic pi port
-    udp_conn
-    |> Socket.Datagram.send!( m, {"127.0.0.1", @sonicpi_port})
+    if use_eval_port do
+      udp_conn
+      |> Socket.Datagram.send!(program, {"127.0.0.1", eval_port})
+    else #this case is used for initializing before the eval port is listening
+      m = {:message, '/run-code',[String.to_char_list(program)]}
+          |> :osc_lib.encode
+      #send program via udp to sonic pi port
+      udp_conn
+      |> Socket.Datagram.send!( m, {"127.0.0.1", @sonicpi_port})
+    end
   end
   ####
   #Internal API
