@@ -367,9 +367,9 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
-  defmacro rest(duration) do
+  defmacro rest(duration, units) do
     quote do
-      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration), unquote(units))]
     end
   end
   @doc """
