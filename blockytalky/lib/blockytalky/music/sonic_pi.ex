@@ -105,7 +105,7 @@ defmodule Blockytalky.SonicPi do
   # stop motif with $motif_name.kill
   def def_motif(motif_name, body_program) do
     """
-    define :#{motif_name} do
+    define :my_motif do
       use_bpm $tempo
       #{body_program}
     end
@@ -113,24 +113,24 @@ defmodule Blockytalky.SonicPi do
   end
   def start_motif(motif_name)  do
     """
-    $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
-      #{motif_name} #lambda
+    $my_motif_thread = in_thread(name: :my_motif_thread) do
+      my_motif #lambda
     end
     """
   end
   def loop_motif(motif_name, sync \\ :down_beat) do
     """
     sync #{sync}
-    $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
+    $my_motif_thread = in_thread(name: :my_motif_thread) do
       loop do
-        $#{motif_name}.() #lambda
+        my_motif#lambda
       end
     end
     """
   end
   def stop_motif(motif_name) do
     """
-    $#{motif_name}_thread.kill
+    my_motif_thread.kill
     """
   end
   def cue(cue_flag) do
@@ -144,7 +144,12 @@ defmodule Blockytalky.SonicPi do
   The SonicPi specific DSL code-string for playing a pitch.
   """
   def play_synth(pitch, duration) do
-    "play #{pitch}, sustain: #{duration}"
+    p = case pitch do
+      n when is_integer(n) -> n
+      ":" <> s -> pitch
+      non_atom -> ":" <> non_atom
+    end
+    "play #{p}, sustain: #{duration}"
   end
   @doc """
   TODO: Make this sensitive to the beats per measure set by the user (when they get that option)
