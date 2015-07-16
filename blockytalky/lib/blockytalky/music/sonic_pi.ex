@@ -118,6 +118,7 @@ defmodule Blockytalky.SonicPi do
   @doc """
   TODO: Make this sensitive to the beats per measure set by the user (when they get that option)
   """
+  def sleep(duration), do: sleep(duration, :beats)
   def sleep(duration,units) do
     t = case units do
       :beats -> duration
