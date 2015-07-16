@@ -33,10 +33,10 @@ defmodule Blockytalky.Music do
   ## Example
       iex> Blockytalky.Music.send_music_program(Blockytalky.SonicPi.cue(:my_cue))
   """
-  def send_music_program(program) do
-    send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program)
+  def send_music_program(program, use_eval_port \\ false) do
+    send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program, use_eval_port)
   end
-  def send_music_program(udp_conn, program, use_eval_port // false) do
+  def send_music_program(udp_conn, program, use_eval_port \\ false) do
     #pack program as osc message
     if use_eval_port do
       udp_conn
