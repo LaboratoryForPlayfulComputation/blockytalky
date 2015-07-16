@@ -52,6 +52,15 @@ defmodule Blockytalky.SonicPi do
       end
     #return program:
     """
+    if $u1 != nil
+      $u1.close
+    end
+    if $u2 != nil
+      $u2.close
+    end
+    if $u3 != nil
+      $u3.close
+    end
     $u1 = UDPSocket.new
     $u2 = UDPSocket.new
     $u2.bind("127.0.0.1", #{listen_port})
@@ -67,7 +76,7 @@ defmodule Blockytalky.SonicPi do
     live_loop :beat_pattern do
       sync :down_beat
       cue  :beat1
-      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},$tempo", 0, '224.0.0.1', #{listen_port}
+      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
     $u3 = UDPSocket.new
