@@ -24,6 +24,7 @@ defmodule Blockytalky do
        children ++ [worker(Blockytalky.Music, [])]
      else
        children
+     end
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
