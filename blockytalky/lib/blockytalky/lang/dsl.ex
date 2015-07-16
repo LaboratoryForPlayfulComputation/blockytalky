@@ -10,7 +10,9 @@ defmodule Blockytalky.DSL do
   @moduledoc """
   The function-version of the Blockytalky.DSL as an intermediate representation
   (or library if you prefer)
-  can be many lines to one "instruction"
+  Code inside quotes in macros should be as small as possible
+  Macro code outside of quotes is evaluated at compile time (not runtime)
+  Code inside library functions can be more complex and call other modules.
 
   Mainly interoperates with the other APIs: Hardware, Music, Comms, and UserState
   We ``should`` do type checking / correctness checking here!
@@ -73,7 +75,7 @@ defmodule Blockytalky.DSL do
   ## Example
       iex> when_sensor "PORT_1" > 100, do: set("item",10)
   """
-  defmacro when_sensor({op,_m,[port_id,value]}, do: body) do
+  defmacro when_sensor({op,_m,[port_id,value]}, do: body) when op in [:<, :<=, :>, :>=, :==, :!= ] do
     #need to swap varable calls for when in case the variable changes between loops,
     #but the sensor port doesn't change
     value = case value do
@@ -123,7 +125,7 @@ defmodule Blockytalky.DSL do
       )
     end
   end
-  defmacro while_sensor({op,_,[port_id,value]}, do: body) do
+  defmacro while_sensor({op,_,[port_id,value]}, do: body) when op in [:<, :<=, :>, :>=, :==, :!= ] do
     compare = case op do
       :> -> quote do fn x,y -> x > y end end
       :>= -> quote do fn x,y -> x >= y end end
@@ -330,8 +332,76 @@ defmodule Blockytalky.DSL do
     Blockytalky.Endpoint.broadcast "comms:message", "say", %{"body" => msg}
   end
   ## Music
-  # motif <motif name> do: <music program>
-  # cue <motif> in <num> beats
-  # (optional) cue <signal>
-  # (optional) sync <signal>
+  @doc """
+    A Sonic Pi motif is a list of strings that concatentate into a sonic pi
+    program when cued.
+    This is so the following macro:
+    defmotif "melody" do
+      play(get(:pitch),4) #lazily determine the pitch at cue-time
+    end
+    turns into:
+    def motif("melody") do
+      var!(my_motif) = []
+      var!(my_motif) = var!(my_motif) ++ ["play # { get(:pitch) }, duration: 4"]
+      var!(my_motif) #return value
+    end
+    We need it to be a lambda so that
+  """
+  defmacro defmotif(name, do: body) do
+    #do compile time checks here
+    quote do
+      def motif(unquote(name)) do
+        var!(my_motif) = []
+        unquote(body)
+        var!(my_motif) #return value
+      end
+    end
+  end
+  @doc """
+  This macro should only every be invoked inside a defmotif macro
+  This macro needs to be aware of the my_motif variable defmotif declares
+  """
+  defmacro play_synth(pitch,duration) do
+    quote do
+      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(unquote(pitch), unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
+    end
+  end
+  defmacro rest(duration, units) do
+    quote do
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration), unquote(units))]
+    end
+  end
+  @doc """
+  music event must be an atom such as
+  :down_beat, :up_beat, :beat1, :beat2 ...
+  """
+  defmacro wait_for(music_event) do
+    quote do
+      var!(my_motif) = var!(my_motif) ++ [SP.sync(unquote(music_event))]
+    end
+  end
+  @doc """
+  - calls the motif function that matches on the motif_name, if it exists
+  does it as an async process (spawn) to drop bad calls, e.g. calling a motif
+  that doesn't exist.
+  - takes the list of strings it returns and concatenates them into a SonicPi program
+  - Sends the sonic pi program to the sonic pi port
+  """
+  def cue(motif_name) do
+    try do
+     body_program = Blockytalky.UserCode.motif(motif_name)
+      |> Enum.join("\n")
+      program = SP.def_motif(motif_name, body_program)
+                <> "\n" <>
+                SP.start_motif(motif_name)
+      Music.send_music_program(program, true)
+    rescue
+      _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
+    end
+  end
+  def sync_to(parent) do
+    program = SP.maestro_beat_pattern(parent, 4)
+    Music.send_music_program(program)
+  end
 end

@@ -6,6 +6,9 @@ defmodule Blockytalky.PageView do
   def sensors do
     HD.get_sensor_names
   end
+  def size_of_sensor_bar do
+    min(length(sensors),4)
+  end
   def init_sensor_type(hw,port_id) do
     case hw do
       "mock" -> "None"

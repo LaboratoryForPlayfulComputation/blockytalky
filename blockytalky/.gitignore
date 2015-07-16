@@ -21,6 +21,7 @@ erl_crash.dump
 /priv/static/css/app.css.map
 /priv/static/js/*.gz
 /priv/static/css/*.gz
+/priv/static/css/app-*.css
 /priv/static/css/svg/*.gz
 # The config/prod.secret.exs file by default contains sensitive
 # data and you should not commit it into version control.

@@ -8,7 +8,8 @@ defmodule Blockytalky.SonicPi do
     sleep 0.75
     play <pitch>
   """
-  @listen_port  Application.get_env(:blockytalky, :music_port, 9090)
+  def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #System-y functions
   def public_cues do
@@ -22,11 +23,34 @@ defmodule Blockytalky.SonicPi do
     $tempo = #{val}
     """
   end
-  def maestro_beat_pattern(network, beats_per_measure) do
-    sync_to_network = if network, do: "sync :network_sync", else: "#"
+  def maestro_beat_pattern(parent, beats_per_measure) do
+    sync_to_network = case parent do
+      false -> "#"
+      name -> #Ruby code to listen until the parent sends up a sync message
+      """
+      loop do
+        begin
+          msg = $u2.recvfrom_nonblock(2048) # "[hostname,tempo[..args..]]"
+          msg_payload = msg[0].split(",")
+          host=msg_payload[0]
+          t=msg_payload[1]
+          if(host == $parent)
+            $tempo = t
+            break
+          end
+        rescue
+          sleep 1.0 / 64.0
+          next
+        end
+      end
+      """
+    end
     beat_signaling = cond do
       beats_per_measure > 2 ->
-      Enum.reduce(2..beats_per_measure,"",fn(x,acc) -> """
+      Enum.reduce(2..beats_per_measure,"",fn(x,acc) ->
+        acc
+        <>
+        """
         sync :down_beat
         cue :beat#{x}
         """
@@ -36,10 +60,21 @@ defmodule Blockytalky.SonicPi do
       end
     #return program:
     """
-    u1 = UDPSocket.new
-    #{sync_to_network}
+    if $u1 != nil && !$u1.closed?
+      $u1.close
+    end
+    if $u2 != nil && !$u2.closed?
+      $u2.close
+    end
+    if $u3 != nil && !$u3.closed?
+      $u3.close
+    end
+    $u1 = UDPSocket.new
+    $u2 = UDPSocket.new
+    $u2.bind("127.0.0.1", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
     live_loop :down_beat do
+      #{sync_to_network}
       use_bpm $tempo
       sleep 0.50
       use_bpm $tempo
@@ -49,41 +84,53 @@ defmodule Blockytalky.SonicPi do
     live_loop :beat_pattern do
       sync :down_beat
       cue  :beat1
-      u1.send :network_sync, 0, '127.0.0.1', #{@listen_port}
+      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
-
+    $u3 = UDPSocket.new
+    $u3.bind("127.0.0.1", #{eval_port})
+      live_loop :eval_loop do
+        begin
+          program, addr = $u3.recvfrom_nonblock(65655)
+          puts program
+          eval(program)
+          sleep 1 / 32.0
+        rescue IO::WaitReadable
+          sleep 1.0 / 32.0
+          next
+        end
+      end
     """
   end
   # stop motif with $motif_name.kill
   def def_motif(motif_name, body_program) do
     """
-    $#{motif_name} = define :#{motif_name} do
+    define :my_motif do
+      use_bpm $tempo
       #{body_program}
     end
     """
   end
-  def start_motif(motif_name, sync \\ :down_beat)  do
+  def start_motif(motif_name)  do
     """
-    sync #{sync}
-    $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
-      $#{motif_name}.() #lambda
+    $my_motif_thread = in_thread(name: :my_motif_thread) do
+      my_motif #lambda
     end
     """
   end
   def loop_motif(motif_name, sync \\ :down_beat) do
     """
     sync #{sync}
-    $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
+    $my_motif_thread = in_thread(name: :my_motif_thread) do
       loop do
-        $#{motif_name}.() #lambda
+        my_motif#lambda
       end
     end
     """
   end
   def stop_motif(motif_name) do
     """
-    $#{motif_name}.kill
+    my_motif_thread.kill
     """
   end
   def cue(cue_flag) do
@@ -93,4 +140,29 @@ defmodule Blockytalky.SonicPi do
   end
   ####
   #User-y functions, e.g. motif body pieces
+  @doc """
+  The SonicPi specific DSL code-string for playing a pitch.
+  """
+  def play_synth(pitch, duration) do
+    p = case pitch do
+      n when is_integer(n) -> n
+      ":" <> s -> pitch
+      non_atom -> ":" <> non_atom
+    end
+    "play #{p}, sustain: #{duration}"
+  end
+  @doc """
+  TODO: Make this sensitive to the beats per measure set by the user (when they get that option)
+  """
+  def sleep(duration), do: sleep(duration, :beats)
+  def sleep(duration,units) do
+    t = case units do
+      :beats -> duration
+      :measures -> duration * 4
+    end
+    "sleep #{t}"
+  end
+  def sync(flag) do
+    "sync :#{flag}"
+  end
 end

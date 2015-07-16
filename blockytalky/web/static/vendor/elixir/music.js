@@ -17,7 +17,7 @@ Blockly.Blocks['defmotif'] = {
         .setCheck("String")
         .appendField("Create the motif:");
     this.appendStatementInput("DO")
-        .setCheck(null)
+        .setCheck(['Music'])
         .appendField("as:");
     this.setColour(290);
     this.setTooltip('');
@@ -27,8 +27,8 @@ Blockly.Blocks['defmotif'] = {
 Blockly.Elixir['defmotif'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
+  Blockly.Elixir.macros_.push(code);
   return code;
 };
 
@@ -44,8 +44,8 @@ Blockly.Blocks['play_synth'] = {
     this.appendDummyInput()
         .appendField("beats");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true, 'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -54,8 +54,7 @@ Blockly.Blocks['play_synth'] = {
 Blockly.Elixir['play_synth'] = function(block) {
   var value_notes = Blockly.Elixir.valueToCode(block, 'NOTES', Blockly.Elixir.ORDER_ATOMIC);
   var value_beats = Blockly.Elixir.valueToCode(block, 'BEATS', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'play_synth('+value_notes+','+value_beats+')\n';
   return code;
 };
 Blockly.Blocks['rest'] = {
@@ -66,8 +65,8 @@ Blockly.Blocks['rest'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([["beats", ":beats"], ["measures", ":measures"], ["option", "OPTIONNAME"]]), "UNITS");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -76,37 +75,17 @@ Blockly.Blocks['rest'] = {
 Blockly.Elixir['rest'] = function(block) {
   var value_amount = Blockly.Elixir.valueToCode(block, 'AMOUNT', Blockly.Elixir.ORDER_ATOMIC);
   var dropdown_units = block.getFieldValue('UNITS');
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
-  return code;
-};
-Blockly.Blocks['play_sample'] = {
-  init: function() {
-    this.appendValueInput("BEATS")
-        .setCheck("String")
-        .appendField("play sample");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setColour(290);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  }
-};
-Blockly.Elixir['play_sample'] = function(block) {
-  var value_beats = Blockly.Elixir.valueToCode(block, 'BEATS', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'rest('+value_amount+','+dropdown_units+')\n';
   return code;
 };
 Blockly.Blocks['wait_for'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("wait for:")
-        .appendField(new Blockly.FieldDropdown([["downbeat", ":down_beat"], ["option", ":up_beat"], ["beat 1", ":beat1"], ["beat 2", ":beat2"], ["beat 3", ":beat3"], ["beat 4", ":beat4"]]), "UNITS");
+        .appendField(new Blockly.FieldDropdown([["downbeat", ":down_beat"], ["upbeat", ":up_beat"], ["beat 1", ":beat1"], ["beat 2", ":beat2"], ["beat 3", ":beat3"], ["beat 4", ":beat4"]]), "UNITS");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,'Music');
+    this.setNextStatement(true,'Music');
     this.setColour(290);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -114,8 +93,7 @@ Blockly.Blocks['wait_for'] = {
 };
 Blockly.Elixir['wait_for'] = function(block) {
   var dropdown_units = block.getFieldValue('UNITS');
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'wait_for('+dropdown_units+')\n';
   return code;
 };
 Blockly.Blocks['cue'] = {
@@ -133,8 +111,7 @@ Blockly.Blocks['cue'] = {
 };
 Blockly.Elixir['cue'] = function(block) {
   var value_motif = Blockly.Elixir.valueToCode(block, 'MOTIF', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'cue('+value_motif+')\n';
   return code;
 };
 Blockly.Blocks['sync_to_parent'] = {
@@ -152,7 +129,6 @@ Blockly.Blocks['sync_to_parent'] = {
 };
 Blockly.Elixir['sync_to_parent'] = function(block) {
   var value_parent = Blockly.Elixir.valueToCode(block, 'PARENT', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble Elixir into code variable.
-  var code = '...';
+  var code = 'sync_to('+value_parent+')\n';
   return code;
 };

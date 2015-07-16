@@ -194,9 +194,18 @@ defmodule Blockytalky.UserState do
     Logger.info "Initializing #{inspect __MODULE__}"
     #restore user code if possible
     File.mkdir(Application.app_dir(:blockytalky, @file_dir ))
-    uc = case File.ls!(Application.app_dir(:blockytalky, @file_dir ))  |> Enum.sort |> Enum.reverse do
-          [] -> %{"code" => "", "xml" => "<xml></xml>"}
-          [head | _] ->
+    filter = fn file ->
+      file |>
+        String.starts_with?(Blockytalky.RuntimeUtils.btu_id)
+    end
+    savefiles =
+      File.ls!(Application.app_dir(:blockytalky, @file_dir ))
+      |> Enum.filter(filter) #only filenames that have "hostname" <> "datetime"
+      |> Enum.sort # sort in ascending order
+      |> Enum.reverse #reverse so most recent is head of list
+    uc = case savefiles do
+          [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
+          [head | _ ] ->
             file = File.read!("#{Application.app_dir(:blockytalky, @file_dir )}/#{head}")
             file = JSX.decode!(file)
           _ -> ""

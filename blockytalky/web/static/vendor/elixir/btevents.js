@@ -15,7 +15,7 @@
      this.appendDummyInput()
          .appendField("When I start");
      this.appendStatementInput("DO")
-         .setCheck(null)
+         .setCheck(['BP','Event','Message'])
          .appendField("do:");
      this.setColour(160);
      this.setTooltip('');
@@ -33,7 +33,7 @@
      this.appendDummyInput()
          .appendField("Repeatedly");
      this.appendStatementInput("DO")
-         .setCheck(null)
+         .setCheck(['BP','Event','Message'])
          .appendField("do:");
      this.setColour(20);
      this.setTooltip('');
@@ -54,10 +54,10 @@ Blockly.Blocks['for_time'] = {
     this.appendDummyInput()
         .appendField("seconds");
     this.appendStatementInput("DO")
-        .setCheck(null)
+        .setCheck(['BP','Event','Message'])
         .appendField("repeatedly do:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
+    this.setPreviousStatement(true, 'Event');
     this.setNextStatement(false, null);
     this.setColour(20);
     this.setTooltip('');
@@ -78,11 +78,11 @@ Blockly.Blocks['in_time'] = {
     this.appendDummyInput()
         .appendField("seconds");
     this.appendStatementInput("DO")
-        .setCheck(null)
+        .setCheck(['BP','Event','Message'])
         .appendField("do once:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, 'Event');
+    this.setNextStatement(true, 'Event');
     this.setColour(160);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');

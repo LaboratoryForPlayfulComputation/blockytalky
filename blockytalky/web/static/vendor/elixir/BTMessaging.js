@@ -20,8 +20,8 @@
          .setCheck("String")
          .appendField("to:");
      this.setInputsInline(true);
-     this.setPreviousStatement(true, null);
-     this.setNextStatement(true, null);
+     this.setPreviousStatement(true, 'Message');
+     this.setNextStatement(true, 'Message');
      this.setColour(120);
      this.setTooltip('');
      this.setHelpUrl('http://www.example.com/');
@@ -62,8 +62,8 @@ Blockly.Blocks['say'] = {
         .setCheck(null)
         .appendField("Say:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, 'Message');
+    this.setNextStatement(true, 'Message');
     this.setColour(120);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
