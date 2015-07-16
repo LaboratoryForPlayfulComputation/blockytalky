@@ -16,7 +16,7 @@ defmodule Blockytalky.SonicPi do
     [:down_beat, :up_beat, :beat1, :beat2, :beat3, :beat4]
   end
   def init do
-    tempo(120) <> maestro_beat_pattern(false,4)
+    ~s|$stdout.reopen("/var/log/sonic_pi.log", "w")\n| <> tempo(120) <> maestro_beat_pattern(false,4)
   end
   def tempo(val) do
     """
