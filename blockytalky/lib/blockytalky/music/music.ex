@@ -36,7 +36,7 @@ defmodule Blockytalky.Music do
   def send_music_program(program, use_eval_port \\ false) do
     send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program, use_eval_port)
   end
-  def send_music_program(udp_conn, program, use_eval_port \\ false) do
+  def send_music_program(udp_conn, program, use_eval_port) do
     #pack program as osc message
     if use_eval_port do
       udp_conn
@@ -80,7 +80,7 @@ defmodule Blockytalky.Music do
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     udp_conn = Socket.UDP.open! listen_port, broadcast: true
-    _task = Task.async fn -> send_music_program(udp_conn, SonicPi.init) end
+    _task = Task.async fn -> send_music_program(udp_conn, SonicPi.init, false) end
     listener_pid = spawn fn -> listen(udp_conn) end
     music_dependants = []
     maestro_parent = :self
