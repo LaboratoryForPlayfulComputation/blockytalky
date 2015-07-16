@@ -20,7 +20,10 @@ defmodule Blockytalky do
       #TODO: User Code / DSL Supervisor
       worker(Blockytalky.UserState,[])
     ]
-    children = if Blockytalky.RuntimeUtils.music, do: children ++ [worker(Blockytalky.Music, [])]
+    children = if Blockytalky.RuntimeUtils.music do
+       children ++ [worker(Blockytalky.Music, [])]
+     else
+       children
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
