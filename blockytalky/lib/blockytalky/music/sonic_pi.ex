@@ -29,7 +29,7 @@ defmodule Blockytalky.SonicPi do
       name -> #Ruby code to listen until the parent sends up a sync message
       """
       loop do
-        msg = u2.recvfrom(2048) # "[hostname,tempo[..args..]]"
+        msg = $u2.recvfrom(2048) # "[hostname,tempo[..args..]]"
         msg_payload = msg[0].split(",")
         host=msg_payload[0]
         t=msg_payload[1]
@@ -52,9 +52,9 @@ defmodule Blockytalky.SonicPi do
       end
     #return program:
     """
-    u1 = UDPSocket.new
-    u2 = UDPSocket.new
-    u2.bind("127.0.0.1", #{listen_port})
+    $u1 = UDPSocket.new
+    $u2 = UDPSocket.new
+    $u2.bind("127.0.0.1", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
     live_loop :down_beat do
       #{sync_to_network}
@@ -67,14 +67,14 @@ defmodule Blockytalky.SonicPi do
     live_loop :beat_pattern do
       sync :down_beat
       cue  :beat1
-      u1.send "#{Blockytalky.RuntimeUtils.btu_id},$tempo", 0, '224.0.0.1', #{listen_port}
+      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},$tempo", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
-    u3 = UDPSocket.new
-    u3.bind("127.0.0.1", #{eval_port})
-    live_loop eval_loop do
-      msg = u3.recvfrom(65655)
-      eval(msg[0])
+    $u3 = UDPSocket.new
+    $u3.bind("127.0.0.1", #{eval_port})
+    live_loop :eval_loop do
+      program, addr = u3.recvfrom(65655)
+      eval(program)
     end
     """
   end
