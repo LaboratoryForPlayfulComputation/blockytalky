@@ -16,7 +16,7 @@ defmodule Blockytalky.SonicPi do
     [:down_beat, :up_beat, :beat1, :beat2, :beat3, :beat4]
   end
   def init do
-    ~s|$stdout.reopen("/var/log/sonic_pi.log", "w")\n| <> tempo(120) <> maestro_beat_pattern(false,4)
+    tempo(120) <> maestro_beat_pattern(false,4)
   end
   def tempo(val) do
     """
@@ -29,20 +29,28 @@ defmodule Blockytalky.SonicPi do
       name -> #Ruby code to listen until the parent sends up a sync message
       """
       loop do
-        msg = $u2.recvfrom(2048) # "[hostname,tempo[..args..]]"
-        msg_payload = msg[0].split(",")
-        host=msg_payload[0]
-        t=msg_payload[1]
-        if(host == $parent)
-          $tempo = t
-          break
+        begin
+          msg = $u2.recvfrom_nonblock(2048) # "[hostname,tempo[..args..]]"
+          msg_payload = msg[0].split(",")
+          host=msg_payload[0]
+          t=msg_payload[1]
+          if(host == $parent)
+            $tempo = t
+            break
+          end
+        rescue
+          sleep 1.0 / 64.0
+          next
         end
       end
       """
     end
     beat_signaling = cond do
       beats_per_measure > 2 ->
-      Enum.reduce(2..beats_per_measure,"",fn(x,acc) -> """
+      Enum.reduce(2..beats_per_measure,"",fn(x,acc) ->
+        acc
+        <>
+        """
         sync :down_beat
         cue :beat#{x}
         """
@@ -52,13 +60,13 @@ defmodule Blockytalky.SonicPi do
       end
     #return program:
     """
-    if $u1 != nil
+    if $u1 != nil && !$u1.closed?
       $u1.close
     end
-    if $u2 != nil
+    if $u2 != nil && !$u2.closed?
       $u2.close
     end
-    if $u3 != nil
+    if $u3 != nil && !$u3.closed?
       $u3.close
     end
     $u1 = UDPSocket.new
@@ -81,16 +89,23 @@ defmodule Blockytalky.SonicPi do
     end
     $u3 = UDPSocket.new
     $u3.bind("127.0.0.1", #{eval_port})
-    live_loop :eval_loop do
-      program, addr = u3.recvfrom(65655)
-      eval(program)
-    end
+      live_loop :eval_loop do
+        begin
+          program, addr = $u3.recvfrom_nonblock(65655)
+          puts program
+          eval(program)
+          sleep 1 / 32.0
+        rescue IO::WaitReadable
+          sleep 1.0 / 32.0
+          next
+        end
+      end
     """
   end
   # stop motif with $motif_name.kill
   def def_motif(motif_name, body_program) do
     """
-    $#{motif_name} = define :#{motif_name} do
+    define :#{motif_name} do
       use_bpm $tempo
       #{body_program}
     end
@@ -99,7 +114,7 @@ defmodule Blockytalky.SonicPi do
   def start_motif(motif_name)  do
     """
     $#{motif_name}_thread = in_thread(name: :#{motif_name}_thread) do
-      $#{motif_name}.() #lambda
+      #{motif_name} #lambda
     end
     """
   end
@@ -115,7 +130,7 @@ defmodule Blockytalky.SonicPi do
   end
   def stop_motif(motif_name) do
     """
-    $#{motif_name}.kill
+    $#{motif_name}_thread.kill
     """
   end
   def cue(cue_flag) do
@@ -143,6 +158,6 @@ defmodule Blockytalky.SonicPi do
     "sleep #{t}"
   end
   def sync(flag) do
-    "sync #{flag}"
+    "sync :#{flag}"
   end
 end

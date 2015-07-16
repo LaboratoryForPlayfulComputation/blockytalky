@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   cue(\"hello\")\n\nend\n\ndefmotif \"hello\" do\n  play_synth(60,1)\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"1\" x=\"39\" y=\"8\"><statement name=\"DO\"><block type=\"cue\" id=\"2\" inline=\"true\"><value name=\"MOTIF\"><block type=\"text\" id=\"3\"><field name=\"TEXT\">hello</field></block></value></block></statement></block><block type=\"defmotif\" id=\"4\" inline=\"false\" x=\"293\" y=\"10\"><value name=\"NAME\"><block type=\"text\" id=\"5\"><field name=\"TEXT\">hello</field></block></value><statement name=\"DO\"><block type=\"play_synth\" id=\"6\" inline=\"true\"><value name=\"NOTES\"><block type=\"math_number\" id=\"7\"><field name=\"NUM\">60</field></block></value><value name=\"BEATS\"><block type=\"math_number\" id=\"8\"><field name=\"NUM\">1</field></block></value></block></statement></block></xml>"
+}

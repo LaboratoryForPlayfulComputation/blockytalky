@@ -15,7 +15,7 @@ defmodule Blockytalky.Music do
   Adds a btu_id to send a :network_sync
   """
   def listen_port do
-    Application.get_env(:blockytalky, :music_port, 9090)
+    Application.get_env(:blockytalky, :music_respond_port, 9091)
   end
   def add_child(btu_id) do
     GenServer.cast(__MODULE__, {:add_dependant, btu_id})
@@ -90,6 +90,7 @@ defmodule Blockytalky.Music do
   def handle_call(:get_children, _from, s={_,_,c,_}), do: {:reply, c, s}
   def handle_call(:get_udp_conn, _from, s={u,_,_,_}), do: {:reply, u, s}
   def handle_cast({:add_child, btu_id}, _from, s={u,l,c,p}), do: {:noreply,{u,l,c ++ [btu_id]}}
+
   def terminate(_reason, {_udp_conn, listener_pid, _music_dependants, _maestro_parent}) do
     Process.exit(listener_pid, :restarting)
     Logger.info "Terminating #{inspect __MODULE__}"
