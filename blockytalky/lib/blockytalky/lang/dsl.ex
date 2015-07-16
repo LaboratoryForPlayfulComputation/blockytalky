@@ -393,7 +393,7 @@ defmodule Blockytalky.DSL do
      body_program = Blockytalky.UserCode.motif(motif_name)
       |> Enum.join("\n")
       program = SP.def_motif(motif_name, body_program)
-                ++ "\n" ++
+                <> "\n" <>
                 SP.start_motif(motif_name)
       Music.send_music_program(program)
     rescue
