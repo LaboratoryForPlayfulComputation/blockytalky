@@ -75,6 +75,7 @@ defmodule Blockytalky.SonicPi do
   def def_motif(motif_name, body_program) do
     """
     $#{motif_name} = define :#{motif_name} do
+      use_bpm $tempo
       #{body_program}
     end
     """
