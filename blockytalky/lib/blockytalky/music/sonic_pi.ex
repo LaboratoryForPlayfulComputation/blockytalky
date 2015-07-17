@@ -26,7 +26,7 @@ defmodule Blockytalky.SonicPi do
   def maestro_beat_pattern(parent, beats_per_measure) do
     sync_to_network = case parent do
       false -> "#"
-      name -> #Ruby code to listen until the parent sends up a sync message
+      name -> #Ruby code to listen until the parent sends a sync message
       """
       loop do
         begin
@@ -87,16 +87,19 @@ defmodule Blockytalky.SonicPi do
       $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
+    #the default sonic pi eval port is pretty slow on raspberry pi
+    #this loop listens on a different port to speed it up
     $u3 = UDPSocket.new
     $u3.bind("127.0.0.1", #{eval_port})
       live_loop :eval_loop do
         begin
           program, addr = $u3.recvfrom_nonblock(65655)
-          puts program
-          eval(program)
-          sleep 1 / 32.0
+          if addr[3] == "127.0.0.1" # only accept eval messages from localhost, arbitrary eval is bad, m'kay.
+            eval(program)
+          end
+          sleep 1.0 / 128.0
         rescue IO::WaitReadable
-          sleep 1.0 / 32.0
+          sleep 1.0 / 128.0
           next
         end
       end

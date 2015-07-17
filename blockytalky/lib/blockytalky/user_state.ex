@@ -11,7 +11,6 @@ defmodule Blockytalky.UserState do
   state looks like:
 
   """
-  @file_dir "priv/usercode"
   @max_history_size 1_000
   ####
   # External API
@@ -193,20 +192,20 @@ defmodule Blockytalky.UserState do
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     #restore user code if possible
-    File.mkdir(Application.app_dir(:blockytalky, @file_dir ))
+    File.mkdir(Application.get_env(:blockytalky,:user_code_dir))
     filter = fn file ->
       file |>
         String.starts_with?(Blockytalky.RuntimeUtils.btu_id)
     end
     savefiles =
-      File.ls!(Application.app_dir(:blockytalky, @file_dir ))
+      File.ls!(Application.get_env(:blockytalky,:user_code_dir))
       |> Enum.filter(filter) #only filenames that have "hostname" <> "datetime"
       |> Enum.sort # sort in ascending order
       |> Enum.reverse #reverse so most recent is head of list
     uc = case savefiles do
           [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
           [head | _ ] ->
-            file = File.read!("#{Application.app_dir(:blockytalky, @file_dir )}/#{head}")
+            file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
             file = JSX.decode!(file)
           _ -> ""
          end

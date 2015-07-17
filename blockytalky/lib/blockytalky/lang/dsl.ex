@@ -404,4 +404,8 @@ defmodule Blockytalky.DSL do
     program = SP.maestro_beat_pattern(parent, 4)
     Music.send_music_program(program)
   end
+  def unsync do
+    program = SP.maestro_beat_pattern(false, 4)
+    Music.send_music_program(program)
+  end
 end
