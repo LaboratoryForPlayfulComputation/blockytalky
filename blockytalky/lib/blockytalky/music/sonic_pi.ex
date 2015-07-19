@@ -9,7 +9,7 @@ defmodule Blockytalky.SonicPi do
     play <pitch>
   """
   def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
-  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5051)
   ####
   #System-y functions
   def public_cues do
@@ -47,9 +47,9 @@ defmodule Blockytalky.SonicPi do
             $tempo = t
             break
           end
-          sleep 1.0 / 100.0
+          sleep 1.0 / 84.0
         rescue
-          sleep 1.0 / 100.0
+          sleep 1.0 / 84.0
           next
         end
       end
@@ -70,6 +70,7 @@ defmodule Blockytalky.SonicPi do
       end
     #return program:
     """
+    use_debug false
     if $u1 != nil && !$u1.closed?
       $u1.close
     end
@@ -99,18 +100,23 @@ defmodule Blockytalky.SonicPi do
     end
     #the default sonic pi eval port is pretty slow on raspberry pi
     #this loop listens on a different port to speed it up
-    $u3 = UDPSocket.new
-    $u3.bind("127.0.0.1", #{eval_port})
-      live_loop :eval_loop do
-        begin
-          program, addr = $u3.recvfrom_nonblock(65655)
-          if addr[3] == "127.0.0.1" # only accept eval messages from localhost, arbitrary eval is bad, m'kay.
-            eval(program)
+      if $eval_loop != nil && $eval_thread.alive?
+        $eval_loop.kill
+      end
+      $eval_loop = in_thread do
+        loop do
+          begin
+          $u3 = UDPSocket.new
+          $u3.bind("127.0.0.1", #{eval_port})
+            program, addr = $u3.recvfrom_nonblock(65655)
+            if addr[3] == "127.0.0.1" # only accept eval messages from localhost, arbitrary eval is bad, m'kay.
+              eval(program)
+            end
+            sleep 1.0 / 64.0
+          rescue IO::WaitReadable
+            sleep 1.0 / 64.0
+            next
           end
-          sleep 1.0 / 64.0
-        rescue IO::WaitReadable
-          sleep 1.0 / 64.0
-          next
         end
       end
     """
