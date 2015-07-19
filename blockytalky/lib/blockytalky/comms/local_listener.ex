@@ -8,7 +8,7 @@ defmodule Blockytalky.LocalListener do
   """
   @udp_multicast_ip "224.0.0.1"
   @udp_multicast_delay 2_000 #milliseconds
-  @udp_multicast_port 8676
+  @udp_multicast_port 8675
   @udp_unicast_port 8675
   @local_ip_expiration 30_000 #milliseconds
   def start_link() do # () -> {:ok, pid}
