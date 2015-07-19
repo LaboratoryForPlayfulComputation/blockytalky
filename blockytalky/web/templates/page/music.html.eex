@@ -62,7 +62,6 @@
       </value>
     </block>
     <block type="wait_for"></block>
-    <!-- <block type="loop"></block> -->
   </category>
   <!--
   <category name="Instruments">

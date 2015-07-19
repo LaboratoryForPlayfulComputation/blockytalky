@@ -55,7 +55,8 @@ config :logger, [
 ####
 #custom configuration
 config :blockytalky,
-  supported_hardware: [:btbrickpi]
+  supported_hardware: [:btbrickpi],
+  user_code_dir: "/opt/blockytalky/usercode"
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"

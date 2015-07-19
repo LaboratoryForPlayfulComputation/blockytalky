@@ -397,7 +397,13 @@ defmodule Blockytalky.DSL do
     try do
      program = Blockytalky.UserCode.motif(motif_name)
       |> Enum.join("\n")
+<<<<<<< HEAD
       |> SP.start_motif()
+=======
+      program = SP.def_motif(motif_name, body_program)
+                <> "\n" <>
+                SP.start_motif(motif_name)
+>>>>>>> 38d9c5aac739121cde85d643c6bd157f2638b5cb
       Music.send_music_program(program, true)
     rescue
       _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}

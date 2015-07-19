@@ -17,6 +17,7 @@ defmodule Blockytalky.Music do
   def stop_signal do
     send_music_program(SonicPi.stop_motif, true)
   end
+
   @doc """
   Sends a music program(string) to the sonic pi instance running on local host
   see Blockytalky.SonicPi for programs API
@@ -55,6 +56,9 @@ defmodule Blockytalky.Music do
       {:error, _} -> []
     end
   end
+  ####
+  #Internal API
+
   ####
   #Internal API
 
