@@ -372,6 +372,11 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration), unquote(units))]
     end
   end
+  defmacro trigger_sample(sample_name) do
+    quote do
+      var!(my_motif) = var!(my_motif) ++ [SP.trigger_sample(unquote(sample_name))]
+    end
+  end
   @doc """
   music event must be an atom such as
   :down_beat, :up_beat, :beat1, :beat2 ...
@@ -390,18 +395,42 @@ defmodule Blockytalky.DSL do
   """
   def cue(motif_name) do
     try do
-     body_program = Blockytalky.UserCode.motif(motif_name)
+     program = Blockytalky.UserCode.motif(motif_name)
       |> Enum.join("\n")
+<<<<<<< HEAD
+      |> SP.start_motif()
+=======
       program = SP.def_motif(motif_name, body_program)
                 <> "\n" <>
                 SP.start_motif(motif_name)
+>>>>>>> 38d9c5aac739121cde85d643c6bd157f2638b5cb
       Music.send_music_program(program, true)
     rescue
       _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
     end
   end
+  def loop(motif_name) do
+    try do
+     program = Blockytalky.UserCode.motif(motif_name)
+      |> Enum.join("\n")
+      |> SP.loop_motif()
+      Music.send_music_program(program, true)
+    rescue
+      _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
+    end
+  end
+  def stop_sound do
+    Music.send_music_program(SP.stop_motif)
+  end
+  def set_volume(volume) do
+    Music.send_music_program(SP.set_amp(volume))
+  end
   def sync_to(parent) do
     program = SP.maestro_beat_pattern(parent, 4)
+    Music.send_music_program(program)
+  end
+  def unsync do
+    program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
   end
 end

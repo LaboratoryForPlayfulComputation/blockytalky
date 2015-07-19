@@ -148,6 +148,15 @@ $(".sensor-select-option").click(function(){
   hw_chan.push("change_sensor_type", {hw: hw_v, port_id: sensor, sensor_type: value});
   $("body").click(); //close dropdown since it isn't an anchor tag
 });
+$(".sample-select-option").click(function(){
+  var option = $(this).find("label");
+  //get the sample num and the file name and push on websocket
+  var sample_num    = option.data("sample-num")
+  var value  = option.data("value");
+  console.log("change sample: " + sample_num + " to: " + value);
+  hw_chan.push("change_sensor_type", {hw: hw_v, port_id: sensor, sensor_type: value});
+  $("body").click(); //close dropdown since it isn't an anchor tag
+});
 
 //global stuff
 window.App = App;

@@ -1,11 +1,33 @@
 <category name="Music">
   <category name="Actions">
-    <!--<block type="sync_to_parent"></block>-->
+    <block type="sync_to_parent">
+      <value name="PARENT">
+        <block type="text">
+          <field name="TEXT">walle</field>
+        </block>
+      </value>
+    </block>
     <!-- <block type="set_tempo"> -->
     <block type="cue">
       <value name="MOTIF">
         <block type="text">
           <field name="TEXT">melody</field>
+        </block>
+      </value>
+    </block>
+    <block type="loop">
+      <value name="MOTIF">
+        <block type="text">
+          <field name="TEXT">melody</field>
+        </block>
+      </value>
+    </block>
+    <block type="stop_sound">
+    </block>
+    <block type="set_volume">
+      <value name="VOLUME">
+        <block type="math_number">
+          <field name="NUM">50</field>
         </block>
       </value>
     </block>
@@ -30,6 +52,8 @@
         </block>
       </value>
     </block>
+    <block type="chord"></block>
+    <block type="trigger_drum"> </block>
     <block type="rest">
       <value name="AMOUNT">
         <block type="math_number">
@@ -38,7 +62,6 @@
       </value>
     </block>
     <block type="wait_for"></block>
-    <!-- <block type="loop"></block> -->
   </category>
   <!--
   <category name="Instruments">

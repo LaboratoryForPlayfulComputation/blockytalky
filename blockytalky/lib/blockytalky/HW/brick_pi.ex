@@ -92,7 +92,7 @@ defmodule Blockytalky.BrickPiState do
   state to reflect that new type. The state looks like:
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
-  @sensor_dir "priv/data"
+  @sensor_dir "data"
   @sensor_file "sensors.json"
   @script_dir "priv/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
@@ -130,7 +130,7 @@ defmodule Blockytalky.BrickPiState do
     sensor_types = Map.put(sensor_types,port_id, sensor_type)
     #backup sensor types
     {status, json} = JSX.encode sensor_types
-    if status == :ok, do: File.write(@sensor_file, json)
+    if status == :ok, do: File.write("#{@sensor_dir}/#{@sensor_file}", json)
     {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do
