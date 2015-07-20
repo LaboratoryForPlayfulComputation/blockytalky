@@ -104,10 +104,10 @@ defmodule Blockytalky.SonicPi do
         $eval_loop.kill
       end
       $eval_loop = in_thread do
+        $u3 = UDPSocket.new
+        $u3.bind("127.0.0.1", #{eval_port})
         loop do
           begin
-          $u3 = UDPSocket.new
-          $u3.bind("127.0.0.1", #{eval_port})
             program, addr = $u3.recvfrom_nonblock(65655)
             eval(program)
             sleep 1.0 / 64.0
