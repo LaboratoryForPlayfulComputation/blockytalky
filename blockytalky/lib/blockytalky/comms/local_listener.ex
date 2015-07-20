@@ -46,7 +46,6 @@ defmodule Blockytalky.LocalListener do
       _ ->
         content = result
                 |> Map.get("content")
-                |> Map.get("py/tuple")
         sender = result
                 |> Map.get("source")
         {:message, {sender, content}}

@@ -56,7 +56,7 @@ defmodule Blockytalky.CommsModule do
   packs the python message.py style json object for the sake of backwards compat.
   """
   def message_encode(source, destination, channel, content \\ []) do
-    ~s|{"py/object": "message.Message", "content": {"py/tuple": #{inspect content}}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
+    ~s|{"py/object": "message.Message", "content": #{inspect content}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
   end
   ####
   # Supervisor implementation
