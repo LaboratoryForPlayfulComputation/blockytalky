@@ -104,14 +104,19 @@ defmodule Blockytalky.SonicPi do
 
     $u3 = UDPSocket.new
     $u3.bind("127.0.0.1", #{eval_port})
-    live_loop :eval_loop do
-      begin
-        program, addr = $u3.recvfrom_nonblock(65655)
-        eval(program)
-        sleep 1.0 / 32.0
-      rescue IO::WaitReadable
-        sleep 1.0 / 32.0
-        next
+    if $eval_thread != nil && $eval_thread.alive?
+      $eval_thread.kill
+    end
+    $eval_thread = in_thread do
+      loop do
+        begin
+          program, addr = $u3.recvfrom_nonblock(65655)
+          eval(program)
+          sleep 1.0 / 32.0
+        rescue IO::WaitReadable
+          sleep 1.0 / 32.0
+          next
+        end
       end
     end
     """
