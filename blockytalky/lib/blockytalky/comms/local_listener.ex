@@ -91,9 +91,7 @@ defmodule Blockytalky.LocalListener do
 
     mlistener_pid  =  spawn  fn -> listen(udp_multi_conn) end
     ulistener_pid  =  spawn  fn -> listen(udp_uni_conn) end
-    Logger.debug "LL listener pid: #{inspect listener_pid}"
     announcer_pid = spawn fn -> announce(udp_multi_conn) end
-    Logger.debug "LL announcer pid: #{inspect announcer_pid}"
     {:ok, {{udp_multi_conn,udp_uni_conn}, {mlistener_pid,ulistener_pid}, announcer_pid, %{}}}
   end
   def handle_cast({:add_local, btu_name, ip}, {udp,lis,ann,local_map}) do
