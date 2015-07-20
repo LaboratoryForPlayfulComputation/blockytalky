@@ -8,7 +8,7 @@ defmodule Blockytalky.LocalListener do
   """
   @udp_multicast_ip "224.0.0.1"
   @udp_multicast_delay 2_000 #milliseconds
-  @udp_multicast_port 8675
+  @udp_multicast_port 8676
   @udp_unicast_port 8675
   @local_ip_expiration 30_000 #milliseconds
   def start_link() do # () -> {:ok, pid}
@@ -86,12 +86,15 @@ defmodule Blockytalky.LocalListener do
   defp erl_ip_to_socket_ip({a,b,c,d}), do: "#{a}.#{b}.#{c}.#{d}"
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
-    udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
-    listener_pid  =  spawn  fn -> listen(udp_conn) end
+    udp_multi_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
+    udp_uni_conn = Socket.UDP.open! @udp_unicast_port, broadcast: true
+
+    mlistener_pid  =  spawn  fn -> listen(udp_multi_conn) end
+    ulistener_pid  =  spawn  fn -> listen(udp_uni_conn) end
     Logger.debug "LL listener pid: #{inspect listener_pid}"
-    announcer_pid = spawn fn -> announce(udp_conn) end
+    announcer_pid = spawn fn -> announce(udp_multi_conn) end
     Logger.debug "LL announcer pid: #{inspect announcer_pid}"
-    {:ok, {udp_conn, listener_pid, announcer_pid, %{}}}
+    {:ok, {{udp_multi_conn,udp_uni_conn}, {mlistener_pid,ulistener_pid}, announcer_pid, %{}}}
   end
   def handle_cast({:add_local, btu_name, ip}, {udp,lis,ann,local_map}) do
     local_map = Map.put(local_map, btu_name, {ip, :calendar.universal_time})
@@ -110,11 +113,16 @@ defmodule Blockytalky.LocalListener do
     {ip,time} = Map.get(local_map,btu_name,{:NOIP,:NOTIME})
     {:reply,time,state}
   end
-  def handle_call(:get_udp_conn, _from, state={udp,_,_,_}), do: {:reply, udp, state}
-  def terminate(reason, state={udp_conn, listener_pid, announcer_pid, _map}) do
+  def handle_call(:get_udp_conn, _from, state={udp,_,_,_}) do
+    {udp_conn, _} = udp
+    {:reply, udp_conn, state}
+  end
+  def terminate(reason, state={{udp_multi_conn, udp_uni_conn}, {mlistener_pid, ulistener_pid}, announcer_pid, _map}) do
     Logger.debug "ShuttingDown #{inspect __MODULE__}"
-    Socket.close udp_conn
-    Process.exit(listener_pid, :restarting)
+    Socket.close udp_multi_conn
+    Socket.close udp_uni_conn
+    Process.exit(mlistener_pid, :restarting)
+    Process.exit(ulistener_pid, :restarting)
     Process.exit(announcer_pid, :restarting)
     :ok
   end
