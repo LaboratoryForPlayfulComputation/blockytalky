@@ -9,7 +9,7 @@ defmodule Blockytalky.SonicPi do
     play <pitch>
   """
   def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
-  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5051)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #System-y functions
   def public_cues do

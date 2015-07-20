@@ -21,6 +21,7 @@ config :blockytalky,
   dax: "ws://btrouter.getdown.org:8005/dax",
   music: true, #set to true if sonic pi is running / this is a synth unit
   music_port: 9090,
+  music_eval_port: 5050,
   update_rate: 30,
   update_rate_hibernate: 100
 
