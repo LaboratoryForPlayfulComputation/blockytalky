@@ -109,9 +109,7 @@ defmodule Blockytalky.SonicPi do
           $u3 = UDPSocket.new
           $u3.bind("127.0.0.1", #{eval_port})
             program, addr = $u3.recvfrom_nonblock(65655)
-            if addr[3] == "127.0.0.1" # only accept eval messages from localhost, arbitrary eval is bad, m'kay.
-              eval(program)
-            end
+            eval(program)
             sleep 1.0 / 64.0
           rescue IO::WaitReadable
             sleep 1.0 / 64.0
