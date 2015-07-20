@@ -100,23 +100,20 @@ defmodule Blockytalky.SonicPi do
     end
     #the default sonic pi eval port is pretty slow on raspberry pi
     #this loop listens on a different port to speed it up
-      if $eval_loop != nil && $eval_thread.alive?
-        $eval_loop.kill
+
+
+    $u3 = UDPSocket.new
+    $u3.bind("127.0.0.1", #{eval_port})
+    live_loop :eval_loop do
+      begin
+        program, addr = $u3.recvfrom_nonblock(65655)
+        eval(program)
+        sleep 1.0 / 64.0
+      rescue IO::WaitReadable
+        sleep 1.0 / 64.0
+        next
       end
-      $eval_loop = in_thread do
-        $u3 = UDPSocket.new
-        $u3.bind("127.0.0.1", #{eval_port})
-        loop do
-          begin
-            program, addr = $u3.recvfrom_nonblock(65655)
-            eval(program)
-            sleep 1.0 / 64.0
-          rescue IO::WaitReadable
-            sleep 1.0 / 64.0
-            next
-          end
-        end
-      end
+    end
     """
   end
   def start_motif(body_program)  do
