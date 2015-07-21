@@ -56,6 +56,7 @@ defmodule Blockytalky.LocalListener do
     {ip,port} = socket
     GenServer.call(__MODULE__,:get_udp_conn)
     |> Socket.Datagram.send CM.message_encode(Blockytalky.RuntimeUtils.btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_unicast_port}
+    :ok
   end
   defp announce udp_conn do
     #Logger.debug "Announcing UDP status"
