@@ -86,7 +86,6 @@ Blockly.Elixir['when_sensor_range'] = function(block) {
   var value_num1 = Blockly.Elixir.valueToCode(block, 'NUM1', Blockly.Elixir.ORDER_ATOMIC);
   var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  // TODO: Assemble Elixir into code variable.
   var code = 'when_sensor "'+dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end\n';
   Blockly.Elixir.macros_.push(code);
   return code;
@@ -200,7 +199,7 @@ Blockly.Blocks['set_motor'] = {
         .appendField("speed to:");
     this.setInputsInline(true);
     this.setPreviousStatement(true, ['BP','Event','Message']);
-    this.setNextStatement(true, 'BP');
+    this.setNextStatement(true, ['BP', 'Event', 'Message']);
     this.setColour(120);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
