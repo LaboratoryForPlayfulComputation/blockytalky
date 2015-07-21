@@ -56,8 +56,8 @@ Blockly.Blocks['for_time'] = {
     this.appendStatementInput("DO")
         .setCheck(['BP','Event','Message'])
         .appendField("repeatedly do:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, 'Event');
+    this.setInputsInline(true,['BP','Event','Message']);
+    this.setPreviousStatement(true, ['BP','Event','Message']);
     this.setNextStatement(false, null);
     this.setColour(20);
     this.setTooltip('');
@@ -80,8 +80,8 @@ Blockly.Blocks['in_time'] = {
     this.appendStatementInput("DO")
         .setCheck(['BP','Event','Message'])
         .appendField("do once:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, 'Event');
+    this.setInputsInline(true,['BP','Event','Message']);
+    this.setPreviousStatement(true,['BP','Event','Message']);
     this.setNextStatement(true, 'Event');
     this.setColour(160);
     this.setTooltip('');
