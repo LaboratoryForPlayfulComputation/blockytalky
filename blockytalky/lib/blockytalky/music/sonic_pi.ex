@@ -37,6 +37,7 @@ defmodule Blockytalky.SonicPi do
       false -> "#"
       name -> #Ruby code to listen until the parent sends a sync message
       """
+      set_sched_ahead_time! 0
       loop do
         begin
           msg = $u2.recvfrom_nonblock(2048) # "[hostname,tempo[..args..]]"
@@ -123,18 +124,40 @@ defmodule Blockytalky.SonicPi do
   end
   def start_motif(body_program)  do
     """
-    $my_motif_thread = in_thread do
-      use_bpm $tempo
+    $next_motif = define :next_motif do
       #{body_program}
+    end
+    if $current_motif == nil
+      $current_motif = $next_motif
+      $next_motif = nil
+    end
+    until $current_motif == nil do
+      $my_motif_thread = in_thread do
+        use_bpm $tempo
+        $current_motif.()
+        $current_motif = $next_motif
+        $next_motif = nil
+      end
     end
     """
   end
   def loop_motif(body_program) do
     """
+    $next_motif = define :next_motif do
+      #{body_program}
+    end
+    if $current_motif == nil
+      $current_motif = $next_motif
+      $next_motif = nil
+    end
     $my_motif_thread = in_thread do
       loop do
         use_bpm $tempo
-        #{body_program}
+        $current_motif.()
+        if $next_motif != nil
+          $current_motif = $next_motif
+          $next_motif = nil
+        end
       end
     end
     """
@@ -142,6 +165,8 @@ defmodule Blockytalky.SonicPi do
   def stop_motif() do
     """
     $my_motif_thread.kill
+    $current_motif = nil
+    $next_motif = nil
     """
   end
   def cue(cue_flag) do
