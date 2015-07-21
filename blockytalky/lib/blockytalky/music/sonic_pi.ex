@@ -131,12 +131,14 @@ defmodule Blockytalky.SonicPi do
       $current_motif = $next_motif
       $next_motif = nil
     end
-    until $current_motif == nil do
+    if $my_motif_thread == nil || $my_motif_thread.alive? == false
       $my_motif_thread = in_thread do
-        use_bpm $tempo
-        $current_motif.()
-        $current_motif = $next_motif
-        $next_motif = nil
+        until $current_motif == nil do
+          use_bpm $tempo
+          $current_motif.()
+          $current_motif = $next_motif
+          $next_motif = nil
+        end
       end
     end
     """
@@ -150,13 +152,15 @@ defmodule Blockytalky.SonicPi do
       $current_motif = $next_motif
       $next_motif = nil
     end
-    $my_motif_thread = in_thread do
-      loop do
-        use_bpm $tempo
-        $current_motif.()
-        if $next_motif != nil
-          $current_motif = $next_motif
-          $next_motif = nil
+    if $my_motif_thread == nil || $my_motif_thread.alive? == false
+      $my_motif_thread = in_thread do
+        loop do
+          use_bpm $tempo
+          $current_motif.()
+          if $next_motif != nil
+            $current_motif = $next_motif
+            $next_motif = nil
+          end
         end
       end
     end
