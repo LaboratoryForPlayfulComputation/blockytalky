@@ -9,7 +9,7 @@ defmodule Blockytalky.SonicPi do
     play <pitch>
   """
   def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
-  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5051)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #System-y functions
   def public_cues do
@@ -37,6 +37,7 @@ defmodule Blockytalky.SonicPi do
       false -> "#"
       name -> #Ruby code to listen until the parent sends a sync message
       """
+      set_sched_ahead_time! 0
       loop do
         begin
           msg = $u2.recvfrom_nonblock(2048) # "[hostname,tempo[..args..]]"
@@ -47,9 +48,9 @@ defmodule Blockytalky.SonicPi do
             $tempo = t
             break
           end
-          sleep 1.0 / 84.0
+          sleep 1.0 / 32.0
         rescue
-          sleep 1.0 / 84.0
+          sleep 1.0 / 32.0
           next
         end
       end
@@ -100,41 +101,67 @@ defmodule Blockytalky.SonicPi do
     end
     #the default sonic pi eval port is pretty slow on raspberry pi
     #this loop listens on a different port to speed it up
-      if $eval_loop != nil && $eval_thread.alive?
-        $eval_loop.kill
-      end
-      $eval_loop = in_thread do
-        loop do
-          begin
-          $u3 = UDPSocket.new
-          $u3.bind("127.0.0.1", #{eval_port})
-            program, addr = $u3.recvfrom_nonblock(65655)
-            if addr[3] == "127.0.0.1" # only accept eval messages from localhost, arbitrary eval is bad, m'kay.
-              eval(program)
-            end
-            sleep 1.0 / 64.0
-          rescue IO::WaitReadable
-            sleep 1.0 / 64.0
-            next
-          end
+
+
+    $u3 = UDPSocket.new
+    $u3.bind("127.0.0.1", #{eval_port})
+    if $eval_thread != nil && $eval_thread.alive?
+      $eval_thread.kill
+    end
+    $eval_thread = in_thread do
+      loop do
+        begin
+          program, addr = $u3.recvfrom_nonblock(65655)
+          eval(program)
+          sleep 1.0 / 32.0
+        rescue IO::WaitReadable
+          sleep 1.0 / 32.0
+          next
         end
       end
+    end
     """
   end
   def start_motif(body_program)  do
     """
-    $my_motif_thread = in_thread do
-      use_bpm $tempo
+    $next_motif = define :next_motif do
       #{body_program}
+    end
+    if $current_motif == nil
+      $current_motif = $next_motif
+      $next_motif = nil
+    end
+    if $my_motif_thread == nil || $my_motif_thread.alive? == false
+      $my_motif_thread = in_thread do
+        until $current_motif == nil do
+          use_bpm $tempo
+          $current_motif.()
+          $current_motif = $next_motif
+          $next_motif = nil
+        end
+      end
     end
     """
   end
   def loop_motif(body_program) do
     """
-    $my_motif_thread = in_thread do
-      loop do
-        use_bpm $tempo
-        #{body_program}
+    $next_motif = define :next_motif do
+      #{body_program}
+    end
+    if $current_motif == nil
+      $current_motif = $next_motif
+      $next_motif = nil
+    end
+    if $my_motif_thread == nil || $my_motif_thread.alive? == false
+      $my_motif_thread = in_thread do
+        loop do
+          use_bpm $tempo
+          $current_motif.()
+          if $next_motif != nil
+            $current_motif = $next_motif
+            $next_motif = nil
+          end
+        end
       end
     end
     """
@@ -142,6 +169,8 @@ defmodule Blockytalky.SonicPi do
   def stop_motif() do
     """
     $my_motif_thread.kill
+    $current_motif = nil
+    $next_motif = nil
     """
   end
   def cue(cue_flag) do

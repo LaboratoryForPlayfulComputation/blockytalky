@@ -211,33 +211,14 @@ Blockly.Blocks['chord'] = {
   init: function() {
     this.appendValueInput("Note1")
         .appendField("chord:");
+    this.appendValueInput("Note2");
+    this.appendValueInput("Note3");
+    this.appendValueInput("Note4");
     this.setInputsInline(true);
     this.setOutput(true,"Array");
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
-    this.notecount = 1;
-    console.log(this);
-  },
-  onchange: function(ev){
-    for(var i = 2; i < 5; i++){
-      var note = Blockly.Elixir.valueToCode(this, 'Note' + i, Blockly.Elixir.ORDER_ATOMIC);
-      var prev_note = Blockly.Elixir.valueToCode(this, 'Note' + (i-1), Blockly.Elixir.ORDER_ATOMIC);
-      if(note == "" && prev_note != "" && i == (this.notecount + 1)){
-        this.appendValueInput("Note"+i);
-        this.notecount++;
-      }
-    }
-    for(var i = 4; i > 1; i--){
-      var note = Blockly.Elixir.valueToCode(this, 'Note' + i, Blockly.Elixir.ORDER_ATOMIC);
-      var prev_note = Blockly.Elixir.valueToCode(this, 'Note' + (i-1), Blockly.Elixir.ORDER_ATOMIC);
-      if(note == "" && prev_note == "" && this.notecount >= i){
-        if(this.inputList.filter(function(x){return x.name == "Note"+i}).length > 0){
-          this.removeInput("Note"+i);
-        }
-        this.notecount--;
-      }
-    }
   }
 };
 Blockly.Elixir['chord'] = function(block) {

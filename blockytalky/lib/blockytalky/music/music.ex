@@ -71,7 +71,10 @@ defmodule Blockytalky.Music do
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     udp_conn = Socket.UDP.open! listen_port, broadcast: true
-    _task = Task.async fn -> send_music_program(udp_conn, SonicPi.init, false) end
+    _task = Task.async fn ->
+      :timer.sleep(15_000) #TODO: replace with ping back from sonic
+      send_music_program(udp_conn, SonicPi.init, false)
+    end
     # read last loaded samples
     File.mkdir("data")
     File.touch!("data/samples.json") #make the file if it doesn't exist

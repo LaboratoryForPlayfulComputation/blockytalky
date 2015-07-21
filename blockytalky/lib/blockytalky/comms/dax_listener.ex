@@ -15,7 +15,12 @@ defmodule Blockytalky.DaxListener do
   def send_message(msg, to) do
     try do #the genserver might not be running
       dax_conn = get_dax_conn
-      Socket.Web.send dax_conn, {:text,CM.message_encode(Blockytalky.RuntimeUtils.btu_id, to, "Message", msg)}
+      if(dax_conn) do
+        Socket.Web.send dax_conn, {:text,CM.message_encode(Blockytalky.RuntimeUtils.btu_id, to, "Message", msg)}
+        :ok
+      else
+        :error
+      end
     rescue
       _ -> :ok
     end
@@ -68,7 +73,7 @@ defmodule Blockytalky.DaxListener do
       _ = spawn (fn -> observer() end)
       {:ok, {dax_conn, listener_pid}}
     rescue
-      _ -> :ignore
+      _ -> {:ok,{nil,nil}}
     end
   end
   ####
