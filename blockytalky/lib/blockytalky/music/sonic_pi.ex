@@ -50,9 +50,8 @@ defmodule Blockytalky.SonicPi do
             use_bpm $tempo
             synced = true
           end
-          sleep 1.0 / 64.0
         rescue
-          sleep 1.0 / 64.0
+          sleep 1.0 / 100.0
           next
         end
       end
