@@ -39,12 +39,13 @@ defmodule Blockytalky.SonicPi do
       """
       loop do
         begin
+          puts "hello"
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
           msg_payload = msg[0].split(",")
-          host=msg_payload[0]
+          host = msg_payload[0]
           puts host
-          t=msg_payload[1]
-          if(host == #{parent})
+          t = msg_payload[1]
+          if(host == #{name})
             $tempo = t
             break
           end
