@@ -91,6 +91,7 @@ defmodule Blockytalky.SonicPi do
     $u2.bind("0.0.0.0", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
+      use_bpm $tempo
       #{sync_to_network}
       cue  :beat1
       cue :down_beat
