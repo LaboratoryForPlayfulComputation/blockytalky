@@ -68,7 +68,7 @@ defmodule Blockytalky.SonicPi do
               $internal_clock = in_thread do
                 loop do
                 sleep 1.0
-                cue ("beat" + (beat_num % #{beats_per_measure} + 1)).to_sym
+                cue ("beat" + (beat_num % #{beats_per_measure} + 1).to_s).to_sym
                 end
               end
             end
