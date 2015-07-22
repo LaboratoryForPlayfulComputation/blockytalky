@@ -39,8 +39,8 @@ defmodule Blockytalky.SonicPi do
       """
       loop do
         begin
-          puts "hello"
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
+          puts msg
           msg_payload = msg[0].split(",")
           host = msg_payload[0]
           puts host
