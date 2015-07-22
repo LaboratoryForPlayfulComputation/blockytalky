@@ -87,7 +87,7 @@ defmodule Blockytalky.SonicPi do
     end
     $u1 = UDPSocket.new
     $u2 = UDPSocket.new
-    $u2.bind("127.0.0.1", #{listen_port})
+    $u2.bind("0.0.0.0", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
       #{sync_to_network}
