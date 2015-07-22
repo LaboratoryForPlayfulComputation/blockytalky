@@ -47,6 +47,7 @@ defmodule Blockytalky.SonicPi do
           t = msg_payload[1]
           if(host == "#{name}")
             $tempo = t.to_f
+            use_bpm $tempo
             synced = true
           end
           sleep 1.0 / 64.0
@@ -96,8 +97,8 @@ defmodule Blockytalky.SonicPi do
       sleep 0.5
       cue :up_beat
       sleep 0.5
-      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
+      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
     end
     #the default sonic pi eval port is pretty slow on raspberry pi
     #this loop listens on a different port to speed it up
