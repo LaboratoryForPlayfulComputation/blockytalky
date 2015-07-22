@@ -60,7 +60,17 @@ defmodule Blockytalky.SonicPi do
             $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\},\#{beat\}", 0, '224.0.0.1', #{listen_port}
             cue beat.to_sym
             if beat != "up_beat"
+              if $internal_clock != nil && $internal_clock.alive?
+                $internal_clock.kill
+              end
               cue :down_beat
+              beat_num = beat[-1,1].to_i
+              $internal_clock = in_thread do
+                loop do
+                sleep 1.0
+                cue ("beat" + (beat_num % #{beats_per_measure} + 1)).to_sym
+                end
+              end
             end
             synced = true
           end
