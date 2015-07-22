@@ -32,6 +32,12 @@ defmodule Blockytalky.SonicPi do
     $tempo = #{val}
     """
   end
+  @doc """
+  takes the name of the btu to sync to or false as a first param
+  takes beats per measure >= 1 as a second param.
+  When syncing to a parent btu, it will listen for a first message,
+  then it will keep track of time internally for one measure
+  """
   def maestro_beat_pattern(parent, beats_per_measure) do
     sync_to_network = case parent do
       false -> "#"
@@ -51,7 +57,7 @@ defmodule Blockytalky.SonicPi do
             synced = true
           end
         rescue
-          sleep 1.0 / 100.0
+          sleep 1.0 / 128.0
           next
         end
       end
@@ -77,6 +83,7 @@ defmodule Blockytalky.SonicPi do
       sleep 0.5
       cue :up_beat
       #{ if parent == false, do: "sleep 0.5", else: "#"}
+      #{sync_to_network}
       """
       true ->
         "#"
@@ -99,7 +106,6 @@ defmodule Blockytalky.SonicPi do
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
       use_bpm $tempo
-      #{sync_to_network}
       cue  :beat1
       cue :down_beat
       sleep 0.5
