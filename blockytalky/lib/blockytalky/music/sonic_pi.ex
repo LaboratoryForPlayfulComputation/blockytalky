@@ -25,7 +25,7 @@ defmodule Blockytalky.SonicPi do
     value = value / 20
     """
     $amp = #{value}
-    set_volume #{value}
+    set_volume! #{value}
     """
   end
   def tempo(val) do
