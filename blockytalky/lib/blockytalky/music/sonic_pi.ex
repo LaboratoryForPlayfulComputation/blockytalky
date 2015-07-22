@@ -37,7 +37,7 @@ defmodule Blockytalky.SonicPi do
       false -> "#"
       name -> #Ruby code to listen until the parent sends a sync message
       """
-      set_sched_ahead_time! 0
+      set_sched_ahead_time! 0.5
       loop do
         begin
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
