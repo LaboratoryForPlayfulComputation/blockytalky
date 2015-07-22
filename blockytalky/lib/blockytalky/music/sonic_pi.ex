@@ -107,7 +107,7 @@ defmodule Blockytalky.SonicPi do
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
       use_bpm $tempo
-      #{if parent != nil, do: sync_to_parent, else: beat_signaling}
+      #{if parent != nil, do: sync_to_network, else: beat_signaling}
     end
 
     $u3 = UDPSocket.new
