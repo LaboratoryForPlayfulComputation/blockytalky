@@ -60,7 +60,7 @@ defmodule Blockytalky.SonicPi do
     end
     beat_signaling = cond do
       beats_per_measure > 2 ->
-      Enum.reduce(2..beats_per_measure,"",fn(x,acc) ->
+      Enum.reduce(2..(beats_per_measure-1),"",fn(x,acc) ->
         acc
         <>
         """
@@ -71,6 +71,14 @@ defmodule Blockytalky.SonicPi do
         sleep 0.5
         """
       end)
+      <>
+      """
+      cue :down_beat
+      cue :beat#{beats_per_measure}
+      sleep 0.5
+      cue :up_beat
+      #{ if parent == false, do: "sleep 0.5", else: "#"}
+      """
       true ->
         "#"
       end
