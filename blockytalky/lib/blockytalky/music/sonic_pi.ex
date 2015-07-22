@@ -42,14 +42,11 @@ defmodule Blockytalky.SonicPi do
         begin
           synced = false
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
-          puts msg
           msg_payload = msg[0].split(",")
           host = msg_payload[0]
-          puts host
           t = msg_payload[1]
           if(host == "#{name}")
-            puts "yay!"
-            $tempo = t
+            $tempo = t.to_f
             synced = true
           end
           sleep 1.0 / 32.0
