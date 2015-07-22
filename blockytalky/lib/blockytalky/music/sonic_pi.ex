@@ -74,7 +74,7 @@ defmodule Blockytalky.SonicPi do
     end
     beat_signaling = cond do
       beats_per_measure > 1 ->
-      Enum.reduce(1..(beats_per_measure-1),"",fn(x,acc) ->
+      Enum.reduce(1..beats_per_measure,"",fn(x,acc) ->
         acc
         <>
         """
