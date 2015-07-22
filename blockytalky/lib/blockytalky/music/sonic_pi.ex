@@ -64,6 +64,7 @@ defmodule Blockytalky.SonicPi do
             end
             synced = true
           end
+          sleep 1.0 / 128.0
         rescue
           sleep 1.0 / 128.0
           next
