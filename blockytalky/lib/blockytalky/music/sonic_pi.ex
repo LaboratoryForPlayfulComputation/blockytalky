@@ -49,7 +49,7 @@ defmodule Blockytalky.SonicPi do
       until synced  do
         begin
           synced = false
-          msg = $u2.recvfrom(1024) # "["hostname,tempo",[..args..]]"
+          msg = $u2.recvfrom_nonblock(1024) # "["hostname,tempo",[..args..]]"
           msg_payload = msg[0].split(",")
           host = msg_payload[0]
           if(host == "#{name}")
