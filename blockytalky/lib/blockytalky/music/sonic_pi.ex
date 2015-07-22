@@ -37,6 +37,8 @@ defmodule Blockytalky.SonicPi do
   takes beats per measure >= 1 as a second param.
   When syncing to a parent btu, it will listen for a first message,
   then it will keep track of time internally for one measure
+  #the default sonic pi eval port is pretty slow on raspberry pi
+  #this loop listens on a different port to speed it up
   """
   def maestro_beat_pattern(parent, beats_per_measure) do
     sync_to_network = case parent do
@@ -50,10 +52,16 @@ defmodule Blockytalky.SonicPi do
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
           msg_payload = msg[0].split(",")
           host = msg_payload[0]
-          t = msg_payload[1]
           if(host == "#{name}")
+            t = msg_payload[1]
+            beat = msg_payload[2]
             $tempo = t.to_f
             use_bpm $tempo
+            $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\},\#{beat\}", 0, '224.0.0.1', #{listen_port}
+            cue beat.to_sym
+            if beat != "up_beat"
+              cue :down_beat
+            end
             synced = true
           end
         rescue
@@ -64,27 +72,20 @@ defmodule Blockytalky.SonicPi do
       """
     end
     beat_signaling = cond do
-      beats_per_measure > 2 ->
-      Enum.reduce(2..(beats_per_measure-1),"",fn(x,acc) ->
+      beats_per_measure > 1 ->
+      Enum.reduce(1..(beats_per_measure-1),"",fn(x,acc) ->
         acc
         <>
         """
         cue :down_beat
         cue :beat#{x}
+        $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\},beat#{x}", 0, '224.0.0.1', #{listen_port}
         sleep 0.5
         cue :up_beat
+        $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\},up_beat", 0, '224.0.0.1', #{listen_port}
         sleep 0.5
         """
       end)
-      <>
-      """
-      cue :down_beat
-      cue :beat#{beats_per_measure}
-      sleep 0.5
-      cue :up_beat
-      #{ if parent == false, do: "sleep 0.5", else: "#"}
-      #{sync_to_network}
-      """
       true ->
         "#"
       end
@@ -106,17 +107,8 @@ defmodule Blockytalky.SonicPi do
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
       use_bpm $tempo
-      cue  :beat1
-      cue :down_beat
-      sleep 0.5
-      cue :up_beat
-      sleep 0.5
-      #{beat_signaling}
-      $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
+      #{if parent != nil, do: sync_to_parent, else: beat_signaling}
     end
-    #the default sonic pi eval port is pretty slow on raspberry pi
-    #this loop listens on a different port to speed it up
-
 
     $u3 = UDPSocket.new
     $u3.bind("127.0.0.1", #{eval_port})
