@@ -123,9 +123,9 @@ defmodule Blockytalky.SonicPi do
         begin
           program, addr = $u3.recvfrom_nonblock(65655)
           eval(program)
-          sleep 1.0 / 32.0
+          sleep 1.0 / 64.0
         rescue IO::WaitReadable
-          sleep 1.0 / 32.0
+          sleep 1.0 / 64.0
           next
         end
       end
@@ -218,6 +218,7 @@ defmodule Blockytalky.SonicPi do
       :beats -> duration
       :measures -> duration * 4
     end
+    t = t * 0.99
     """
     use_bpm $tempo
     sleep #{t}
