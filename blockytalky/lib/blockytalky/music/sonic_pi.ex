@@ -64,9 +64,9 @@ defmodule Blockytalky.SonicPi do
             end
             synced = true
           end
-          sleep 1.0 / 128.0
+          sleep 1.0 / 100.0
         rescue
-          sleep 1.0 / 128.0
+          sleep 1.0 / 100.0
           next
         end
       end
@@ -108,7 +108,7 @@ defmodule Blockytalky.SonicPi do
     # Main tempo cueing / UDP broadcasting thread
     live_loop :beat_pattern do
       use_bpm $tempo
-      #{if parent != nil, do: sync_to_network, else: beat_signaling}
+      #{if parent != false, do: sync_to_network, else: beat_signaling}
     end
 
     $u3 = UDPSocket.new
