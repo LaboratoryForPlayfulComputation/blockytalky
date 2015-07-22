@@ -395,7 +395,7 @@ defmodule Blockytalky.DSL do
   """
   def cue(motif_name) do
     try do
-     program = Blockytalky.UserCode.motif(motif_name)
+      |> account_for_syncing()
       |> Enum.join("\n")
       |> SP.start_motif()
       Music.send_music_program(program, true)
@@ -406,12 +406,23 @@ defmodule Blockytalky.DSL do
   def loop(motif_name) do
     try do
      program = Blockytalky.UserCode.motif(motif_name)
+      |> account_for_syncing
       |> Enum.join("\n")
       |> SP.loop_motif()
       Music.send_music_program(program, true)
     rescue
       _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
     end
+  end
+  defp account_for_syncing(program) do
+    if(length(program) > 2) do
+      first = List.first program
+      last = List.last program
+      if(String.starts_with?(first,"sync") && String.starts_with?(last,"sleep")) do
+        program = Enum.take(program, length(program) - 1)
+      end
+    end
+    program
   end
   def stop_sound do
     Music.send_music_program(SP.stop_motif)
