@@ -49,9 +49,9 @@ defmodule Blockytalky.SonicPi do
             $tempo = t.to_f
             synced = true
           end
-          sleep 1.0 / 32.0
+          sleep 1.0 / 64.0
         rescue
-          sleep 1.0 / 32.0
+          sleep 1.0 / 64.0
           next
         end
       end
