@@ -77,7 +77,7 @@ defmodule Blockytalky.SonicPi do
           end
           sleep 1.0 / 128.0
         rescue
-          sleep 1.0 / 128.0
+          sleep 1.0 / 64.0
           next
         end
       end
