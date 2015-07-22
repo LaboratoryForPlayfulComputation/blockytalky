@@ -37,8 +37,10 @@ defmodule Blockytalky.SonicPi do
       false -> "#"
       name -> #Ruby code to listen until the parent sends a sync message
       """
-      loop do
+      synced = false
+      until synced  do
         begin
+          synced = false
           msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
           puts msg
           msg_payload = msg[0].split(",")
@@ -46,8 +48,9 @@ defmodule Blockytalky.SonicPi do
           puts host
           t = msg_payload[1]
           if(host == #{name})
+            puts "yay!"
             $tempo = t
-            break
+            synced = true
           end
           sleep 1.0 / 32.0
         rescue
