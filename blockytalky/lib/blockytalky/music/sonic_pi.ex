@@ -47,7 +47,7 @@ defmodule Blockytalky.SonicPi do
           host = msg_payload[0]
           puts host
           t = msg_payload[1]
-          if(host == #{name})
+          if(host == "#{name}")
             puts "yay!"
             $tempo = t
             synced = true
