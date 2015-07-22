@@ -25,6 +25,7 @@ defmodule Blockytalky.SonicPi do
     value = value / 20
     """
     $amp = #{value}
+    set_volume #{value}
     """
   end
   def tempo(val) do
@@ -60,7 +61,16 @@ defmodule Blockytalky.SonicPi do
             $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\},\#{beat\}", 0, '224.0.0.1', #{listen_port}
             cue beat.to_sym
             if beat != "up_beat"
+              if $next_beat != nil && $next_beat.alive?
+                $next_beat.kill
+              end
               cue :down_beat
+              $next_beat = in_thread do
+                sleep 1.0
+                beat_num = beat[-1,1].to_i
+                next_num = (beat_num % #{beats_per_measure}) + 1
+                cue ("beat" + next_num.to_s ).to_sym
+              end
             end
             synced = true
           end
