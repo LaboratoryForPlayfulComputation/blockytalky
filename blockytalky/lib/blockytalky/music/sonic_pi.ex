@@ -65,11 +65,14 @@ defmodule Blockytalky.SonicPi do
                 $next_beat.kill
               end
               cue :down_beat
+              beat_num = beat[-1,1].to_i
               $next_beat = in_thread do
-                sleep 1.0
-                beat_num = beat[-1,1].to_i
-                next_num = (beat_num % #{beats_per_measure}) + 1
-                cue ("beat" + next_num.to_s ).to_sym
+                loop do
+                  sleep 0.98
+                  next_num = (beat_num % #{beats_per_measure}) + 1
+                  cue ("beat" + next_num.to_s ).to_sym
+                  beat_num = beat_num + 1
+                end
               end
             end
             synced = true
