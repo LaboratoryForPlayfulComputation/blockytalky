@@ -40,7 +40,7 @@ defmodule Blockytalky.SonicPi do
       set_sched_ahead_time! 0
       loop do
         begin
-          msg = $u2.recvfrom_nonblock(2048) # "[hostname,tempo[..args..]]"
+          msg = $u2.recvfrom_nonblock(2048) # "["hostname,tempo",[..args..]]"
           msg_payload = msg[0].split(",")
           host=msg_payload[0]
           t=msg_payload[1]
@@ -62,8 +62,11 @@ defmodule Blockytalky.SonicPi do
         acc
         <>
         """
-        sync :down_beat
+        cue :down_beat
         cue :beat#{x}
+        sleep 0.5
+        cue :up_beat
+        sleep 0.5
         """
       end)
       true ->
@@ -85,17 +88,13 @@ defmodule Blockytalky.SonicPi do
     $u2 = UDPSocket.new
     $u2.bind("127.0.0.1", #{listen_port})
     # Main tempo cueing / UDP broadcasting thread
-    live_loop :down_beat do
-      #{sync_to_network}
-      use_bpm $tempo
-      sleep 0.50
-      use_bpm $tempo
-      cue :up_beat
-      sleep 0.50
-    end
     live_loop :beat_pattern do
-      sync :down_beat
+      #{sync_to_network}
       cue  :beat1
+      cue :down_beat
+      sleep 0.5
+      cue :up_beat
+      sleep 0.5
       $u1.send "#{Blockytalky.RuntimeUtils.btu_id},\#{$tempo\}", 0, '224.0.0.1', #{listen_port}
       #{beat_signaling}
     end
