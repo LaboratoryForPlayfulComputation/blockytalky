@@ -114,7 +114,7 @@ defmodule Blockytalky.DSL do
       )
     end
   end
-  defmacro when_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
+  defmacro when_sensor({:not, _m,[{:in, _  [port_id, range={:.., _m2, [_left,_right]}]}]}, do: body) do
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
         when_sensor_value_range(unquote(port_id),
@@ -155,7 +155,7 @@ defmodule Blockytalky.DSL do
         )
       end
   end
-  defmacro while_sensor({:not_in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
+  defmacro while_sensor({:not, _m,[{:in, _  [port_id, range={:.., _m2, [_left,_right]}]}]}, do: body) do
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
         while_sensor_value_range(unquote(port_id),
