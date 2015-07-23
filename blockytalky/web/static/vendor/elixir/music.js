@@ -235,3 +235,21 @@ Blockly.Elixir['chord'] = function(block) {
   code += ']';
   return [code,Blockly.Elixir.ORDER_ATOMIC];
 };
+Blockly.Blocks['set_synth'] = {
+  init: function() {
+    // sample atoms taken directly from sonic pi sample library.
+    this.appendDummyInput()
+        .appendField("Change synth instrument to ")
+        .appendField(new Blockly.FieldDropdown([["Sine",":sine"],["Square",":square"],["Saw",":saw"],["Pretty Bell",":pretty_bell"],["Bass",":mod_fm"],["Dark Ambience",":dark_ambience"]]), "SYNTH")
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(275);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['set_synth'] = function(block) {
+  var dropdown_synth = block.getFieldValue('SYNTH');
+  var code = 'set_synth('+dropdown_synth+')\n';
+  return code;
+};
