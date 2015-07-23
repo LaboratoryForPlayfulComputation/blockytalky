@@ -197,6 +197,9 @@ defmodule Blockytalky.SonicPi do
     $my_motif_thread.kill
     $current_motif = nil
     $next_motif = nil
+    if $next_beat != nil && $next_beat.alive?
+      $next_beat.kill
+    end
     """
   end
   def cue(cue_flag) do
