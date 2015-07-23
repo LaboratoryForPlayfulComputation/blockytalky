@@ -431,6 +431,9 @@ defmodule Blockytalky.DSL do
   def set_volume(volume) do
     Music.send_music_program(SP.set_amp(volume))
   end
+  def set_synth(synth) do
+    Music.send_music_program(SP.set_synth(synth))
+  end
   def sync_to(parent) do
     program = SP.maestro_beat_pattern(parent, 4)
     Music.send_music_program(program)

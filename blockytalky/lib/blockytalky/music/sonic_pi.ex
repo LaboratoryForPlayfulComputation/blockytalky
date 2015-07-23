@@ -33,6 +33,11 @@ defmodule Blockytalky.SonicPi do
     $tempo = #{val}
     """
   end
+  def set_synth(synth) do
+    """
+    $synth = #{synth}
+    """
+  end
   @doc """
   takes the name of the btu to sync to or false as a first param
   takes beats per measure >= 1 as a second param.
@@ -217,6 +222,9 @@ defmodule Blockytalky.SonicPi do
     end
     """
     use_bpm $tempo
+    if $synth != nil
+      use_synth $synth
+    end
     play #{p}, sustain: #{duration}, amp: $amp
     """
   end
