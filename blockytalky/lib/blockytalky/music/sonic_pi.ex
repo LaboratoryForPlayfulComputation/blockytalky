@@ -35,7 +35,7 @@ defmodule Blockytalky.SonicPi do
   end
   def set_synth(synth) do
     """
-    $synth = #{synth}
+    $synth = #{inspect synth}
     """
   end
   @doc """
