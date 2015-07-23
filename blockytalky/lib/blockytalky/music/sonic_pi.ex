@@ -74,7 +74,7 @@ defmodule Blockytalky.SonicPi do
               $next_beat = in_thread do
                 loop_num = 0
                 until loop_num > 4 do
-                  sleep 0.98
+                  sleep 0.96
                   next_num = (beat_num % #{beats_per_measure}) + 1
                   cue ("beat" + next_num.to_s ).to_sym
                   beat_num = beat_num + 1
