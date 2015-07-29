@@ -10,6 +10,7 @@ defmodule Blockytalky.SonicPi do
   """
   def listen_port, do:  Application.get_env(:blockytalky, :music_port, 9090)
   def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
+  def music_resp_port, do: Application.get_env(:blockytalky, :music_respond_port, 9091)
   ####
   #System-y functions
   def public_cues do
@@ -142,7 +143,7 @@ defmodule Blockytalky.SonicPi do
           program, addr = $u3.recvfrom_nonblock(65655)
           eval(program)
           sleep 1.0 / 64.0
-        rescue IO::WaitReadable
+        rescue #IO::WaitReadable
           sleep 1.0 / 64.0
           next
         end
@@ -150,45 +151,21 @@ defmodule Blockytalky.SonicPi do
     end
     """
   end
-  def start_motif(body_program)  do
+  def start_motif(body_program, opts \\ [])  do
+    loop = Keyword.get(opts,:loop,false)
     """
-    $next_motif = define :next_motif do
+    $keep_looping = #{loop}
+    $cueued = true
+    define :next_motif do
+      $cueued  = false
       #{body_program}
-    end
-    if $current_motif == nil
-      $current_motif = $next_motif
-      $next_motif = nil
-    end
-    if $my_motif_thread == nil || $my_motif_thread.alive? == false
-      $my_motif_thread = in_thread do
-        until $current_motif == nil do
-          use_bpm $tempo
-          $current_motif.()
-          $current_motif = $next_motif
-          $next_motif = nil
-        end
-      end
-    end
-    """
-  end
-  def loop_motif(body_program) do
-    """
-    $next_motif = define :next_motif do
-      #{body_program}
-    end
-    if $current_motif == nil
-      $current_motif = $next_motif
-      $next_motif = nil
     end
     if $my_motif_thread == nil || $my_motif_thread.alive? == false
       $my_motif_thread = in_thread do
         loop do
           use_bpm $tempo
-          $current_motif.()
-          if $next_motif != nil
-            $current_motif = $next_motif
-            $next_motif = nil
-          end
+          next_motif
+          break if ! $keep_looping && ! $cueued
         end
       end
     end
@@ -197,8 +174,6 @@ defmodule Blockytalky.SonicPi do
   def stop_motif() do
     """
     $my_motif_thread.kill
-    $current_motif = nil
-    $next_motif = nil
     if $next_beat != nil && $next_beat.alive?
       $next_beat.kill
     end
@@ -225,12 +200,21 @@ defmodule Blockytalky.SonicPi do
       ":" <> s -> pitch
       non_atom -> ":" <> non_atom
     end
+    |> String.replace("#","s") #elixir atoms don't support #s so sharps are s'
+    #return:
     """
     use_bpm $tempo
     if $synth != nil
       use_synth $synth
     end
     play #{p}, sustain: #{duration}, amp: $amp
+    """
+  end
+  def send_music_message(message, to) do
+    """
+    if $u1 != nil && ! $u1.closed?
+      $u1.send "{\\"message\\":\\"#{message}\\", \\"to\\":\\"#{to}\\"}", 0, '127.0.0.1', #{music_resp_port}
+    end
     """
   end
   @doc """
@@ -242,7 +226,7 @@ defmodule Blockytalky.SonicPi do
       :beats -> duration
       :measures -> duration * 4
     end
-    t = t * 0.99
+    t = t * 0.995
     """
     use_bpm $tempo
     sleep #{t}

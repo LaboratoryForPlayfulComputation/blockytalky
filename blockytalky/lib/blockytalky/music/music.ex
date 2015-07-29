@@ -17,7 +17,19 @@ defmodule Blockytalky.Music do
   def stop_signal do
     send_music_program(SonicPi.stop_motif, true)
   end
-
+  def listen(udp_conn) do
+    {data, ip} = udp_conn
+      |> Socket.Datagram.recv!
+    case JSX.decode(data) do
+      {:ok, map} ->
+        message = Map.get(map,"message")
+        to = Map.get(map,"to")
+        Blockytalky.CommsModule.send_message(message,to)
+      _ ->
+        :ok
+    end
+    listen(udp_conn)
+  end
   @doc """
   Sends a music program(string) to the sonic pi instance running on local host
   see Blockytalky.SonicPi for programs API
@@ -60,9 +72,6 @@ defmodule Blockytalky.Music do
   #Internal API
 
   ####
-  #Internal API
-
-  ####
   # GenServer Implementation
   # CH. 16
   def start_link() do
@@ -71,10 +80,12 @@ defmodule Blockytalky.Music do
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     udp_conn = Socket.UDP.open! listen_port, broadcast: true
+    _ = spawn fn -> listen(udp_conn) end
     _task = Task.async fn ->
       :timer.sleep(15_000) #TODO: replace with ping back from sonic
       send_music_program(udp_conn, SonicPi.init, false)
     end
+
     # read last loaded samples
     File.mkdir("data")
     File.touch!("data/samples.json") #make the file if it doesn't exist

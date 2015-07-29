@@ -4,7 +4,7 @@ import {Socket} from "phoenix"
  //humane is the popup notification for logging messages to the client
   humane.baseCls = 'humane-libnotify';
   humane.clickToClose = true;
-  humane.error = humane.spawn({ addnCls: 'humane-libnotify-error', timeout: 1000 });
+  humane.error = humane.spawn({ addnCls: 'humane-libnotify-error', timeout: 2000 });
  //foundation.js for pretty widgets and dropdowns
  $(document).foundation(); //init
  //sockets and channels
@@ -36,19 +36,24 @@ hw_chan.on("sensor_changed", payload => {
   var port_id = payload.port_id;
   var sensor_label = payload.sensor_label;
   console.log("sensor_changed " + port_id + ":" + sensor_label);
+
   humane.log("System: Port Changed!" );
   $(".sensor-select[data-name='" + port_id + "']").text(sensor_label);
 });
 comm_chan.on("message", payload => {
+
   humane.log("received message: " + payload.body);
 });
 comm_chan.on("say", payload => {
+
   humane.log("say:" + payload.body);
 })
 uc_chan.on("progress", payload => {
+
   humane.log("System: " + payload.body);
 });
 uc_chan.on("error", payload => {
+
   humane.error("System Error: " + payload.body);
 });
 /* App object */
@@ -58,6 +63,7 @@ var App = {
       {media: '/media/',
        toolbox: document.getElementById('toolbox')}),
   download_code: function (){
+
     humane.log("Downloading code from " + $(".name-header").text() +" to  the browser!");
     console.log("downloading code from btu")
     uc_chan.push("download", {body: ""})
@@ -67,6 +73,7 @@ var App = {
         var xml = Blockly.Xml.textToDom(save_file.xml);
         Blockly.Xml.domToWorkspace(App.workspace,xml);
       }
+
       humane.log("System: Code Downloaded from " + $(".name-header").text())
     });
   }
@@ -76,16 +83,19 @@ console.log(App);
 //button-bar callbacks:
 $(".run-button").click(function(){
   socket.flushSendBuffer();
+
   humane.log("Telling "+$(".name-header").text()+" to run code!");
   uc_chan.push("run", {body: ":ok"});
 });
 $(".stop-button").click(function(){
   socket.flushSendBuffer();
+
   humane.log("Telling "+$(".name-header").text()+" to stop code!");
   uc_chan.push("stop", {body: ":ok"})
 });
 $(".upload-button").click(function(){
   socket.flushSendBuffer();
+
   humane.log("Uploading code from the browser to "+ $(".name-header").text() +"!");
   var payload = {
     xml: new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace)),
@@ -161,6 +171,7 @@ $(".sample-select-option").click(function(){
 //global stuff
 window.App = App;
 $(document).ready(function() {
+
     humane.log("Connecting to btu... please wait :)");
     $(".icon-bar .item").addClass("disabled");
     $("#sensors-bin button").addClass("disabled");
