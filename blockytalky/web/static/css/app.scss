@@ -57,6 +57,9 @@ form.link, form.button {
     padding-bottom: 0;
   }
 }
+#btu-logo{
+  margin:0;
+}
 #workspace-marker{
   display: block;
 }
@@ -65,6 +68,9 @@ form.link, form.button {
   width: 50%;
   float: left;
 }
+a.item{
+    padding: 5px;
+  }
 /* Customize container */
 
 /* blockly */
