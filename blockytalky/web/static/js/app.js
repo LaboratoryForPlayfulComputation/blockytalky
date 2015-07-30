@@ -176,6 +176,10 @@ $(".shutdown-button").click(function(){
   //send signal to BTU to shutdown
   //It will broadcast back to all connected clients to shutdown
 });
+$(".fullscreen-button").click(function(){
+   $(".container")[0].webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+   $(".container").append($(App.workspace.toolbox_.HtmlDiv));
+});
 
 $(".sensor-select-option").click(function(){
   var option = $(this).find("label");
