@@ -141,7 +141,7 @@ Blockly.Elixir['set_volume'] = function(block) {
 };
 Blockly.Blocks['set_tempo'] = {
   init: function() {
-    this.appendValueInput("VTEMPO")
+    this.appendValueInput("TEMPO")
         .setCheck(["Number"])
         .appendField("set tempo to ");
     this.setInputsInline(true);
