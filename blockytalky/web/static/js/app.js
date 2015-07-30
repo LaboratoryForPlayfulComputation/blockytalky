@@ -107,7 +107,7 @@ var App = {
     });
   }
 };
-console.log(App);
+
 
 //button-bar callbacks:
 $(".run-button").click(function(){
@@ -177,9 +177,27 @@ $(".shutdown-button").click(function(){
   //It will broadcast back to all connected clients to shutdown
 });
 $(".fullscreen-button").click(function(){
-   $(".container")[0].webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
    $(".container").append($(App.workspace.toolbox_.HtmlDiv));
+   //move trashcan
+
+   $('body')[0].webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+
 });
+
+var changeHandler = function(e){
+    var bDiv = $('#blocklyDiv');
+
+    if(window.screen.availTop == 0 ){
+     bDiv.height("100vh");
+    }
+    else {
+      bDiv.height(window.screen.height - bDiv.offset().top);
+    }
+     false;
+  }
+  document.addEventListener("fullscreenchange", changeHandler, false);
+  document.addEventListener("webkitfullscreenchange", changeHandler, false);
+  document.addEventListener("mozfullscreenchange", changeHandler, false);
 
 $(".sensor-select-option").click(function(){
   var option = $(this).find("label");
@@ -217,6 +235,8 @@ window.onload = function() {
         window.clearInterval(load_code_on_init);
         $(".icon-bar .item").removeClass("disabled");
         $("#sensors-bin button").removeClass("disabled");
+        var bDiv = $('#blocklyDiv');
+        bDiv.height("100vh")
         $.undim();
         App.download_code();
         console.log("on load download");
