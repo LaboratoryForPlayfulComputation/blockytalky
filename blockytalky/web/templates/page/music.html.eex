@@ -31,6 +31,13 @@
         </block>
       </value>
     </block>
+    <block type="set_tempo">
+      <value name="TEMPO">
+        <block type="math_number">
+          <field name="NUM">120</field>
+        </block>
+      </value>
+    </block>
     <block type="set_synth"></block>
   </category>
   <category name="Motifs">

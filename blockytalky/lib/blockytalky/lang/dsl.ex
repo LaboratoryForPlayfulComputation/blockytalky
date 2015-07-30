@@ -453,6 +453,9 @@ defmodule Blockytalky.DSL do
   def set_volume(volume) do
     Music.send_music_program(SP.set_amp(volume))
   end
+  def set_tempo(tempo) do
+    Music.send_music_program(SP.tempo(tempo))
+  end
   def set_synth(synth) do
     Music.send_music_program(SP.set_synth(synth))
   end

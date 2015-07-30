@@ -139,6 +139,24 @@ Blockly.Elixir['set_volume'] = function(block) {
   var code = 'set_volume('+value_volume+')\n';
   return code;
 };
+Blockly.Blocks['set_tempo'] = {
+  init: function() {
+    this.appendValueInput("VTEMPO")
+        .setCheck(["Number"])
+        .appendField("set tempo to ");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(275);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['set_tempo'] = function(block) {
+  var value_tempo = Blockly.Elixir.valueToCode(block, 'TEMPO', Blockly.Elixir.ORDER_ATOMIC);
+  var code = 'set_tempo('+value_tempo+')\n';
+  return code;
+};
 Blockly.Blocks['stop_sound'] = {
   init: function() {
     this.appendDummyInput()
