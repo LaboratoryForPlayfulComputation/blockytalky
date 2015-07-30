@@ -25,9 +25,11 @@ Blockly.Blocks['defmotif'] = {
   }
 };
 Blockly.Elixir['defmotif'] = function(block) {
+  Blockly.Elixir.context = ":music";
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
+  Blockly.Elixir.context = null;
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -141,8 +143,8 @@ Blockly.Blocks['stop_sound'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("stop sound");
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true,['BP','Event','Message']);
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -158,8 +160,8 @@ Blockly.Blocks['cue'] = {
         .setCheck("String")
         .appendField("cue motif:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true,['BP','Event','Message']);
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -176,8 +178,8 @@ Blockly.Blocks['loop'] = {
         .setCheck("String")
         .appendField("loop motif:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true,['BP','Event','Message']);
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -194,8 +196,8 @@ Blockly.Blocks['sync_to_parent'] = {
         .setCheck("String")
         .appendField("sync to BTU");
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true,['BP','Event','Message']);
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -240,9 +242,24 @@ Blockly.Blocks['set_synth'] = {
     // sample atoms taken directly from sonic pi sample library.
     this.appendDummyInput()
         .appendField("Change synth instrument to ")
-        .appendField(new Blockly.FieldDropdown([["Sine",":sine"],["Square",":square"],["Saw",":saw"],["Pretty Bell",":pretty_bell"],["Bass",":mod_fm"],["Dark Ambience",":dark_ambience"]]), "SYNTH")
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+        .appendField(new Blockly.FieldDropdown([
+          ["Sine",":sine"],
+          ["Square",":square"],
+          ["Saw",":saw"],
+          ["Pretty Bell",":pretty_bell"],
+          ["Bass",":mod_fm"],
+          ["Dark Ambience",":dark_ambience"],
+          ["dsaw",":dsaw"],
+          ["Dull bell",":dull_bell"],
+          ["Fm", ":fm"],
+          ["Growl", ":growl"],
+          ["Hollow", ":hollow"],
+          ["Prophet", ":prophet"],
+          ["Tri",":tri"],
+          ["Zawa",":zawa"],
+          ["Tb303",":tb303"]]), "SYNTH")
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true,['BP','Event','Message']);
     this.setColour(275);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -251,5 +268,25 @@ Blockly.Blocks['set_synth'] = {
 Blockly.Elixir['set_synth'] = function(block) {
   var dropdown_synth = block.getFieldValue('SYNTH');
   var code = 'set_synth('+dropdown_synth+')\n';
+  return code;
+};
+Blockly.Blocks['with_fx'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("With effects:")
+        .appendField(new Blockly.FieldDropdown([["echo", ":echo"], ["flanger", ":flanger"], ["distortion", ":distortion"], ["reverb", ":reverb"], ["slicer", ":slicer"], ["wobble", ":wobble"]]), "EFFECT");
+    this.appendStatementInput("COMMANDS")
+        .setCheck("Music");
+    this.setPreviousStatement(true, "Music");
+    this.setNextStatement(true, "Music");
+    this.setColour(275);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['with_fx'] = function(block) {
+  var dropdown_effect = block.getFieldValue('EFFECT');
+  var statements_commands = Blockly.Elixir.statementToCode(block, 'COMMANDS');
+  var code = 'with_fx('+ dropdown_effect + ')\ndo\n' + statements_commands + '\nend\n';
   return code;
 };

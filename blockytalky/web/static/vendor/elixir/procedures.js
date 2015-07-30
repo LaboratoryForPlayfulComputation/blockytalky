@@ -31,7 +31,7 @@ goog.require('Blockly.Elixir');
 
 Blockly.Elixir['procedures_defreturn'] = function(block) {
   // Define a procedure with a return value.
-  
+
   //globals = globals.length ? '  global ' + globals.join(', ') + '\n' : '';
   var funcName = Blockly.Elixir.variableDB_.getName(block.getFieldValue('NAME'),
       Blockly.Procedures.NAME_TYPE);
@@ -76,7 +76,7 @@ Blockly.Elixir['procedures_callreturn'] = function(block) {
     args[x] = Blockly.Elixir.valueToCode(block, 'ARG' + x,
         Blockly.Elixir.ORDER_NONE) || 'nil';
   }
-  var code = funcName + '(' + args.join(', ') + ')';
+  var code = 'Blockytalky.UserCode.'+funcName + '(' + args.join(', ') + ')';
   return [code, Blockly.Elixir.ORDER_FUNCTION_CALL];
 };
 
@@ -89,7 +89,9 @@ Blockly.Elixir['procedures_callnoreturn'] = function(block) {
     args[x] = Blockly.Elixir.valueToCode(block, 'ARG' + x,
         Blockly.Elixir.ORDER_NONE) || 'nil';
   }
-  var code = funcName + '(' + args.join(', ') + ')\n';
+  //currently for our macros to see the local functions, we need to append the full namespace
+  // Going to post a question to elixir and ask about this.
+  var code = 'Blockytalky.UserCode.'+funcName + '(' + args.join(', ') + ')\n';
   return code;
 };
 

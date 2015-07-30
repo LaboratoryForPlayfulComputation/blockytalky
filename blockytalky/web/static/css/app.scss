@@ -37,6 +37,7 @@ form.link, form.button {
   background-size: 100px auto;
 }
 
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing {
@@ -57,6 +58,14 @@ form.link, form.button {
     padding-bottom: 0;
   }
 }
+#samples-bin {
+  li {
+    padding-bottom: 0;
+  }
+}
+#btu-logo{
+  margin:0;
+}
 #workspace-marker{
   display: block;
 }
@@ -64,7 +73,11 @@ form.link, form.button {
   text-align: center;
   width: 50%;
   float: left;
+  margin-left: 25%;
 }
+a.item{
+    padding: 5px;
+  }
 /* Customize container */
 
 /* blockly */

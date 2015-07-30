@@ -63,11 +63,18 @@
       </value>
     </block>
     <block type="wait_for"></block>
+    <block type="send">
+      <value name="msg">
+        <block type="text">
+          <field name="TEXT">hello</field>
+        </block>
+      </value>
+      <value name="to">
+        <block type="text">
+          <field name="TEXT">walle</field>
+        </block>
+      </value>
+    </block>
+    <block type="with_fx"></block>
   </category>
-  <!--
-  <category name="Instruments">
-    <block name="effect"></block>
-    <block name="synth"></block>
-  </category>
-  -->
 </category>

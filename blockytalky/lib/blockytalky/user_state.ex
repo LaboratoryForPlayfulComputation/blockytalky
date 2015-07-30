@@ -188,7 +188,27 @@ defmodule Blockytalky.UserState do
     spawn (fn -> loop() end)
     status
   end
-
+  defp latest_usercode do
+    savefiles =
+      File.ls!(Application.get_env(:blockytalky,:user_code_dir))
+      |> Enum.filter(filter) #only filenames that have "hostname" <> "datetime"
+      |> Enum.sort # sort in ascending order
+      |> Enum.reverse #reverse so most recent is head of list
+    uc = case savefiles do
+      [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
+      [head | _ ] ->
+        file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
+        file = case JSX.decode(file) do
+          {:ok, f} -> f
+          _ -> #the  save file is corrupted
+            #delete the file and try again
+            File.rm! "#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}"
+            latest_usercode
+          end
+      _ -> %{"code" => "", "xml" => "<xml></xml>"}
+      end
+    uc
+  end
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     #restore user code if possible
@@ -206,7 +226,11 @@ defmodule Blockytalky.UserState do
           [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
           [head | _ ] ->
             file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
-            file = JSX.decode!(file)
+            file = case JSX.decode(file) do
+              {:ok, f} -> f
+              _ ->
+                #delete the file and try again
+            end
           _ -> ""
          end
     #state = message queue, port_values, user defined var values, user_code_string, user_code pid, and loop iteration number (FRP)
