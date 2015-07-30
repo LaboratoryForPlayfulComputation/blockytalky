@@ -391,6 +391,14 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [SP.trigger_sample(unquote(sample_name))]
     end
   end
+  defmacro with_fx(fx, [do: body]) do
+    quote do
+      {head,tail} = SP.with_fx(unquote(fx)) #{"with_fx :some_fx do", "end"}
+      var!(my_motif) = var!(my_motif) ++ [head]
+      unquote(body)
+      var!(my_motif) = var!(my_motif) ++ [tail]
+    end
+  end
   @doc """
   music event must be an atom such as
   :down_beat, :up_beat, :beat1, :beat2 ...

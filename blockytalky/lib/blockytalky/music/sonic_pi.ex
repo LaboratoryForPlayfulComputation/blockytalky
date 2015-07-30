@@ -241,5 +241,14 @@ defmodule Blockytalky.SonicPi do
   def sync(flag) do
     "sync :#{flag}"
   end
+  def with_fx(fx) do
+    {
+    """
+    with_fx #{inspect fx} do
+    """,
+    """
+    end
+    """}
+  end
 
 end

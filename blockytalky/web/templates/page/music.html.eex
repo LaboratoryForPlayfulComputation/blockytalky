@@ -75,11 +75,6 @@
         </block>
       </value>
     </block>
+    <block type="with_fx"></block>
   </category>
-  <!--
-  <category name="Instruments">
-    <block name="effect"></block>
-    <block name="synth"></block>
-  </category>
-  -->
 </category>
