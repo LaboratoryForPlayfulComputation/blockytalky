@@ -196,7 +196,7 @@ defmodule Blockytalky.SonicPi do
   end
   def play_synth(pitch, duration) do
     p = case pitch do
-      n when is_integer(n) -> n
+      n when is_integer(n) -> to_string(n)
       ":" <> s -> pitch
       non_atom -> ":" <> non_atom
     end
