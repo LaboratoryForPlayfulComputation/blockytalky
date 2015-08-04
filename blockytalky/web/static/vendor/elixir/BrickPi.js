@@ -68,7 +68,7 @@ Blockly.Blocks['when_sensor_range'] = {
     this.appendValueInput("NUM1")
         .setCheck("Number")
         .appendField("is")
-        .appendField(new Blockly.FieldDropdown([["in", true], ["not", false]]), "range")
+        .appendField(new Blockly.FieldDropdown([["in", ''], ["not", ' not ']]), "range")
         .appendField("between");
     this.appendValueInput("NUM2")
         .setCheck("Number");
@@ -86,11 +86,7 @@ Blockly.Elixir['when_sensor_range'] = function(block) {
   var value_num1 = Blockly.Elixir.valueToCode(block, 'NUM1', Blockly.Elixir.ORDER_ATOMIC);
   var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var not = '';
-  if (! dropdown_range){
-    not = 'not';
-  }
-  var code = 'when_sensor "' + not + ' ' + dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end\n';
+  var code = 'when_sensor "' + dropdown_range + ' ' + dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end\n';
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -151,7 +147,7 @@ Blockly.Blocks['while_sensor_range'] = {
    this.appendValueInput("NUM1")
        .setCheck("Number")
        .appendField("is")
-       .appendField(new Blockly.FieldDropdown([["in", true], ["not", false]]), "range")
+       .appendField(new Blockly.FieldDropdown([["in", ''], ["not", ' not ']]), "range")
        .appendField("between");
    this.appendValueInput("NUM2")
        .setCheck("Number");
@@ -169,11 +165,8 @@ Blockly.Elixir['while_sensor_range'] = function(block) {
  var value_num1 = Blockly.Elixir.valueToCode(block, 'NUM1', Blockly.Elixir.ORDER_ATOMIC);
  var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
- var not = '';
- if( ! dropdown_range){
-   not = 'not';
- }
- var code = 'while_sensor "'+ not + ' ' + dropdown_port +'" in '+ value_num1 +'..'+ value_num2 +' do\n '+ statements_do + '\n end\n';
+
+ var code = 'while_sensor "'+ dropdown_range + ' ' + dropdown_port +'" in '+ value_num1 +'..'+ value_num2 +' do\n '+ statements_do + '\n end\n';
  Blockly.Elixir.macros_.push(code);
  return code;
 };
