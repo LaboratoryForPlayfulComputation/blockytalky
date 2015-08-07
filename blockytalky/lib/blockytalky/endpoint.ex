@@ -1,6 +1,9 @@
 defmodule Blockytalky.Endpoint do
   use Phoenix.Endpoint, otp_app: :blockytalky
 
+
+  ##websockets
+  socket "/ws", Blockytalky.UserSocket
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phoenix.digest
@@ -31,5 +34,5 @@ defmodule Blockytalky.Endpoint do
     key: "_blockytalky_key",
     signing_salt: "UG/6ehSx"
 
-  plug :router, Blockytalky.Router
+  plug Blockytalky.Router
 end

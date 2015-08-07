@@ -38,9 +38,9 @@ import {Socket} from "phoenix"
  //sockets and channels
  let socket = new Socket("/ws");
  socket.connect();
- let hw_chan = socket.chan("hardware:values", {});
- let comm_chan = socket.chan("comms:message",{});
- let uc_chan = socket.chan("uc:command", {});
+ let hw_chan = socket.channel("hardware:values");
+ let comm_chan = socket.channel("comms:message");
+ let uc_chan = socket.channel("uc:command");
  //join
  hw_chan.join().receive("ok", chan => {
    console.log("Hw Success!");

@@ -6,6 +6,7 @@ defmodule Blockytalky.Router do
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
+    plug :put_secure_browser_headers
   end
 
   pipeline :api do
@@ -16,12 +17,8 @@ defmodule Blockytalky.Router do
     pipe_through :browser # Use the default browser stack
     get "/", PageController, :index
   end
-  #http://www.phoenixframework.org/v0.13.1/docs/channels
-  socket "/ws", Blockytalky do
-    channel "hardware:*", HardwareChannel
-    channel "comms:*", CommsChannel
-    channel "uc:*", UserCodeChannel
-  end
+
+
   # Other scopes may use custom stacks.
   # scope "/api", Blockytalky do
   #   pipe_through :api
