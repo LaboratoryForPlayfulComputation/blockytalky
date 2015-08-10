@@ -3,7 +3,7 @@ defmodule Blockytalky.Mixfile do
 
   def project do
     [app: :blockytalky,
-     version: "0.2.4",
+     version: "0.2.5",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix] ++ Mix.compilers,
@@ -30,11 +30,11 @@ defmodule Blockytalky.Mixfile do
   #
   # Type `mix help deps` for examples and options
   defp deps do
-    [{:phoenix, "~> 0.14", override: true},
-     {:phoenix_ecto, "~> 0.4"},
+    [{:phoenix, "~> 0.16", override: true},
+     {:phoenix_ecto, "~> 0.8"},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 1.1"},
-     {:phoenix_live_reload, "~> 0.4", only: :dev},
+     {:phoenix_html, "~> 1.4"},
+     {:phoenix_live_reload, "~> 0.5", only: :dev},
      {:cowboy, "~> 1.0"},
      {:erlport, git: "https://github.com/hdima/erlport.git"},
      {:osc,     git: "https://github.com/mujaheed/erlang-osc.git"},

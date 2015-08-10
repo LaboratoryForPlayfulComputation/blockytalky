@@ -2,7 +2,6 @@ defmodule Blockytalky.BrickPi do
   alias Blockytalky.PythonQuerier, as: PythonQuerier
   alias Blockytalky.BrickPiState, as: BrickPiState
   require Logger
-
   @moduledoc """
   API for BrickPi calls.
   """
@@ -134,6 +133,7 @@ defmodule Blockytalky.BrickPiState do
     {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do
+    Logger.info("Terminating #{inspect __MODULE__}")
   end
 
   ####
