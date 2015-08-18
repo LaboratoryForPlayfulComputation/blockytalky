@@ -421,7 +421,7 @@ defmodule Blockytalky.DSL do
       |> account_for_syncing()
       |> Enum.join("\n")
       |> SP.start_motif(loop: false)
-      Music.send_music_program(program, true)
+      Music.send_music_program(program)
     rescue
       _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
     end
@@ -432,7 +432,7 @@ defmodule Blockytalky.DSL do
       #|> account_for_syncing()
       |> Enum.join("\n")
       |> SP.start_motif(loop: true)
-      Music.send_music_program(program, true)
+      Music.send_music_program(program)
     rescue
       _ -> Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "No motif named: #{motif_name}"}
     end
