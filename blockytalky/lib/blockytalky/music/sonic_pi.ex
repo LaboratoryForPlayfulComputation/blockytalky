@@ -120,9 +120,6 @@ defmodule Blockytalky.SonicPi do
     if $u2 != nil && !$u2.closed?
       $u2.close
     end
-    if $u3 != nil && !$u3.closed?
-      $u3.close
-    end
     $u1 = UDPSocket.new
     $u2 = UDPSocket.new
     $u2.bind("0.0.0.0", #{listen_port})
@@ -130,24 +127,6 @@ defmodule Blockytalky.SonicPi do
     live_loop :beat_pattern do
       use_bpm $tempo
       #{if parent != false, do: sync_to_network, else: beat_signaling}
-    end
-
-    $u3 = UDPSocket.new
-    $u3.bind("127.0.0.1", #{eval_port})
-    if $eval_thread != nil && $eval_thread.alive?
-      $eval_thread.kill
-    end
-    $eval_thread = in_thread do
-      loop do
-        begin
-          program, addr = $u3.recvfrom_nonblock(65655)
-          eval(program)
-          sleep 1.0 / 64.0
-        rescue #IO::WaitReadable
-          sleep 1.0 / 64.0
-          next
-        end
-      end
     end
     """
   end
