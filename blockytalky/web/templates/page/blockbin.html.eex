@@ -3,6 +3,7 @@
   <%= render Blockytalky.PageView, "events.html" %>
    <%= render Blockytalky.PageView, "messaging.html" %>
    <%= render Blockytalky.PageView, "music.html" %>
+   <%= render Blockytalky.PageView, "grovepi.html" %>
    <sep></sep>
    <category name="Logic">
      <category name="If">
