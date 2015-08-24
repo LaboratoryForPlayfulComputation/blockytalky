@@ -12,7 +12,8 @@ config :blockytalky, Blockytalky.Endpoint,
   secret_key_base: "a7NmeMdzJJY1pE0J0ITT+N+qaKI/Qf8D309sH0bYPPHtTen4sJDCVlUh68ePDMNg",
   debug_errors: false,
   pubsub: [name: Blockytalky.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+           adapter: Phoenix.PubSub.PG2],
+  check_origin: false
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -21,6 +22,7 @@ config :blockytalky,
   dax: "ws://btrouter.getdown.org:8005/dax",
   music: true, #set to true if sonic pi is running / this is a synth unit
   music_port: 9090,
+  music_eval_port: 5050,
   update_rate: 30,
   update_rate_hibernate: 100
 

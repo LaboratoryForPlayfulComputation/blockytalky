@@ -6,6 +6,9 @@ defmodule Blockytalky.PageView do
   def sensors do
     HD.get_sensor_names
   end
+  def size_of_sensor_bar do
+    min(length(sensors),4)
+  end
   def init_sensor_type(hw,port_id) do
     case hw do
       "mock" -> "None"
@@ -16,6 +19,6 @@ defmodule Blockytalky.PageView do
     "#{min(round(1 / length(sensors) * 100) - 5, 20)}%"
   end
   def btu_id do
-    Application.get_env(:blockytalky, :id, "Unknown")
+    Blockytalky.RuntimeUtils.btu_id
   end
 end

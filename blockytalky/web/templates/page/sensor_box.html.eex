@@ -1,4 +1,4 @@
-<div class="sensor-box panel text-center" data-name="<%= @sensor[:id] %>">
+<div class="panel sensor-box text-center" data-name="<%= @sensor[:id] %>">
   <div class="sensor-name">
     <%= @sensor[:label] %>
   </div>

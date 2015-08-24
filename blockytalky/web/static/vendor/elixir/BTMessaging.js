@@ -20,8 +20,8 @@
          .setCheck("String")
          .appendField("to:");
      this.setInputsInline(true);
-     this.setPreviousStatement(true, null);
-     this.setNextStatement(true, null);
+     this.setPreviousStatement(true, ['Music','BP','Event','Message']);
+     this.setNextStatement(true, ['Music','BP','Event','Message']);
      this.setColour(120);
      this.setTooltip('');
      this.setHelpUrl('http://www.example.com/');
@@ -30,8 +30,11 @@
    Blockly.Elixir['send'] = function(block) {
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   var value_to = Blockly.Elixir.valueToCode(block, 'to', Blockly.Elixir.ORDER_ATOMIC);
-  var code = 'send_message('+value_msg+','+value_to+')\n';
-  Blockly.Elixir.macros_.push(code);
+  var context = ':top';
+  if (Blockly.Elixir.context != null){
+    context = Blockly.Elixir.context;
+  }
+  var code = 'send_message('+value_msg+','+value_to+', context: ' + context + ')\n';
   return code;
 };
  //receive
@@ -63,8 +66,8 @@ Blockly.Blocks['say'] = {
         .setCheck(null)
         .appendField("Say:");
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, ['BP','Event','Message']);
+    this.setNextStatement(true, ['BP','Event','Message']);
     this.setColour(120);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -74,6 +77,5 @@ Blockly.Elixir['say'] = function(block) {
   var value_msg = Blockly.Elixir.valueToCode(block, 'msg', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble Elixir into code variable.
   var code = 'say('+value_msg+')\n';
-  Blockly.Elixir.macros_.push(code);
   return code;
 };

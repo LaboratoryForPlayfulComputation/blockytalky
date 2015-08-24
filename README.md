@@ -1,89 +1,55 @@
-# blockytalky_elixir
+# BlockyTalky
 Phoenix and Elixir version of BlockyTalky for Raspberry pi -- LPC
 
-#To Install for development
-You will need the following programs:
-- Vagrant
-- ChefDK
-- VirtualBox (Or VM Ware)
+BlockyTalky is a distributed, networked toolkit for programming IoT like devices.
 
-You will also need the following vagrant plugins:
-- vagrant-berkshelf (>= 4.0.4)
-- vagrant-share     (>= 1.1.3, system)
-- vagrant-triggers  (>= 0.5.0)
-- vagrant-vbguest   (>= 0.10.0)
+BlockyTalky runs as a DSL and runtime-system wrapped by a phoenix web app that provides real-time monitoring of hardware signals, a Google Blockly based visual programming interface, and typical IDE functions like running and stopping code.
 
-You can install the plugins with: `vagrant plugin install <plugin-name>``
+BlockyTalky expects to be installed on Raspberry Pi hardware and currently supports Raspbian, Coder, and [DexterInd's Modified Raspbian](http://www.dexterindustries.com/BrickPi/getting-started/pi-prep/)
 
-Start the vm with:
-`vagrant up`
-If running on windows, please use a shell (like cygwin or the git-portable with sourcetree) that has ssh. Also, run the shell as an Administrator.
-If running on windows, after initializing for the first time, restart windows as that is required for symlinks to work (which is important for npm packages like brunch.io)
-- Install brunch io and npm
-  - `cd blockytalky`
-  - `rm -rf node_modules`
-      - NOTE: for vagrant, you need to make a symlink to somewhere not shared so that the folder name being too long doesn't crash: `mkdir ~/node_modules && ln -s ~/node_modules node_modules`
-  - `npm install`
-  - `sudo npm install -g brunch`
-- install mix packages:
-  -  `mix local.hex`
-  -  `mix deps.get`
-#To Install on raspberry pi or by hand on vm:
-- install erlang
-  - `https://www.erlang-solutions.com/downloads/download-erlang-otp`
-  - install the full erlang, not erlang-mini
-- install npm
-  - wget http://node-arm.herokuapp.com/node_latest_armhf.deb
-  - sudo dpkg -i node_latest_armhf.deb
-    - thanks to: `http://weworkweplay.com/play/raspberry-pi-nodejs/`
-    - note, if on vm or rpi if you have npm problems consider:
-      - `wget https://www.npmjs.com/install.sh | sudo sh` to see if that installs a more up to date version
-- install elixir from source
-  - git clone "https://github.com/elixir-lang/elixir"
-  - git checkout "tags/v1.0.5"
-    - or other current version of elixir ~>1.0.4
-  - make clean test
-    - note: test takes a while, you can just run clean if you have done these steps before without changing versions / environments
-  - sudo make install
-    - this step also takes a while.
-- install hex
-  - `sudo mix local.hex`
-- install phoenix tasks
-  - `sudo mix archive.install` https://github.com/phoenixframework/phoenix/releases/download/v0.14.0/phoenix_new-0.14.0.ez`
-  - replace the v number with whatever version of pheonix blockytalky currently has
-- run npm in case brunch isn't working
-  - cd blockytalky_elixir/blockytalky
-  - `rm -rf node_modules` if any exist currently
-  - `npm cache clean`
-  - `npm install`
-  - `sudo npm install -g brunch`
-    - use `npm list` to see what might be missing.
-- install blockytalky deps
-  - (cd blockytalky_elixir/blockytalky)
-  - `sudo mix deps.get`
-  - `sudo mix compile`
-- run `chmod +x install.sh && sudo install.sh` from DexterInd.
-  - `https://github.com/DexterInd/BrickPi/tree/master/Setup%20Files`
-- install BrickPi library globally (optional, we have a version in the hw_api directory)
-  - `https://github.com/DexterInd/BrickPi_Python`
-  - `sudo python setup.py install`
-- enable logging
-  - (cd blockytalky_elixir/blockytalky)
-  - sudo mix fileLogging
-- optional dev tools
-  - `sudo apt-get install inotify-tools`
+BlockyTalky currently supports the domains of Sensors and Motors with driver support for BrickPi and GrovePi hats and hardware. SonicPi's softsynth DSL is also supported on Pi2s or better.
 
-# Run for dev
-  - `sudo HOSTNAME=<blockytalky_id> mix phoenix.server` or `sudo HOSTNAME=<blockytalky_id> iex -S mix phoenix.server` if you want iex>
-    - where you replace the blockytalky_id with the id that you want to run as (for messaging, etc.) if you want to use a btu id other than your hostname
-    - make sure to change the dev config options (specifically supported hardware) if you are deving on the pi and want to test brickpi or grovepi support
-# Deploy for production
-    - resource: http://www.phoenixframework.org/v0.14.0/docs/advanced-deployment
-    - on dev machine: `brunch build --production && MIX_ENV=prod PORT=80 mix phoenix.digest && MIX_ENV=prod mix release` will generate a new /rel folder
-      - make sure `ERTS_VSN` in rel/blockytalky/bin/blocktalky is the same as the ERTS on the pi you are deploying to. We are using 6.1. you can check in ``/usr/lib/erlang/erts-<vsn>`
-      - Make sure also you have the same version of ERTS in your erlang directory as you do on the pi (it can be a symlink to another version with the name changed, if it isn't possible to get the version of ERTS on the dev machine.)
-      - don't use sudo with `mix release` or else it will have permission issues
-      - look at the docs for the release tool for more info `https://github.com/bitwalker/exrm`
-      - I do not currently recommend building a release on the pi itself because `brunch build --production` seems to take too long or hang
-      - note, the app in /rel will not be packaged with its own erlang and will instead use the systems erlang at `/usr/lib/erlang` because we assume cross compilation (compiled on x86_64 -> run on rpi/arm)
-      - you can run `npm list` to make sure brunch will succeed in its build. if you are missing dependencies, then node install did not work correctly. This is a big issue on VMs and the solution of making the node_modules dir a symlink to somewhere else on the system (not a windows file system).
+# Quick Install
+Checklist:
+- Install Latest BlockyTalky release and run on boot
+- BrickPi and GrovePi setup
+- SonicPi run on start and boot in GUI Modified
+
+### Install (or Upgrade) Latest BlockyTalky release and run on boot
+
+<pre>
+mkdir /opt/blockytalky
+cd /opt/blockytalky
+# wget or curl the latest release, replace the version #
+# https://github.com/tufts-LPC/blockytalky_elixir/releases/latest
+sudo wget https://github.com/tufts-LPC/blockytalky_elixir/releases/download/v#.#.#/blockytalky.tar.gz
+sudo tar xvfz blockytalky.tar.gz
+# edit the config to enable / disable music and specific hardware
+sudo nano releases/#.#.#/blockytalky.conf
+# add: /opt/blockytalky/bin/blockytalky start
+sudo nano /etc/rc.local
+</pre>
+
+### BrickPi and GrovePi Setup
+From your home or some other directory:
+<pre>
+git clone https://github.com/DexterInd/BrickPi_Python
+cd BrickPi_Python
+sudo apt-get install python-setuptools
+sudo python setup.py install
+</pre>
+
+Edit `/boot/config.txt` and uncomment the line: `dtparam=i2c_arm=on`
+
+### SonicPi run on start and boot in GUI Modified
+
+Edit `/etc/xdg/lxsession/LXDE-pi/autostart` and add the line `@sonicpi`
+
+Run `sudo raspi-config` and enable boot to desktop GUI mode.
+
+
+# More Instructions
+When installing on coder, both blockytalky and coder will compete for port 80. Please make your coder configuration use another port.
+
+To get started with developing for BlockyTalky:
+[Start here for Development Instructions](https://github.com/tufts-LPC/blockytalky_elixir/wiki/Getting-Started-for-Developers)

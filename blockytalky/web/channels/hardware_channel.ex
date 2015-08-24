@@ -14,16 +14,11 @@ defmodule Blockytalky.HardwareChannel do
 
   ####
   #External API
-  def pub_mock_hw_message() do
-    value = case MockHW.get_sensor_value(3) do
-      {:ok, data} -> data
-      _           -> ":("
-    end
-    Blockytalky.Endpoint.broadcast! "hardware:values", "mock",  %{body: value}
-  end
+
 
   ####
   #Channel implementation
+
   #pattern match on param 1, a string like "topic:subtopic"
   def join("hardware:" <> _any, _auth_msg, socket) do
     #Logger.debug "User joined socket: #{inspect socket}"
@@ -50,6 +45,7 @@ defmodule Blockytalky.HardwareChannel do
     push socket, "sensor_changed", %{"port_id" => port_id, "sensor_label" => sensor_label} #client's don't need the type, this is just to change the label.
     {:noreply, socket}
   end
+
   def handle_out(any, payload, socket) do
     push socket, any, payload
     {:noreply, socket}

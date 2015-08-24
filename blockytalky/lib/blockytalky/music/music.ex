@@ -3,26 +3,32 @@ defmodule Blockytalky.Music do
   require Logger
   alias Blockytalky.SonicPi, as: SonicPi
   @moduledoc """
-  Motifs are defined as Sonic pi lambda's
+  Motifs are defined as Sonic pi DSL strings
   Motifs can be played [in loops|one-shots] in named threads that can be started
   (in_thread) or killed ($threadvar.kill)
   """
   @sonicpi_port 4557
-  @listen_port  Application.get_env(:blockytalky, :music_port, 9090)
+  def eval_port, do: Application.get_env(:blockytalky, :music_eval_port, 5050)
   ####
   #External API
-  @doc """
-  Adds a btu_id to send a :network_sync 
-  """
-  def add_child(btu_id) do
-    GenServer.cast(__MODULE__, {:add_dependant, btu_id})
+  def listen_port do
+    Application.get_env(:blockytalky, :music_respond_port, 9091)
   end
-  def set_parent(parent_id) do
-    spawn send_music_program(SonicPi.maestro_parent) #prep sonic pi vm to sync
-    GenServer.cast(__MODULE__, {:set_parent, parent_id})
+  def stop_signal do
+    send_music_program(SonicPi.stop_motif, true)
   end
-  def sync_to_parent(parent_id) do
-    if parent_id == get_parent, do: send_music_program(SonicPi.cue(:network))
+  def listen(udp_conn) do
+    {data, ip} = udp_conn
+      |> Socket.Datagram.recv!
+    case JSX.decode(data) do
+      {:ok, map} ->
+        message = Map.get(map,"message")
+        to = Map.get(map,"to")
+        Blockytalky.CommsModule.send_message(message,to)
+      _ ->
+        :ok
+    end
+    listen(udp_conn)
   end
   @doc """
   Sends a music program(string) to the sonic pi instance running on local host
@@ -30,56 +36,71 @@ defmodule Blockytalky.Music do
   ## Example
       iex> Blockytalky.Music.send_music_program(Blockytalky.SonicPi.cue(:my_cue))
   """
-  def send_music_program(program) do
+  def send_music_program(program, use_eval_port \\ false) do
+    send_music_program(GenServer.call(__MODULE__,:get_udp_conn),program, use_eval_port)
+  end
+  def send_music_program(udp_conn, program, use_eval_port) do
     #pack program as osc message
-    m = {:message, '/run-code',[String.to_char_list(program)]}
-        |> :osc_lib.encode
-    #send program via udp to sonic pi port
-    GenServer.call(__MODULE__, :get_udp_conn)
-    |> Socket.Datagram.send! m, {"127.0.0.1", @sonicpi_port}
+    if use_eval_port do
+      udp_conn
+      |> Socket.Datagram.send!(program, {"127.0.0.1", eval_port})
+    else #this case is used for initializing before the eval port is listening
+      m = {:message, '/run-code',[String.to_char_list(program)]}
+          |> :osc_lib.encode
+      #send program via udp to sonic pi port
+      udp_conn
+      |> Socket.Datagram.send!( m, {"127.0.0.1", @sonicpi_port})
+    end
+  end
+  def get_samples_map do
+    GenServer.call(__MODULE__,:get_samples_map)
+  end
+  def get_sample(sample_num) do
+    Map.get(get_samples_map, sample_num)
+  end
+  def set_sample(sample_num, file_name) do
+    GenServer.cast(__MODULE__,{:set_sample, sample_num, file_name})
+  end
+  def get_saved_samples do
+    File.mkdir "data/samples"
+    case File.ls "data/samples" do
+      {:ok, files} -> files
+      {:error, _} -> []
+    end
   end
   ####
   #Internal API
-  #all messages come from sonic_pi, any message from another BTU will come from the comms module
-  defp listen(udp_conn) do
-    #listen for udp message
-    {data, ip} = udp_conn |> Socket.Datagram.recv!
-        Logger.debug "Got message from sonicpi: #{inspect data}"
-    case data do
-      :network_sync ->
-        #send network signal to children
-        get_children
-        |> Enum.map(fn(child) -> CommsModule.send_message(:network_sync,child) end)
-    end
-    listen(udp_conn)
-  end
-  defp get_parent do
-    GenServer.call(__MODULE__,:get_parent)
-  end
-  defp get_children do
-    GenServer.call(__MODULE__, :get_children)
-  end
+
   ####
   # GenServer Implementation
   # CH. 16
   def start_link() do
-    udp_conn = Socket.UDP.open! @udp_multicast_port, broadcast: true
-    Logger.info "Starting #{inspect __MODULE__}"
-    {:ok, _pid} = GenServer.start_link(__MODULE__, udp_conn)
+    {:ok, _pid} = GenServer.start_link(__MODULE__,[], name: __MODULE__)
   end
-  def init(udp_conn) do
-    send_music_program(SonicPi.init)
-    listener_pid = spawn listen(udp_conn)
-    music_dependants = []
-    maestro_parent = :self
-    {:ok, {udp_conn, listener_pid, music_dependants, maestro_parent}}
+  def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
+    udp_conn = Socket.UDP.open! listen_port, broadcast: true
+    _ = spawn fn -> listen(udp_conn) end
+    _task = Task.async fn ->
+      :timer.sleep(15_000) #TODO: replace with ping back from sonic
+      send_music_program(udp_conn, SonicPi.init, false)
+    end
+
+    # read last loaded samples
+    File.mkdir("data")
+    File.touch!("data/samples.json") #make the file if it doesn't exist
+    samples_map = case File.read!("data/samples.json") |> JSX.decode do
+      {:ok, map} -> map
+      _          -> %{}
+    end
+    {:ok, {udp_conn, samples_map}}
   end
-  def handle_call(:get_parent, _from, s={_,_,_,parent}), do: {:reply, parent, s}
-  def handle_call(:get_children, _from, s={_,_,c,_}), do: {:reply, c, s}
-  def handle_call(:get_udp_conn, _from, s={u,_,_,_}), do: {:reply, u, s}
-  def handle_cast({:add_child, btu_id}, _from, s={u,l,c,p}), do: {:noreply,{u,l,c ++ [btu_id]}}
-  def terminate(_reason, {_udp_conn, listener_pid, _music_dependants, _maestro_parent}) do
-    Process.exit(listener_pid, :restarting)
+  def handle_call(:get_udp_conn, _from, s={u,_m}), do: {:reply, u, s}
+  def handle_call(:get_samples_map, _from, s={_u,m}), do: {:reply,m,s}
+  def handle_cast({:set_sample, sample_num, file_name}, _from, {u,m}) do
+    {:noreply,{u,Map.put(m,sample_num,file_name)}}
+  end
+  def terminate(_reason, _state) do
     Logger.info "Terminating #{inspect __MODULE__}"
     :ok
   end

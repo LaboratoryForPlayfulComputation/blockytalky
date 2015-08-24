@@ -8,7 +8,6 @@ defmodule Blockytalky.DaxListener do
   CommsModule receive channel
   """
   @dax_router Application.get_env(:blockytalky, :dax, "ws://0.0.0.0:8005/dax")
-  @btu_id Blockytalky.RuntimeUtils.btu_id
 
   def start_link() do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)  #return this
@@ -16,7 +15,12 @@ defmodule Blockytalky.DaxListener do
   def send_message(msg, to) do
     try do #the genserver might not be running
       dax_conn = get_dax_conn
-      Socket.Web.send dax_conn, {:text,CM.message_encode(@btu_id, to, "Message", msg)}
+      if(dax_conn) do
+        Socket.Web.send dax_conn, {:text,CM.message_encode(Blockytalky.RuntimeUtils.btu_id, to, "Message", msg)}
+        :ok
+      else
+        :error
+      end
     rescue
       _ -> :ok
     end
@@ -45,7 +49,7 @@ defmodule Blockytalky.DaxListener do
     case get_dax_conn do
       nil ->
         try do
-          dax_conn = Socket.connect! @dax_router
+          dax_conn = connect
           GenServer.cast(__MODULE__,{:set_dax_conn, dax_conn})
         rescue
           _ ->  :ok
@@ -60,16 +64,23 @@ defmodule Blockytalky.DaxListener do
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     try do
-      dax_conn = Socket.connect! @dax_router
-      msg = CM.message_encode(@btu_id, "dax", "Subs")
+      dax_conn = connect
+      Logger.debug "connected to dax!"
+      msg = CM.message_encode(Blockytalky.RuntimeUtils.btu_id, "dax", "Subs")
       Socket.Web.send! dax_conn, {:text, msg}
       Logger.debug "dax_conn: #{inspect dax_conn}"
       listener_pid = spawn  (fn -> listen(dax_conn) end)
       _ = spawn (fn -> observer() end)
       {:ok, {dax_conn, listener_pid}}
     rescue
-      _ -> :ignore
+      _ -> {:ok,{nil,nil}}
     end
+  end
+  ####
+  #private API
+  defp connect do
+    Task.async fn -> Socket.connect! @dax_router end
+    |> Task.await 10_000 #10 second timeout for waiting to connect
   end
   def handle_call(:get_dax_conn, _from, state={dax_conn,_l}) do
     {:reply, dax_conn, state}

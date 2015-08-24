@@ -2,14 +2,10 @@ defmodule Blockytalky.BrickPi do
   alias Blockytalky.PythonQuerier, as: PythonQuerier
   alias Blockytalky.BrickPiState, as: BrickPiState
   require Logger
-
   @moduledoc """
   API for BrickPi calls.
   """
-  ####
-  #config
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
-  @supported_hardware Application.get_env(:blockytalky, :supported_hardware)
+
   ####
   #External API
 
@@ -18,6 +14,9 @@ defmodule Blockytalky.BrickPi do
     type = BrickPiState.get_sensor_type(port_id)
     value = case type do
       "TYPE_SENSOR_NONE" -> nil
+      "TYPE_SENSOR_ULTRASONIC_SS" ->
+        v = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num]) #turn the error case into a max (default) case
+        if v == -1, do: 255
       _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
       end
 
@@ -33,19 +32,23 @@ defmodule Blockytalky.BrickPi do
   end
   def get_encoder_value(port_id) do
      port_num = BrickPiState.get_sensor_type_constants[port_id]
-     PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num])
+     case PythonQuerier.run_result(:btbrickpi, :get_encoder_value,[port_num]) do
+       {:ok, v} -> v
+       _ -> nil
+     end
    end
   @doc """
   ##Example
       iex>Blockytalky.BrickPi.set_sensor_type("PORT_1","TYPE_SENSOR_TOUCH")
   """
   def set_sensor_type(port_id, sensor_type) do
-     BrickPiState.set_sensor_type(port_id, sensor_type)
-     num_type = BrickPiState.get_sensor_type_constants[sensor_type]
-     port_num = BrickPiState.get_sensor_type_constants[port_id]
-     PythonQuerier.run(:btbrickpi, :set_sensor_type, [port_num, num_type])
-
-   end
+     if sensor_type != "TYPE_SENSOR_NONE" do
+       BrickPiState.set_sensor_type(port_id, sensor_type)
+       num_type = BrickPiState.get_sensor_type_constants[sensor_type]
+       port_num = BrickPiState.get_sensor_type_constants[port_id]
+       PythonQuerier.run(:btbrickpi, :set_sensor_type, [port_num, num_type])
+    end
+  end
    @doc """
    ##Example
       iex>Blockytalky.BrickPi.set_sensor_type(0,"TYPE_SENSOR_TOUCH")
@@ -88,20 +91,21 @@ defmodule Blockytalky.BrickPiState do
   state to reflect that new type. The state looks like:
   {map_of_constants=%{"KEY" => int...}, port_list=[:"1":"KEY1",:"3":"KEY2"]}
   """
-  @sensor_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/data/"
+  @sensor_dir "data"
   @sensor_file "sensors.json"
-  @script_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/lib/hw_apis"
+  @script_dir "priv/hw_apis"
   @no_sensor "TYPE_SENSOR_NONE"
   def start_link() do
     {:ok, _pid} = GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
   def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     # {:ok, %{"TYPE_NAME"=> value, ...},[:"1":num, ...]}
     map = _get_sensor_type_constants
     #reload last known configuration of sensor types
-    File.mkdir(@sensor_dir)
-    File.touch("#{@sensor_dir}/#{@sensor_file}")
-    sensor_types = case File.read("#{@sensor_dir}/#{@sensor_file}") do
+    File.mkdir(Application.app_dir(:blockytalky, @sensor_dir))
+    File.touch("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}")
+    sensor_types = case File.read("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}") do
       {:ok, text} when text != "" -> JSX.decode(text)
       _ -> %{}
     end
@@ -125,10 +129,11 @@ defmodule Blockytalky.BrickPiState do
     sensor_types = Map.put(sensor_types,port_id, sensor_type)
     #backup sensor types
     {status, json} = JSX.encode sensor_types
-    if status == :ok, do: File.write(@sensor_file, json)
+    if status == :ok, do: File.write("#{@sensor_dir}/#{@sensor_file}", json)
     {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do
+    Logger.info("Terminating #{inspect __MODULE__}")
   end
 
   ####
@@ -145,7 +150,7 @@ defmodule Blockytalky.BrickPiState do
 
   defp _get_sensor_type_constants(list, file \\ nil) do
     #open file
-    unless file, do: file = File.open!("#{@script_dir}/BrickPi.py")
+    unless file, do: file = File.open!("#{Application.app_dir(:blockytalky, @script_dir)}/BrickPi.py")
     #parse through to find constant declarations at the top of the file
     line = IO.read(file, :line) |> String.strip
     #match = ~r/^([A-Z_]+)(\s*)=(\s*)(((0x)*)[0-9]|[A-Z_]+)/

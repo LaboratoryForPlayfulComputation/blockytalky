@@ -2,12 +2,12 @@ defmodule Blockytalky.CommsModule do
   use Supervisor
   alias Blockytalky.DaxListener, as: DL
   alias Blockytalky.LocalListener, as: LL
+  alias Blockytalky.UserState, as: US
   require Logger
   @moduledoc """
   In charge of local and remote messaging between
   BTUs, App Inventor Apps, and music synths.
   """
-  @btu_id Blockytalky.RuntimeUtils.btu_id
 
   ####
   #External APIs
@@ -46,6 +46,7 @@ defmodule Blockytalky.CommsModule do
         Blockytalky.Endpoint.broadcast! "comms:sync", "network_sync",  %{body: msg}
       _ ->
         {sender, body} = msg
+        US.queue_message(body)
         Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: body}
     end
   end
@@ -55,12 +56,13 @@ defmodule Blockytalky.CommsModule do
   packs the python message.py style json object for the sake of backwards compat.
   """
   def message_encode(source, destination, channel, content \\ []) do
-    ~s|{"py/object": "message.Message", "content": {"py/tuple": #{inspect content}}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
+    ~s|{"py/object": "message.Message", "content": #{inspect content}, "destination": "#{destination}", "channel": "#{channel}", "source": "#{source}"}|
   end
   ####
   # Supervisor implementation
   # CH17 Programming Elixir
   def init(_) do
+    Logger.info "Initializing #{inspect __MODULE__}"
     #try to connect to
     comms_children = [
       worker(DL, [], restart: :transient),

@@ -1,18 +1,87 @@
 <category name="Music">
-  <category name="Config">
+  <category name="Actions">
     <block type="sync_to_parent">
+      <value name="PARENT">
+        <block type="text">
+          <field name="TEXT">walle</field>
+        </block>
+      </value>
+    </block>
+    <!-- <block type="set_tempo"> -->
+    <block type="cue">
+      <value name="MOTIF">
+        <block type="text">
+          <field name="TEXT">melody</field>
+        </block>
+      </value>
+    </block>
+    <block type="loop">
+      <value name="MOTIF">
+        <block type="text">
+          <field name="TEXT">melody</field>
+        </block>
+      </value>
+    </block>
+    <block type="stop_sound">
+    </block>
+    <block type="set_volume">
+      <value name="VOLUME">
+        <block type="math_number">
+          <field name="NUM">50</field>
+        </block>
+      </value>
+    </block>
+    <block type="set_tempo">
+      <value name="TEMPO">
+        <block type="math_number">
+          <field name="NUM">120</field>
+        </block>
+      </value>
+    </block>
+    <block type="set_synth"></block>
   </category>
   <category name="Motifs">
-    <block type="defmotif"></block>
-    <block type="play_synth"></block>
-    <block type="rest"></block>
+    <block type="defmotif">
+      <value name="NAME">
+        <block type="text">
+          <field name="TEXT">melody</field>
+        </block>
+      </value>
+    </block>
+    <block type="play_synth">
+      <value name="NOTES">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="BEATS">
+        <block type="math_number">
+          <field name="NUM">2</field>
+        </block>
+      </value>
+    </block>
+    <block type="chord"></block>
+    <block type="trigger_drum"> </block>
+    <block type="rest">
+      <value name="AMOUNT">
+        <block type="math_number">
+          <field name="NUM">2</field>
+        </block>
+      </value>
+    </block>
     <block type="wait_for"></block>
-    <block type="loop"></block>
+    <block type="send">
+      <value name="msg">
+        <block type="text">
+          <field name="TEXT">hello</field>
+        </block>
+      </value>
+      <value name="to">
+        <block type="text">
+          <field name="TEXT">walle</field>
+        </block>
+      </value>
+    </block>
+    <block type="with_fx"></block>
   </category>
-  <!--
-  <category name="Instruments">
-    <block name="effect"></block>
-    <block name="synth"></block>
-  </category>
-  -->
 </category>

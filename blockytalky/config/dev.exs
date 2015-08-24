@@ -18,6 +18,7 @@ config :blockytalky, Blockytalky.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif)$},
+      ~r{priv/static/vendor/.*(js|css|png|jpeg|jpg|gif)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex)$}
     ]
@@ -40,4 +41,5 @@ config :blockytalky, Blockytalky.Repo,
   ####
   #custom configuration
   config :blockytalky,
-    supported_hardware: [:btgrovepi]
+    supported_hardware: [:btgrovepi],
+    user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"

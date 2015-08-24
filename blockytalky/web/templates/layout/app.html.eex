@@ -9,6 +9,10 @@
 
     <title><%= btu_id %></title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/libnotify.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/foundation.min.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/foundation-icons.css") %>">
+
   </head>
 
   <body>
@@ -27,7 +31,7 @@
       <%= @inner %>
 
     </div> <!-- /container -->
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="<%= static_path(@conn, "/js/jquery-1.11.3.min.js")  %>"></script>
     <script src="<%= static_path(@conn, "/js/foundation.min.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     <script>require("web/static/js/app")</script>

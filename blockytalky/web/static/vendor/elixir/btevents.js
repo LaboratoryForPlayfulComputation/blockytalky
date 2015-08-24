@@ -15,7 +15,7 @@
      this.appendDummyInput()
          .appendField("When I start");
      this.appendStatementInput("DO")
-         .setCheck(null)
+         .setCheck(['BP','Event','Message'])
          .appendField("do:");
      this.setColour(160);
      this.setTooltip('');
@@ -24,7 +24,7 @@
  };
  Blockly.Elixir['when_start'] = function(block) {
    var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-   var code = 'start do\n '+ statements_do +' \nend';
+   var code = 'start do\n '+ statements_do +' \nend\n';
    Blockly.Elixir.macros_.push(code);
    return code;
  };
@@ -33,7 +33,7 @@
      this.appendDummyInput()
          .appendField("Repeatedly");
      this.appendStatementInput("DO")
-         .setCheck(null)
+         .setCheck(['BP','Event','Message'])
          .appendField("do:");
      this.setColour(20);
      this.setTooltip('');
@@ -42,7 +42,7 @@
  };
  Blockly.Elixir['repeatedly_do'] = function(block) {
    var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-   var code = 'repeatedly do\n '+ statements_do +' \nend';
+   var code = 'repeatedly do\n '+ statements_do +' \nend\n';
    Blockly.Elixir.macros_.push(code);
    return code;
  };
@@ -54,10 +54,10 @@ Blockly.Blocks['for_time'] = {
     this.appendDummyInput()
         .appendField("seconds");
     this.appendStatementInput("DO")
-        .setCheck(null)
+        .setCheck(['BP','Event','Message'])
         .appendField("repeatedly do:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
+    this.setInputsInline(true,['BP','Event','Message']);
+    this.setPreviousStatement(true, ['BP','Event','Message']);
     this.setNextStatement(false, null);
     this.setColour(20);
     this.setTooltip('');
@@ -67,8 +67,7 @@ Blockly.Blocks['for_time'] = {
 Blockly.Elixir['for_time'] = function(block) {
   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'for_time('+value_time+') do\n '+statements_do+' \n end';
-  Blockly.Elixir.macros_.push(code);
+  var code = 'for_time('+value_time+') do\n '+statements_do+' \n end\n';
   return code;
 };
 Blockly.Blocks['in_time'] = {
@@ -79,11 +78,11 @@ Blockly.Blocks['in_time'] = {
     this.appendDummyInput()
         .appendField("seconds");
     this.appendStatementInput("DO")
-        .setCheck(null)
+        .setCheck(['BP','Event','Message'])
         .appendField("do once:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setInputsInline(true,['BP','Event','Message']);
+    this.setPreviousStatement(true,['BP','Event','Message']);
+    this.setNextStatement(true, 'Event');
     this.setColour(160);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -92,7 +91,6 @@ Blockly.Blocks['in_time'] = {
 Blockly.Elixir['in_time'] = function(block) {
   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'in_time('+value_time+') do\n '+statements_do+' \n end';
-  Blockly.Elixir.macros_.push(code);
+  var code = 'in_time('+value_time+') do\n '+statements_do+' \n end\n';
   return code;
 };

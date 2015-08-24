@@ -1,9 +1,15 @@
 <xml id="toolbox" style="display: none">
-   <%= render Blockytalky.PageView, "sensors.html" %>
-  <%= render Blockytalky.PageView, "events.html" %>
+   <%= if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware do %>
+    <%= render Blockytalky.PageView, "sensors.html" %>
+   <% end %>
+   <%= render Blockytalky.PageView, "events.html" %>
    <%= render Blockytalky.PageView, "messaging.html" %>
-   <%= render Blockytalky.PageView, "music.html" %>
-   <%= render Blockytalky.PageView, "grovepi.html" %>
+   <%= if :btgrovepi in Blockytalky.RuntimeUtils.supported_hardware do %>
+    <%= render Blockytalky.PageView, "grovepi.html" %>
+   <% end %>
+   <%= if Application.get_env(:blockytalky, :music) do %>
+    <%= render Blockytalky.PageView, "music.html" %>
+   <% end %>
    <sep></sep>
    <category name="Logic">
      <category name="If">
@@ -67,7 +73,7 @@
      </block>
      <block type="math_random_float"></block>
    </category>
-   <category name="Lists">
+   <!-- <category name="Lists">
      <block type="lists_create_empty"></block>
      <block type="lists_create_with"></block>
      <block type="lists_repeat">
@@ -82,7 +88,7 @@
      <block type="lists_indexOf"></block>
      <block type="lists_getIndex"></block>
      <block type="lists_setIndex"></block>
-   </category>
+   </category> -->
    <category name="Variables" custom="VARIABLE"></category>
    <category name="Functions" custom="PROCEDURE"></category>
    <sep></sep>

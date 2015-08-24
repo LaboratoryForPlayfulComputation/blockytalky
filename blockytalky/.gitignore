@@ -21,6 +21,7 @@ erl_crash.dump
 /priv/static/css/app.css.map
 /priv/static/js/*.gz
 /priv/static/css/*.gz
+/priv/static/css/app-*.css
 /priv/static/css/svg/*.gz
 # The config/prod.secret.exs file by default contains sensitive
 # data and you should not commit it into version control.
@@ -32,7 +33,7 @@ erl_crash.dump
 #/config/prod.secret.exs
 
 # compiled python
-/lib/hw_apis/*.pyc
+/priv/hw_apis/*.pyc
 
 #compiled erts
-/rel/blockytalky/erts-*
+/rel/blockytalky

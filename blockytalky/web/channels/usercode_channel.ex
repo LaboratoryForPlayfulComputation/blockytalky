@@ -2,8 +2,8 @@ defmodule Blockytalky.UserCodeChannel do
   use Phoenix.Channel
   alias Blockytalky.UserState, as: US
   require Logger
-  @file_dir "#{Application.get_env(:blockytalky, Blockytalky.Endpoint, __DIR__)[:root]}/usercode"
-  @btu_id Blockytalky.RuntimeUtils.btu_id
+  
+
   def join("uc:" <> _any, _auth_msg, socket) do
     {:ok, socket}
   end
@@ -15,6 +15,7 @@ defmodule Blockytalky.UserCodeChannel do
   def handle_in("stop", _, socket) do
     US.stop_user_code
     Blockytalky.HardwareDaemon.stop_signal
+    Blockytalky.Music.stop_signal
     {:noreply, socket}
   end
   def handle_in("upload", %{"body" => map}, socket) do
@@ -27,6 +28,12 @@ defmodule Blockytalky.UserCodeChannel do
   def handle_in("download", _ , socket) do
     map = GenServer.call(US,:get_user_code)
     {:reply, {:ok, map}, socket}
+  end
+  def handle_in("select_sample", %{"body" => sample_name}, socket) do
+    {:noreply, socket}
+  end
+  def handle_in("upload_sample", %{"body" => sample}, socket) do
+    {:noreply, socket}
   end
   @doc """
   a progress message has the form:
@@ -53,9 +60,9 @@ defmodule Blockytalky.UserCodeChannel do
       [val | _ ] = :io_lib.format('~2..0B~n', [x]) #format to 2 digits
       val
     end
-    file_name = Enum.join([@btu_id,y,mo,d,h,mi,s], "_") <> ".json"
-    File.mkdir(@file_dir)
-    case File.write("#{@file_dir}/#{file_name}", JSX.encode!(map) |> JSX.prettify!) do
+    file_name = Enum.join([Blockytalky.RuntimeUtils.btu_id,y,mo,d,h,mi,s], "_") <> ".json"
+    File.mkdir(Application.get_env(:blockytalky,:user_code_dir))
+    case File.write("#{Application.get_env(:blockytalky,:user_code_dir)}/#{file_name}", JSX.encode!(map) |> JSX.prettify!) do
       {_, reason} -> Blockytalky.Endpoint.broadcast! "uc:command", "error",  %{body: reason}
       _           -> Blockytalky.Endpoint.broadcast! "uc:command", "progress",  %{body: "Code uploaded!"}
     end
