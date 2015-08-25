@@ -21,17 +21,20 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
 			set_sensor_type(i,io_vals[i])
     return
 def get_sensor_value(port_num,sensor_type,sensor_io):
-    if sensor_io == "ULTRASONIC":
-	return ultrasonicRead(port_num)
-    if sensor_io == "DHT":
-	return dht(port_num,0)
+    try: 
+	    if sensor_io == "ULTRASONIC":
+		return ultrasonicRead(port_num)
+	    if sensor_io == "DHT":
+		return dht(port_num,0)
 
-    if sensor_type == "analog":
-	return analogRead(port_num)
-    elif sensor_type == "digital":
-	return digitalRead(port_num)
-    else:
-	 return -1
+	    if sensor_type == "analog":
+		return analogRead(port_num)
+	    elif sensor_type == "digital":
+		return digitalRead(port_num)
+	    else:
+		 return -1
+    except IOError: 
+	    return "Error"
 def set_sensor_type(port_num, sensor_io): #sets the pinmode if applicable
     if (sensor_io != "DHT" and sensor_io != "ULTRASONIC"):
 	pinMode(port_num,sensor_io)

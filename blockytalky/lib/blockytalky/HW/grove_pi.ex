@@ -10,14 +10,19 @@ defmodule Blockytalky.GrovePi do
 	end
 
 	def component_id_map do 
-		%{:LIGHT_SENSOR => "INPUT", :SOUND_SENSOR => "INPUT", :ROTARY_ANGLE_SENSOR => "INPUT",
-			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT", :RELAY => "OUTPUT",
-			:TEMPERATURE_HUMIDITY_SENSOR => "DHT", :ULTRASONIC_SENSOR => "ULTRASONIC"}
+		%{:LIGHT => "INPUT", :SOUND => "INPUT", :ROTARY_ANGLE => "INPUT",
+			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",
+			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
 	end 
-	def get_sensor_value(port_id) do
+	def get_component_value(port_id) do
 		{port_num, type} = Map.get(port_id_map, port_id)
-		io = GrovePiState.get_port_info(port_id)
-		PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		io = GrovePiState.get_port_io(port_id)
+                case io do
+		   "OUTPUT" -> GrovePiState.get_last_set_value(port_id) 
+                    _ -> 
+			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		        if v == "Error", do: nil, else: v
+	        end
 	end
 	
 	def set_component_type(port_id, component_id) do
@@ -48,6 +53,7 @@ defmodule Blockytalky.GrovePi do
 				end
 		end
 		PythonQuerier.run(:btgrovepi, :set_component, [port_num, value, type])
+                GrovePiState.set_component_value(port_id, value)
 		:ok		
 	end
 end
@@ -66,20 +72,36 @@ defmodule Blockytalky.GrovePiState do
 	def set_component_type(port_id, component_id) do
 		GenServer.cast(__MODULE__, {:set_port, port_id, component_id})		
 	end
-	
-	def get_port_info(port_id) do
-		Map.get(GrovePi.component_id_map, GenServer.call(__MODULE__, {:get_port, port_id}))
+        def set_component_value(port_id, value) do
+                GenServer.cast(__MODULE__, {:set_value, port_id, value})
+        end
+	def get_last_set_value(port_id) do
+                GenServer.call(__MODULE__, {:get_last_set_value, port_id})
+        end
+	def get_port_io(port_id) do
+		Map.get(GrovePi.component_id_map, get_port_component(port_id))
 	end
-
+        def get_port_component(port_id) do
+                { component_id, _ } = GenServer.call(__MODULE__, {:get_port, port_id})
+		component_id
+        end
 	def terminate(_reason,_state) do
 		Logger.info("Terminating #{inspect __MODULE__}")
 	end
 	def handle_call({:get_port, port_id}, _from, map) do
-		{:reply, Map.get(map, port_id), map}
+		{:reply, Map.get(map, port_id, {nil, nil}), map}
 	end
-	def handle_cast({:set_port, port_id, component_id }, map) do	
-		map = Map.put(map, port_id, component_id)
+        def handle_call({:get_last_set_value, port_id}, _from, map) do
+                { _, value} = Map.get(map, port_id, {nil, nil})
+                {:reply, value, map}
+        end
+	def handle_cast({:set_port, port_id, component_id}, map) do	
+		map = Map.put(map, port_id, {component_id, nil})
 		{:noreply, map}
 	end
-	
+        def handle_cast({:set_value, port_id, value}, map) do
+		{ component_id, _ } = Map.get(map, port_id, {nil, nil})
+		map = Map.put(map, port_id, { component_id, value })
+                {:noreply, map}
+        end	
 end

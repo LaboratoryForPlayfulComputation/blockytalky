@@ -1,8 +1,12 @@
 import btgrovepi
+from grovepi import *
+rot = 1
+pinMode(rot,"INPUT")
 while True:
 	try:
 		io_vals = []
-		for i in range(10):
+		print(analogRead(rot))
+		"""for i in range(10):
 			io = raw_input("Enter io for " + str(i) + " :")
 			io_vals.append(io)
 		btgrovepi.setup(io_vals)
@@ -27,6 +31,7 @@ while True:
 			#print (btgrovepi.get_port_type(port_num))
 			#print ("Sensor io: ")
 			#print (btgrovepi.get_port_io(port_num))
+		"""
 	except TypeError:
 		print ("TypeError")
 	except IOError:
