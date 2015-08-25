@@ -15,7 +15,7 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
     }
     if(type == null){
       type = "alert"
-    }
+    } 
     system_log = noty({
       text: message,
       theme: "blockytalkyTheme",

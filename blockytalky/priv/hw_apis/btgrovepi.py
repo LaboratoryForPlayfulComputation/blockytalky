@@ -1,7 +1,6 @@
 from grovepi import *
 
 
-
 NO_SENSOR = -1
 #def setup(sensorA0 = NO_SENSOR, sensorA1 = NO_SENSOR, sensorA2 = NO_SENSOR, sensorD2 = NO_SENSOR, sensorD3 = NO_SENSOR, sensorD4 = NO_SENSOR, sensorD5 = NO_SENSOR, sensorD6 = NO_SENSOR, sensorD7 = NO_SENSOR, sensorD8 = NO_SENSOR):
 def setup(io_vals = []): #array with indices as ports and values as plugged-in-component io types 
@@ -21,20 +20,28 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
 			set_sensor_type(i,io_vals[i])
     return
 def get_sensor_value(port_num,sensor_type,sensor_io):
+    val = 0
+    val2 = 0
     try: 
+	   
 	    if sensor_io == "ULTRASONIC":
-		return ultrasonicRead(port_num)
-	    if sensor_io == "DHT":
-		return dht(port_num,0)
-
-	    if sensor_type == "analog":
-		return analogRead(port_num)
+		val = ultrasonicRead(port_num)
+	    elif sensor_io == "DHT":
+		[val,val2] = dht(port_num,0)
+	    elif sensor_type == "analog":
+		val = analogRead(port_num)
 	    elif sensor_type == "digital":
-		return digitalRead(port_num)
-	    else:
-		 return -1
-    except IOError: 
+		val = digitalRead(port_num)
+	    
+    except: 
 	    return "Error"
+    if (val != val or val2 != val2):
+	    return -2
+    else:
+            if sensor_io == "DHT":
+	    	return [val,val2]
+	    else:
+		return val
 def set_sensor_type(port_num, sensor_io): #sets the pinmode if applicable
     if (sensor_io != "DHT" and sensor_io != "ULTRASONIC"):
 	pinMode(port_num,sensor_io)

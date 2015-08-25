@@ -15,7 +15,7 @@ defmodule Blockytalky.GrovePi do
 			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
 	end 
 	def get_component_value(port_id) do
-		{port_num, type} = Map.get(port_id_map, port_id)
+		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
 		io = GrovePiState.get_port_io(port_id)
                 case io do
 		   "OUTPUT" -> GrovePiState.get_last_set_value(port_id) 

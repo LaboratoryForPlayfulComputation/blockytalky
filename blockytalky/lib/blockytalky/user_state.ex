@@ -7,7 +7,7 @@ defmodule Blockytalky.UserState do
   alias Blockytalky.GrovePiState, as: GPS
   alias Blockytalky.MockHW, as: MockHW
   @moduledoc """
-  Keeps track of the statful-ness of the client's BT program.
+  Keeps track of the stateful-ness of the client's BT program.
   e.g. hardware change over time, message queue to be handled
   Called by IR as needed to stash data between iterations
   state looks like:
