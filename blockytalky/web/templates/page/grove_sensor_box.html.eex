@@ -1,0 +1,19 @@
+<div class="panel sensor-box text-center" data-name="<%= @sensor[:id] %>">
+  <div class="sensor-name">
+   
+     <%= @sensor[:label] %>
+  </div>
+  <div class="sensor-value">
+    -
+  </div>
+  <div class=".center">
+      <button href="#" data-name="<%= @sensor[:id] %>" data-dropdown="drop<%= @sensor[:id] %>" aria-controls="drop<%= @sensor[:id] %>" aria-expanded="false" class="button dropdown small sensor-select">
+        <%= init_sensor_type(@sensor[:hw],@sensor[:id])%>
+      </button><br>
+      <ul id="drop<%= @sensor[:id] %>" data-dropdown-content class="f-dropdown" aria-hidden="true">
+        <%= for type <- @sensor[:types] do %>
+          <li class="sensor-select-option"><label data-hw="<%= @sensor[:hw] %>" data-sensor="<%= @sensor[:id] %>" data-value="<%= type[:id]%>"><%= type[:label] %></label></li>
+        <% end %>
+      </ul>
+   </div>
+</div>
