@@ -30,7 +30,7 @@ defmodule Blockytalky.Mixfile do
   #
   # Type `mix help deps` for examples and options
   defp deps do
-    [{:phoenix, "~> 0.17", override: true},
+    [{:phoenix, "~> 1.0", override: true},
      {:phoenix_ecto, "~> 0.8"},
      {:postgrex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.0"},
@@ -42,7 +42,7 @@ defmodule Blockytalky.Mixfile do
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
      { :socket, git: "https://github.com/meh/elixir-socket.git"},
-     {:exrm, git: "https://github.com/bitwalker/exrm.git", tag: "0.18.5"}
+     { :exrm, git: "https://github.com/bitwalker/exrm.git", tag: "0.19.2"}
    ]
   end
 end
