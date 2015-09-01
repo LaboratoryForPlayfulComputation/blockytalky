@@ -85,6 +85,7 @@ defmodule Blockytalky.HardwareDaemon do
         :btbrickpi ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),
              worker(Blockytalky.BrickPiState,[])]
+        :wemo    -> []
         _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end
