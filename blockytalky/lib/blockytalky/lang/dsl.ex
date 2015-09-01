@@ -482,16 +482,8 @@ defmodule Blockytalky.DSL do
     WeMo.device_toggle(device_name)
   end
 
-  def wemo_set_state(device_name, :on) do
-    wemo_turn_on(device_name)
-  end
-
-  def wemo_set_state(device_name, :off) do
-    wemo_turn_off(device_name)
-  end
-
-  def wemo_set_state(device_name, :toggle) do
-    wemo_toggle(device_name)
+  def wemo_set_state(device_name, state) do
+    WeMo.device_set_state(device_name, state)
   end
 
 
