@@ -4,6 +4,7 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.CommsModule, as: CM
+  alias Blockytalky.WeMo, as: WeMo
   #alias Blockytalky.CommsChannel, as: CC
 
   require Logger
@@ -467,4 +468,31 @@ defmodule Blockytalky.DSL do
     program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
   end
+
+  #WeMo stuff below
+  def wemo_turn_on(device_name) do
+    WeMo.device_turn_on(device_name)
+  end
+
+  def wemo_turn_off(device_name) do
+    WeMo.device_turn_off(device_name)
+  end
+
+  def wemo_toggle(device_name) do
+    WeMo.device_toggle(device_name)
+  end
+
+  def wemo_set_state(device_name, :on) do
+    wemo_turn_on(device_name)
+  end
+
+  def wemo_set_state(device_name, :off) do
+    wemo_turn_off(device_name)
+  end
+
+  def wemo_set_state(device_name, :toggle) do
+    wemo_toggle(device_name)
+  end
+
+
 end

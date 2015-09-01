@@ -1,0 +1,9 @@
+<category name="WeMo">
+<block type="wemo_set">
+  <value name="device">
+    <block type="text">
+      <field name="TEXT">Device Name Here</field>
+    </block>
+  </value>
+</block>
+</category>

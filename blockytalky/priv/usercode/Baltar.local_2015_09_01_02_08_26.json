@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   wemo_set_state(\"Front Door Switch\",:off)\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"7\" x=\"18.999999999999886\" y=\"19\"><statement name=\"DO\"><block type=\"wemo_set\" id=\"10\" inline=\"true\"><field name=\"STATE\">:off</field><value name=\"device\"><block type=\"text\" id=\"11\"><field name=\"TEXT\">Front Door Switch</field></block></value></block></statement></block></xml>"
+}

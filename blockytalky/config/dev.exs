@@ -41,5 +41,5 @@ config :blockytalky, Blockytalky.Repo,
   ####
   #custom configuration
   config :blockytalky,
-    supported_hardware: [:mock],
+    supported_hardware: [:mock, :wemo],
     user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"

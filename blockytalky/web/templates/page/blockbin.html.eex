@@ -4,6 +4,9 @@
    <% end %>
    <%= render Blockytalky.PageView, "events.html" %>
    <%= render Blockytalky.PageView, "messaging.html" %>
+   <%= if :wemo in Blockytalky.RuntimeUtils.supported_hardware do %>
+    <%= render Blockytalky.PageView, "wemo.html" %>
+   <% end %>
    <%= if Application.get_env(:blockytalky, :music) do %>
     <%= render Blockytalky.PageView, "music.html" %>
    <% end %>
