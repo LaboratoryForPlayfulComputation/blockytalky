@@ -24,6 +24,12 @@
       datatype: :atom,
       default: false
     ],
+    "blockytalky.Elixir.Blockytalky.Endpoint.check_origin": [
+      doc: "",
+      to: "blockytalky.Elixir.Blockytalky.Endpoint.check_origin",
+      datatype: :atom,
+      default: false
+    ],
     "blockytalky.Elixir.Blockytalky.Endpoint.pubsub.name": [
       doc: "",
       to: "blockytalky.Elixir.Blockytalky.Endpoint.pubsub.name",
