@@ -1,0 +1,57 @@
+<category name="Grove Components">
+  <category name="Event">
+    <block type="when_button"></block>
+    <block type="when_port">
+      <value name="NUM">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="when_range">
+      <value name="NUM1">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+      <value name="NUM2">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="while_button"></block>
+    <block type="while_port">
+       <value name="NUM">
+          <block type="math_number">
+             <field name="NUM">0</field>
+          </block>
+       </value>
+    </block>
+    <block type="while_range">
+      <value name="NUM1">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+      <value name="NUM2">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+  </category>
+  <category name="Values">
+    <block type="get_value"></block>
+    <block type="get_temp"></block>
+    <block type="get_hum"></block>
+    <block type="set_value">
+      <value name="VALUE">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="set_digital"></block>
+  </category>
+</category>
