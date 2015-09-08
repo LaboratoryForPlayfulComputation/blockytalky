@@ -86,7 +86,7 @@ Blockly.Elixir['when_sensor_range'] = function(block) {
   var value_num1 = Blockly.Elixir.valueToCode(block, 'NUM1', Blockly.Elixir.ORDER_ATOMIC);
   var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'when_sensor "' + dropdown_range + ' ' + dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end\n';
+  var code = 'when_sensor ' + dropdown_range + ' "' + dropdown_port+'" in '+value_num1+'..'+value_num2+' do\n '+statements_do+'\n end\n';
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -166,7 +166,7 @@ Blockly.Elixir['while_sensor_range'] = function(block) {
  var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
 
- var code = 'while_sensor "'+ dropdown_range + ' ' + dropdown_port +'" in '+ value_num1 +'..'+ value_num2 +' do\n '+ statements_do + '\n end\n';
+ var code = 'while_sensor '+ dropdown_range + ' "' + dropdown_port +'" in '+ value_num1 +'..'+ value_num2 +' do\n '+ statements_do + '\n end\n';
  Blockly.Elixir.macros_.push(code);
  return code;
 };

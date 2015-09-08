@@ -3,6 +3,7 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
+  alias Blockytalky.GrovePi, as: GP
   alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
 
@@ -320,7 +321,27 @@ defmodule Blockytalky.DSL do
       Blockytalky.Endpoint.broadcast "uc:command", "error", %{"body" => "Tried to set motor speed to value not in -100 to 100: #{inspect value}"}
     end
   end
-  ## Grove Pi
+  #set Grove component value
+  def gp_set_value(port_id, value) do
+    if value in 0..1023 do
+      GP.set_component_value(port_id, value)
+    else
+      Blockytalky.Endpoint.broadcast "uc:command", "error", %{"body" => "Tried to set component to value not between 0 and 1023: #{inspect value}"}
+    end
+  end
+  #get temperature and humidity from Grove
+  def gp_get_temp(port_id) do
+    case GP.get_component_value(port_id) do
+      [temp, hum] -> temp
+      _ -> nil
+    end
+  end
+  def gp_get_hum(port_id) do
+     case GP.get_component_value(port_id) do
+       [temp, hum] -> hum
+       _ -> nil
+     end
+  end
   ## Comms
   # message <msg> to <unit>
   defmacro send_message(msg, to, opt \\ []) do

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%= render Blockytalky.PageView, "button_bar.html" %>
+
 <%= render Blockytalky.PageView, "sensor_values.html" %>
 <span id="workspace-marker" style="margin-left: 50px; height: 0px; width: 0px"></span> <!-- for tour -->
 <div id="blocklyDiv" style="height: 90vh; width: 100%;"></div>

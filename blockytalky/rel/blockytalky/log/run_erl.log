@@ -1,0 +1,8 @@
+run_erl [2709] Wed Jul  8 16:43:27 2015
+Args before exec of shell:
+run_erl [2709] Wed Jul  8 16:43:27 2015
+argv[0] = sh
+run_erl [2709] Wed Jul  8 16:43:27 2015
+argv[1] = -c
+run_erl [2709] Wed Jul  8 16:43:27 2015
+argv[2] = exec "/home/pi/blockytalky_elixir/blockytalky/rel/blockytalky/bin/blockytalky" "console"

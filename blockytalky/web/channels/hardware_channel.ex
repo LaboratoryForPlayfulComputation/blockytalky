@@ -2,6 +2,8 @@ defmodule Blockytalky.HardwareChannel do
   use Phoenix.Channel
   alias Blockytalky.MockHW, as: MockHW
   alias Blockytalky.BrickPi, as: BP
+  alias Blockytalky.GrovePi, as: GP
+  alias Blockytalky.GrovePiState, as: GPS
   #alias Blockytalky.UserState, as: US
   alias Blockytalky.HardwareDaemon, as: HD
   require Logger
@@ -37,6 +39,8 @@ defmodule Blockytalky.HardwareChannel do
         BP.set_sensor_type(port_id, sensor_type)
       "mock" ->
         MockHW.set_sensor_type(port_id, sensor_type)
+      "btgrovepi" ->
+        GP.set_component_type(String.to_atom(port_id), String.to_atom(sensor_type))
         _ -> :ok
     end
     #broadcast that the change has occured:
