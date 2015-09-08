@@ -1,21 +1,21 @@
 import {Socket} from "deps/phoenix/web/static/js/phoenix"
-import "deps/phoenix_html/web/static/js/phoenix_html"
+import "deps/phoenix_html/web/static/js/phoenix_html" 
 /* after page loads DOM elements */
  //common page elements:
  //humane is the popup notification for logging messages to the client
   //humane.baseCls = 'humane-libnotify';
   //humane.clickToClose = true;
   //humane.error = humane.spawn({ addnCls: 'humane-libnotify-error', timeout: 2000 });
-  var system_log;
+  var system_log; 
   var message_log;
   function sys_log(message, type){
     if(system_log != null)
-    {
+    { 
       system_log.close();
     }
     if(type == null){
       type = "alert"
-    }
+    } 
     system_log = noty({
       text: message,
       theme: "blockytalkyTheme",

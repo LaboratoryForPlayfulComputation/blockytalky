@@ -3,9 +3,11 @@ defmodule Blockytalky.UserState do
   require Logger
   require Integer
   alias Blockytalky.BrickPi, as: BP
+  alias Blockytalky.GrovePi, as: GP
+  alias Blockytalky.GrovePiState, as: GPS
   alias Blockytalky.MockHW, as: MockHW
   @moduledoc """
-  Keeps track of the statful-ness of the client's BT program.
+  Keeps track of the stateful-ness of the client's BT program.
   e.g. hardware change over time, message queue to be handled
   Called by IR as needed to stash data between iterations
   state looks like:
@@ -21,8 +23,7 @@ defmodule Blockytalky.UserState do
     #update brickpi state
     if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware, do: update_bp_state()
     #update grove state
-    #update music state
-    #update messaging state
+    if :btgrovepi in Blockytalky.RuntimeUtils.supported_hardware, do: update_gp_state()
   end
   def upload_user_code(code_map) do
     GenServer.cast(__MODULE__, {:upload_user_code, code_map})
@@ -139,6 +140,16 @@ defmodule Blockytalky.UserState do
         v -> put_value(v,x)#value, port
       end
     end
+  end
+  defp update_gp_state do
+    port_list = GP.port_id_map
+    |> Map.keys
+    |> Enum.filter fn port_id -> GPS.get_port_component(port_id) != nil end
+    port_values = port_list
+    |> Enum.map fn port_id -> GP.get_component_value(port_id) end
+
+    Enum.zip(port_values,port_list)
+    |> Enum.map fn {v,p} -> put_value(v,p) end 
   end
   defp update_mock_state do
     sensor_ports = for {key,_} <- MockHW.port_map, do: key

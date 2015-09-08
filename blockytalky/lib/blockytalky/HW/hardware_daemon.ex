@@ -25,6 +25,21 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Light (ambient)"},
     %{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Light (reflective)"}
   ]
+ @grove_analog_types [
+    %{:id => :TYPE_SENSOR_NONE, :label => "None"},
+    %{:id => :LIGHT, :label => "Light sensor"},
+    %{:id => :SOUND, :label => "Sound sensor"},
+    %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"}
+  ]
+  @grove_digital_types [
+    %{:id => :TYPE_SENSOR_NONE, :label => "None"},
+    %{:id => :BUTTON, :label => "Button"},
+    %{:id => :BUZZER, :label => "Buzzer"},
+    %{:id => :LED, :label => "LED Light"},
+    %{:id => :RELAY, :label => "Relay"},
+    %{:id => :TEMP_HUM, :label => "Temp & Humidity sensor"},
+    %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"}
+  ]
   @sensor_data [
     %{:hw => "mock", :id => "MOCK_1", :label => "Mock 1", :type => "sensor", :types => @basic_sensor_types},
     %{:hw => "mock", :id => "MOCK_2", :label => "Mock 2", :type => "sensor", :types => @basic_sensor_types},
@@ -37,7 +52,17 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btbrickpi", :id => "PORT_A", :label => "Motor Port 1", :type => "motor"},
     %{:hw => "btbrickpi", :id => "PORT_B", :label => "Motor Port 2", :type => "motor"},
     %{:hw => "btbrickpi", :id => "PORT_C", :label => "Motor Port 3", :type => "motor"},
-    %{:hw => "btbrickpi", :id => "PORT_D", :label => "Motor Port 4", :type => "motor"}
+    %{:hw => "btbrickpi", :id => "PORT_D", :label => "Motor Port 4", :type => "motor"},
+    %{:hw => "btgrovepi", :id => :A0, :label => "Port A0", :type => "analog", :types => @grove_analog_types},
+    %{:hw => "btgrovepi", :id => :A1, :label => "Port A1", :type => "analog", :types => @grove_analog_types},
+    %{:hw => "btgrovepi", :id => :A2, :label => "Port A2", :type => "analog", :types => @grove_analog_types},
+    %{:hw => "btgrovepi", :id => :D2, :label => "Port D2", :type => "digital", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D3, :label => "Port D3", :type => "PWM", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D4, :label => "Port D4", :type => "digital", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D5, :label => "Port D5", :type => "PWM", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types}
   ]
   ####
   #External API
@@ -46,11 +71,26 @@ defmodule Blockytalky.HardwareDaemon do
     @sensor_data |> Enum.filter(fn x-> String.to_atom(Map.get(x, :hw)) in Blockytalky.RuntimeUtils.supported_hardware end)
   end
   def get_sensor_type_label_for_id(sensor_id) do
-    sensor = @basic_sensor_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
-    Logger.debug "get label for: #{inspect sensor}"
-    case sensor do
-      nil -> "None"
-      map -> Map.get(map, :label, "None")
+    for hw <- Blockytalky.RuntimeUtils.supported_hardware do
+      sensor = case hw do
+        :btbrickpi ->
+           @basic_sensor_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
+        :btgrovepi ->
+           sensor_id = case sensor_id do
+	     b when is_binary(b) -> String.to_atom(b)
+             a -> a
+           end
+           s = @grove_digital_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
+           if s == nil do
+             s = @grove_analog_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
+           end
+           s
+      end
+      Logger.debug "get label for: #{inspect sensor}"
+      case sensor do
+        nil -> "None"
+        map -> Map.get(map, :label, "None")
+      end
     end
   end
   @doc """
@@ -85,6 +125,9 @@ defmodule Blockytalky.HardwareDaemon do
         :btbrickpi ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),
              worker(Blockytalky.BrickPiState,[])]
+	:btgrovepi ->
+	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
+	     worker(Blockytalky.GrovePiState, [])]
         _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end
