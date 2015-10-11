@@ -1,6 +1,4 @@
 # BlockyTalky
-Phoenix and Elixir version of BlockyTalky for Raspberry pi -- LPC
-
 BlockyTalky is a distributed, networked toolkit for programming IoT like devices.
 
 BlockyTalky runs as a DSL and runtime-system wrapped by a phoenix web app that provides real-time monitoring of hardware signals, a Google Blockly based visual programming interface, and typical IDE functions like running and stopping code.
