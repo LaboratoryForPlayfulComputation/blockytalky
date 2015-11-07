@@ -3,7 +3,7 @@ defmodule Blockytalky.Mixfile do
 
   def project do
     [app: :blockytalky,
-     version: "0.3.0",
+     version: "0.3.1",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix] ++ Mix.compilers,
