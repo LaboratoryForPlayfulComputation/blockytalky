@@ -44,7 +44,7 @@ defmodule Blockytalky.Mixfile do
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
      { :socket, git: "https://github.com/meh/elixir-socket.git"},
      {:exrm, "~> 1.0.0-rc7", override: true},
-     {:conform, "~> 1.0.0-rc7", override: true},
+     {:conform, "~> 1.0.0-rc8", override: true},
      {:conform_exrm, "~> 0.1"}
    ]
   end
