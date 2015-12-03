@@ -1,5 +1,5 @@
 %{"bbmustache": {:hex, :bbmustache, "1.0.3"},
-  "conform": {:hex, :conform, "1.0.0-rc8"},
+  "conform": {:git, "https://github.com/bitwalker/conform", "57c9d30300898d48616527c3fb3b3f192a5524db", [tag: "1.0.0-rc8"]},
   "conform_exrm": {:hex, :conform_exrm, "0.2.0"},
   "cowboy": {:hex, :cowboy, "1.0.3"},
   "cowlib": {:hex, :cowlib, "1.0.1"},
