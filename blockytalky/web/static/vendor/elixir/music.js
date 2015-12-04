@@ -29,6 +29,7 @@ Blockly.Elixir['defmotif'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
+  console.log(code);
   Blockly.Elixir.context = null;
   Blockly.Elixir.macros_.push(code);
   return code;
@@ -57,6 +58,7 @@ Blockly.Elixir['play_synth'] = function(block) {
   var value_notes = Blockly.Elixir.valueToCode(block, 'NOTES', Blockly.Elixir.ORDER_ATOMIC);
   var value_beats = Blockly.Elixir.valueToCode(block, 'BEATS', Blockly.Elixir.ORDER_ATOMIC);
   var code = 'play_synth('+value_notes+','+value_beats+')\n';
+  console.log(code);
   return code;
 };
 Blockly.Blocks['trigger_drum'] = {
@@ -255,6 +257,65 @@ Blockly.Elixir['chord'] = function(block) {
   code += ']';
   return [code,Blockly.Elixir.ORDER_ATOMIC];
 };
+
+
+Blockly.Blocks['premade_chord'] = {
+  init: function() {
+    this.appendValueInput("Note1")
+        .appendField(new Blockly.FieldTextInput("Premade Chord:"), "NAME");
+    this.appendValueInput("Note2");
+    this.appendValueInput("Note3");
+    this.appendValueInput("Note4");
+    this.setInputsInline(true);
+    this.setOutput(true,"Array");
+    this.setColour(275);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['premade_chord'] = function(block) {
+  var code = "[";
+  for(var i=1; i <5; i++){
+    var note = Blockly.Elixir.valueToCode(block, 'Note'+i, Blockly.Elixir.ORDER_ATOMIC);
+    if(note != "" && i > 1){
+      code += "," + note;
+    }
+    else if(note != ""){
+      code += note;
+    }
+  }
+  code += ']';
+  return [code,Blockly.Elixir.ORDER_ATOMIC];
+};
+
+
+Blockly.Blocks['play_chord_progression'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("play chord progression:")
+        .appendField(new Blockly.FieldTextInput("prog"), "NAME");
+    this.appendStatementInput("DO");
+    this.setPreviousStatement(true, 'Music');
+    this.setNextStatement(true, 'Music');
+    this.setColour(275);
+    this.setTooltip('Contains a sequence of play chords blocks that will be played in order');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['play_chord_progression'] = function(block) {
+  Blockly.Elixir.context = ":music";
+  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
+  var code = statements_do;
+  code = code.replace(/\s/g, '');
+  code = code.replace(/\)/g, '\)\n');
+  console.log(code);
+  Blockly.Elixir.context = null;
+  Blockly.Elixir.macros_.push(code);
+  return code;
+};
+
+
 Blockly.Blocks['set_synth'] = {
   init: function() {
     // sample atoms taken directly from sonic pi sample library.
