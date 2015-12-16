@@ -20,7 +20,7 @@ defmodule Blockytalky do
       #TODO: User Code / DSL Supervisor
       worker(Blockytalky.UserState,[])
     ]
-    children = if Blockytalky.RuntimeUtils.music? do
+    children = if Blockytalky.RuntimeUtils.music do
        children ++ [worker(Blockytalky.Music, [])]
      else
        children
