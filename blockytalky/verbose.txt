@@ -1,0 +1,946 @@
+[33mBuilding release with MIX_ENV=prod.[0m
+==> Generating relx configuration...
+==> Merging custom relx configuration from rel/relx.config...
+==> Generating sys.config...
+==> Generating boot script...
+==> Packaging consolidated protocols...
+==> Conform: Loading schema...
+==> Conform: Generating escript..
+Compiling src/conf_parse.peg
+PEG manifest updated
+==> conform
+Compiled src/conf_parse.erl
+Compiled lib/conform.ex
+Compiled lib/conform/conf.ex
+Compiled lib/conform/parse.ex
+Compiled lib/conform/schema/transform.ex
+Compiled lib/conform/schema/mapping.ex
+Compiled lib/conform/schema/validator.ex
+Compiled lib/conform/type.ex
+Compiled lib/conform/sysconfig.ex
+Compiled lib/conform/types/enum.ex
+Compiled lib/conform/validators/range_validator.ex
+Compiled lib/mix/tasks/conform.archive.ex
+Compiled lib/conform/utils/utils.ex
+Compiled lib/conform/schema.ex
+Compiled lib/conform/utils/code.ex
+Compiled lib/mix/tasks/conform.configure.ex
+Compiled lib/mix/tasks/conform.release.ex
+Compiled lib/mix/tasks/conform.new.ex
+Compiled lib/mix/tasks/conform.effective.ex
+Compiled lib/conform/translate.ex
+Generated conform app
+Generated escript conform with MIX_ENV=prod
+==> Conform: Adding overlays to relx.config...
+==> Conform: Done!
+==> Generating release...
+[0;32m===> Starting relx build process ...
+[0m[0;36m===> state(api):
+          log: (3:debug),
+          config file: /Users/matt/blockytalky_elixir/blockytalky/rel/files/relx.config
+          goals: 
+          output_dir: /Users/matt/blockytalky_elixir/blockytalky/_rel
+          lib_dirs: 
+          providers: 
+               tar,
+               relup,
+               release,
+               resolve_release,
+               overlay,
+               rel_discover,
+               app_discover,
+          provider config values: 
+               {overlay_vars,[]},
+               {system_libs,true},
+               {default_libs,true},
+[0m
+[0;36m===> Running provider app_discover
+[0m[0;32m===> Resolving OTP Applications from directories:
+          /Users/matt/blockytalky_elixir/blockytalky/_build/prod
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/eex/ebin
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/elixir/ebin
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/ex_unit/ebin
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/iex/ebin
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/logger/ebin
+          /usr/local/Cellar/elixir/1.1.1/bin/../lib/mix/ebin
+          /Users/matt/blockytalky_elixir/blockytalky/lib
+          /Users/matt/blockytalky_elixir/blockytalky/deps
+          /Users/matt/blockytalky_elixir/erlang/lib
+          /Users/matt/blockytalky_elixir/blockytalky/rel[0m
+[0;35m===> Missing beam file elf_format <<"/Users/matt/blockytalky_elixir/erlang/lib/hipe-3.11/ebin/elf_format.beam">>
+[0m[0;36m===> Resolved the following OTP Applications from the system: 
+          bbmustache-1.0.3: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/bbmustache
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          blockytalky-0.3.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/blockytalky
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    phoenix,
+                    phoenix_html,
+                    cowboy,
+                    logger,
+                    phoenix_ecto,
+                    postgrex,
+                    httpoison,
+                    syslog,
+                    erlport,
+                    osc,
+                    exjsx,
+                    socket,
+                    crypto,
+               Library Dependencies:
+
+          certifi-0.3.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/certifi
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          conform-1.0.0-rc8: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/conform
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    neotoma,
+               Library Dependencies:
+
+          conform_exrm-0.2.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/conform_exrm
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          cowboy-1.0.4: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/cowboy
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    ranch,
+                    cowlib,
+                    crypto,
+               Library Dependencies:
+
+          cowlib-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/cowlib
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    crypto,
+               Library Dependencies:
+
+          decimal-1.1.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/decimal
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          ecto-0.16.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/ecto
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    logger,
+                    decimal,
+                    poolboy,
+               Library Dependencies:
+
+          erlport-0.9.8: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/erlport
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          erlware_commons-0.15.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/erlware_commons
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          exjsx-3.2.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/exjsx
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    jsx,
+               Library Dependencies:
+
+          exrm-1.0.0-rc7: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/exrm
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    logger,
+                    relx,
+               Library Dependencies:
+
+          getopt-0.8.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/getopt
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          hackney-1.4.7: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/hackney
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    crypto,
+                    asn1,
+                    public_key,
+                    ssl,
+                    idna,
+                    mimerl,
+                    certifi,
+               Library Dependencies:
+                    ssl_verify_hostname,
+
+          httpoison-0.8.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/httpoison
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    hackney,
+               Library Dependencies:
+
+          idna-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/idna
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          jsx-2.6.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/jsx
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          mimerl-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/mimerl
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          neotoma-1.7.3: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/neotoma
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          osc-1.0.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/osc
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          phoenix-1.1.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/phoenix
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    plug,
+                    poison,
+                    logger,
+                    eex,
+               Library Dependencies:
+
+          phoenix_ecto-0.9.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/phoenix_ecto
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    logger,
+                    ecto,
+               Library Dependencies:
+
+          phoenix_html-2.3.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/phoenix_html
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    logger,
+                    plug,
+               Library Dependencies:
+
+          plug-1.0.3: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/plug
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    crypto,
+                    logger,
+               Library Dependencies:
+
+          poison-1.5.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/poison
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          poolboy-1.5.1: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/poolboy
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          postgrex-0.9.1: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/postgrex
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    logger,
+               Library Dependencies:
+
+          providers-1.4.1: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/providers
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    getopt,
+               Library Dependencies:
+
+          ranch-1.2.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/ranch
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          relx-3.5.0: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/relx
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    getopt,
+                    erlware_commons,
+                    bbmustache,
+                    providers,
+               Library Dependencies:
+
+          socket-0.3.1: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/socket
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+                    crypto,
+                    ssl,
+               Library Dependencies:
+
+          ssl_verify_hostname-1.0.5: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/ssl_verify_hostname
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    ssl,
+               Library Dependencies:
+
+          syslog-0.5.1: /Users/matt/blockytalky_elixir/blockytalky/_build/prod/lib/syslog
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          eex-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/eex
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          elixir-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/elixir
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    compiler,
+               Library Dependencies:
+
+          ex_unit-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/ex_unit
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          iex-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/iex
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          logger-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/logger
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          mix-1.1.1: /usr/local/Cellar/elixir/1.1.1/bin/../lib/mix
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    elixir,
+               Library Dependencies:
+
+          bbmustache-1.0.3: /Users/matt/blockytalky_elixir/blockytalky/deps/bbmustache
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          certifi-0.3.0: /Users/matt/blockytalky_elixir/blockytalky/deps/certifi
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          cowboy-1.0.4: /Users/matt/blockytalky_elixir/blockytalky/deps/cowboy
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    ranch,
+                    cowlib,
+                    crypto,
+               Library Dependencies:
+
+          cowlib-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/deps/cowlib
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    crypto,
+               Library Dependencies:
+
+          erlport-0.9.8: /Users/matt/blockytalky_elixir/blockytalky/deps/erlport
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          erlware_commons-0.15.0: /Users/matt/blockytalky_elixir/blockytalky/deps/erlware_commons
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          fs-0.9.1: /Users/matt/blockytalky_elixir/blockytalky/deps/fs
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          getopt-0.8.2: /Users/matt/blockytalky_elixir/blockytalky/deps/getopt
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          hackney-1.4.7: /Users/matt/blockytalky_elixir/blockytalky/deps/hackney
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    crypto,
+                    asn1,
+                    public_key,
+                    ssl,
+                    idna,
+                    mimerl,
+                    certifi,
+               Library Dependencies:
+                    ssl_verify_hostname,
+
+          idna-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/deps/idna
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          mimerl-1.0.2: /Users/matt/blockytalky_elixir/blockytalky/deps/mimerl
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          neotoma-1.7.3: /Users/matt/blockytalky_elixir/blockytalky/deps/neotoma
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          osc-1.0.0: /Users/matt/blockytalky_elixir/blockytalky/deps/osc
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          poolboy-1.5.1: /Users/matt/blockytalky_elixir/blockytalky/deps/poolboy
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          providers-1.4.1: /Users/matt/blockytalky_elixir/blockytalky/deps/providers
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    getopt,
+               Library Dependencies:
+
+          ranch-1.2.0: /Users/matt/blockytalky_elixir/blockytalky/deps/ranch
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          relx-3.5.0: /Users/matt/blockytalky_elixir/blockytalky/deps/relx
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    getopt,
+                    erlware_commons,
+                    bbmustache,
+                    providers,
+               Library Dependencies:
+
+          ssl_verify_hostname-1.0.5: /Users/matt/blockytalky_elixir/blockytalky/deps/ssl_verify_hostname
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    ssl,
+               Library Dependencies:
+
+          asn1-3.0.1: /Users/matt/blockytalky_elixir/erlang/lib/asn1-3.0.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          common_test-1.8.1: /Users/matt/blockytalky_elixir/erlang/lib/common_test-1.8.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          compiler-5.0.1: /Users/matt/blockytalky_elixir/erlang/lib/compiler-5.0.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          cosEvent-2.1.15: /Users/matt/blockytalky_elixir/erlang/lib/cosEvent-2.1.15
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosEventDomain-1.1.14: /Users/matt/blockytalky_elixir/erlang/lib/cosEventDomain-1.1.14
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosFileTransfer-1.1.16: /Users/matt/blockytalky_elixir/erlang/lib/cosFileTransfer-1.1.16
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosNotification-1.1.21: /Users/matt/blockytalky_elixir/erlang/lib/cosNotification-1.1.21
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosProperty-1.1.17: /Users/matt/blockytalky_elixir/erlang/lib/cosProperty-1.1.17
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosTime-1.1.14: /Users/matt/blockytalky_elixir/erlang/lib/cosTime-1.1.14
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          cosTransactions-1.2.14: /Users/matt/blockytalky_elixir/erlang/lib/cosTransactions-1.2.14
+               Symlink: false
+               Active Dependencies:
+                    orber,
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          crypto-3.4: /Users/matt/blockytalky_elixir/erlang/lib/crypto-3.4
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          debugger-4.0.1: /Users/matt/blockytalky_elixir/erlang/lib/debugger-4.0.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          dialyzer-2.7.1: /Users/matt/blockytalky_elixir/erlang/lib/dialyzer-2.7.1
+               Symlink: false
+               Active Dependencies:
+                    compiler,
+                    gs,
+                    hipe,
+                    kernel,
+                    stdlib,
+                    wx,
+               Library Dependencies:
+
+          diameter-1.7: /Users/matt/blockytalky_elixir/erlang/lib/diameter-1.7
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          edoc-0.7.13: /Users/matt/blockytalky_elixir/erlang/lib/edoc-0.7.13
+               Symlink: false
+               Active Dependencies:
+                    compiler,
+                    kernel,
+                    stdlib,
+                    syntax_tools,
+               Library Dependencies:
+
+          eldap-1.0.3: /Users/matt/blockytalky_elixir/erlang/lib/eldap-1.0.3
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          erl_docgen-0.3.5: /Users/matt/blockytalky_elixir/erlang/lib/erl_docgen-0.3.5
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          erts-6.1: /Users/matt/blockytalky_elixir/erlang/lib/erts-6.1
+               Symlink: false
+               Active Dependencies:
+               Library Dependencies:
+
+          et-1.5: /Users/matt/blockytalky_elixir/erlang/lib/et-1.5
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          eunit-2.2.7: /Users/matt/blockytalky_elixir/erlang/lib/eunit-2.2.7
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          gs-1.5.16: /Users/matt/blockytalky_elixir/erlang/lib/gs-1.5.16
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          ic-4.3.5: /Users/matt/blockytalky_elixir/erlang/lib/ic-4.3.5
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          inets-5.10.2: /Users/matt/blockytalky_elixir/erlang/lib/inets-5.10.2
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          jinterface-1.5.12: /Users/matt/blockytalky_elixir/erlang/lib/jinterface-1.5.12
+               Symlink: false
+               Active Dependencies:
+               Library Dependencies:
+
+          kernel-3.0.1: /Users/matt/blockytalky_elixir/erlang/lib/kernel-3.0.1
+               Symlink: false
+               Active Dependencies:
+               Library Dependencies:
+
+          megaco-3.17.1: /Users/matt/blockytalky_elixir/erlang/lib/megaco-3.17.1
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          mnesia-4.12.1: /Users/matt/blockytalky_elixir/erlang/lib/mnesia-4.12.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          observer-2.0.1: /Users/matt/blockytalky_elixir/erlang/lib/observer-2.0.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          odbc-2.10.20: /Users/matt/blockytalky_elixir/erlang/lib/odbc-2.10.20
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          orber-3.6.27: /Users/matt/blockytalky_elixir/erlang/lib/orber-3.6.27
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+                    mnesia,
+               Library Dependencies:
+
+          os_mon-2.2.15: /Users/matt/blockytalky_elixir/erlang/lib/os_mon-2.2.15
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    sasl,
+               Library Dependencies:
+
+          otp_mibs-1.0.9: /Users/matt/blockytalky_elixir/erlang/lib/otp_mibs-1.0.9
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    snmp,
+               Library Dependencies:
+
+          parsetools-2.0.11: /Users/matt/blockytalky_elixir/erlang/lib/parsetools-2.0.11
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          percept-0.8.9: /Users/matt/blockytalky_elixir/erlang/lib/percept-0.8.9
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          public_key-0.22: /Users/matt/blockytalky_elixir/erlang/lib/public_key-0.22
+               Symlink: false
+               Active Dependencies:
+                    asn1,
+                    crypto,
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          reltool-0.6.6: /Users/matt/blockytalky_elixir/erlang/lib/reltool-0.6.6
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          runtime_tools-1.8.14: /Users/matt/blockytalky_elixir/erlang/lib/runtime_tools-1.8.14
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          sasl-2.4: /Users/matt/blockytalky_elixir/erlang/lib/sasl-2.4
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          snmp-4.25.1: /Users/matt/blockytalky_elixir/erlang/lib/snmp-4.25.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          ssh-3.0.3: /Users/matt/blockytalky_elixir/erlang/lib/ssh-3.0.3
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+                    crypto,
+                    public_key,
+               Library Dependencies:
+
+          ssl-5.3.5: /Users/matt/blockytalky_elixir/erlang/lib/ssl-5.3.5
+               Symlink: false
+               Active Dependencies:
+                    crypto,
+                    public_key,
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          stdlib-2.1: /Users/matt/blockytalky_elixir/erlang/lib/stdlib-2.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+               Library Dependencies:
+
+          syntax_tools-1.6.15: /Users/matt/blockytalky_elixir/erlang/lib/syntax_tools-1.6.15
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+               Library Dependencies:
+
+          test_server-3.7.1: /Users/matt/blockytalky_elixir/erlang/lib/test_server-3.7.1
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          tools-2.6.15: /Users/matt/blockytalky_elixir/erlang/lib/tools-2.6.15
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          typer-0.9.8: /Users/matt/blockytalky_elixir/erlang/lib/typer-0.9.8
+               Symlink: false
+               Active Dependencies:
+                    compiler,
+                    dialyzer,
+                    hipe,
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          webtool-0.8.10: /Users/matt/blockytalky_elixir/erlang/lib/webtool-0.8.10
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+          wx-1.3: /Users/matt/blockytalky_elixir/erlang/lib/wx-1.3
+               Symlink: false
+               Active Dependencies:
+                    stdlib,
+                    kernel,
+               Library Dependencies:
+
+          xmerl-1.3.7: /Users/matt/blockytalky_elixir/erlang/lib/xmerl-1.3.7
+               Symlink: false
+               Active Dependencies:
+                    kernel,
+                    stdlib,
+               Library Dependencies:
+
+[0m
+[0;36m===> Provider successfully run: app_discover
+[0m[0;36m===> Running provider resolve_release
+[0m[0;36m===> Solving Release blockytalky-0.3.3
+[0m[0;36m===> Provider (resolve_release) failed with: {error,
+                                                     {rlx_prv_release,
+                                                      {failed_solve,
+                                                       [{[{[sasl,iex,elixir,
+                                                            {blockytalky,
+                                                             {{0,3,3},
+                                                              {[],[]}}}],
+                                                           [sasl,iex,elixir,
+                                                            {blockytalky,
+                                                             {{0,3,3},
+                                                              {[],[]}}}]}],
+                                                         []}]}}}
+[0m
