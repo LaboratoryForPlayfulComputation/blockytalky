@@ -28,7 +28,7 @@
     <li class="load-button"><label for="fileupload"><a>Load Code from Computer</a></label><input id="fileupload" style="height: 0px; visibility: hidden;" type="file"/></li>
     <li class="fullscreen-button"><a href="#">Fullscreen the workspace (press ESC to exit)</a></li>
     <%= if(Blockytalky.RuntimeUtils.coder?) do %>
-      <li class="coder-button"><a href=":8081/app/auth">Coder</a></li>
+      <li class="coder-button"><a href="/app/auth" onclick="javascript:event.target.port=8080">Coder</a></li>
     <% end %>
     <!--<li class="shutdown-button"><i class="fi-power" style="color: #444;"></i><a href="#">Power Down</a></li>-->
   </ul>
