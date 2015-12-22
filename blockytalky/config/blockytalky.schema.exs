@@ -112,7 +112,7 @@ See the moduledoc for `Conform.Schema.Validator` for more details and examples.
       commented: false,
       datatype: :integer,
       default: 80,
-      doc: "Provide documentation for blockytalky.Elixir.Blockytalky.Endpoint.http.port here.",
+      doc: "BT http port",
       hidden: false,
       to: "blockytalky.Elixir.Blockytalky.Endpoint.http.port"
     ],
@@ -132,19 +132,19 @@ See the moduledoc for `Conform.Schema.Validator` for more details and examples.
       hidden: true,
       to: "blockytalky.Elixir.Blockytalky.Endpoint.server"
     ],
-    "dax": [
+    "blockytalky.dax": [
       commented: false,
       datatype: :binary,
       default: "ws://btrouter.getdown.org:8005/dax",
-      doc: "url endpoint for dax communication python server",
+      doc: "DAX python router endpoint",
       hidden: false,
       to: "blockytalky.dax"
     ],
-    "music": [
+    "blockytalky.music": [
       commented: false,
       datatype: :atom,
       default: true,
-      doc: "whether sonic pi interop should run",
+      doc: "Connect to Sonic Pi?",
       hidden: false,
       to: "blockytalky.music"
     ],
@@ -164,23 +164,23 @@ See the moduledoc for `Conform.Schema.Validator` for more details and examples.
       hidden: true,
       to: "blockytalky.music_eval_port"
     ],
-    "update_rate": [
+    "blockytalky.update_rate": [
       commented: false,
       datatype: :integer,
       default: 30,
-      doc: "how long between polls when code is executing (ms)",
+      doc: "sleep time (ms) to wait between HW loops while code is running",
       hidden: false,
       to: "blockytalky.update_rate"
     ],
-    "update_rate_hibernate": [
+    "blockytalky.update_rate_hibernate": [
       commented: false,
       datatype: :integer,
       default: 100,
-      doc: "how long between polls when code is not executing (ms)",
+      doc: "sleep time (ms) to wait between HW loops while code is not running",
       hidden: false,
       to: "blockytalky.update_rate_hibernate"
     ],
-    "supported_hardware": [
+    "blockytalky.supported_hardware": [
       commented: false,
       datatype: [
         list: :atom
@@ -188,15 +188,15 @@ See the moduledoc for `Conform.Schema.Validator` for more details and examples.
       default: [
         :btbrickpi
       ],
-      doc: "list of hardware genservers to turn on: btbrickpi, btgrovepi, mock",
+      doc: "[btbrickpi | btgrovepi | mock | none] list of currently connected hardware",
       hidden: false,
       to: "blockytalky.supported_hardware"
     ],
-    "user_code_dir": [
+    "blockytalky.user_code_dir": [
       commented: false,
       datatype: :binary,
       default: "/opt/blockytalky/usercode",
-      doc: "there directory blockytalky code+xml.json files are placed",
+      doc: "where json files containing user code (DSL) and blockly source (xml) are stored ",
       hidden: false,
       to: "blockytalky.user_code_dir"
     ],

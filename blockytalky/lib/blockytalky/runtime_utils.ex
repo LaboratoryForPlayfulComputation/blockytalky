@@ -23,14 +23,14 @@ defmodule Blockytalky.RuntimeUtils do
   Set music support enabled at runtime, then compile time backup
   $ sudo HW="btbrickpi btgrovepi" MUSIC=true blockytalky
   """
-  def music do
+  def music? do
     case System.get_env("MUSIC") do #set music at runtime
       "true" -> true
       "false" -> false
       nil -> Application.get_env(:blockytalky, :music, false) || false #otherwise get compile time value
     end
   end
-  def priv_path_for(file) do
-    #Application.app_dir(, Path.join("priv", file))
-  end
+
+  def coder?, do: File.exists?("/home/coder")
+
 end
