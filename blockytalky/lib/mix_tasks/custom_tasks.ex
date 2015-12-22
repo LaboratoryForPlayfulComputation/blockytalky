@@ -83,3 +83,16 @@ defmodule Mix.Tasks.FileLogging do
     user == "root"
   end
 end
+defmodule Mix.Tasks.Blockytalky.Release do
+  use Mix.Task
+  def run(_) do
+    System.put_env(%{"MIX_ENV"=>"prod"})
+    Mix.shell.info "Compiling Blockytalky with prod environment"
+    System.cmd("mix",["compile"])
+    Mix.shell.info "Preparing Blockytalky for release: brunch build + phoenix digest"
+    System.cmd("brunch",["build","--production"],into: IO.stream(:stdio, :line))
+    System.cmd("mix",["phoenix.digest"],into: IO.stream(:stdio, :line))
+    Mix.shell.info "Running EXRM release"
+    System.cmd("mix",["release","--no-confirm-missing", "--verbosity=verbose"],into: IO.stream(:stdio, :line))
+  end
+end

@@ -30,16 +30,7 @@ defmodule Blockytalky.RuntimeUtils do
       nil -> Application.get_env(:blockytalky, :music, false) || false #otherwise get compile time value
     end
   end
-  @doc """
-  query the home directory to see if this is a coder instance. It is possible
-  for someone to have a user name "coder" and this not be a coder instance, but
-  this way doesn't require making a network call against <hostname>/app/auth
-  """
-  def coder? do
-    case System.cmd("ls",["/home"]) do
-      {"",_} -> false
-      {s,_} -> (s |> String.contains?("coder"))
-      _ -> false
-    end
-  end
+
+  def coder?, do: File.exists?("/home/coder")
+
 end

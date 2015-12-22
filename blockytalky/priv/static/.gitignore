@@ -1,0 +1,9 @@
+*.gz
+media/*.gz
+js/*.gz
+js/lang/*.gz
+images/*.gz
+css/*.gz
+css/svgs/*.gz
+.DS_Store
+*/.DS_Store
