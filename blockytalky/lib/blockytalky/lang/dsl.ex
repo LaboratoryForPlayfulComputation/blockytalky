@@ -366,7 +366,6 @@ defmodule Blockytalky.DSL do
     msg
   end
   def say(msg) do
-    Logger.debug "hello"
     Blockytalky.Endpoint.broadcast "comms:message", "say", %{"body" => msg}
   end
   ## Music
