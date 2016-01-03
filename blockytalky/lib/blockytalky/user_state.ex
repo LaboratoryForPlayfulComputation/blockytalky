@@ -118,7 +118,11 @@ defmodule Blockytalky.UserState do
        [{_, value} | _ ] -> value
        _ -> nil
      end
-   end
+  end
+  def update_var(var_name, fun) do
+    GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+  end
+
   def get_var_history(var_name) do
     GenServer.call(__MODULE__, {:get_var,var_name})
   end
@@ -149,7 +153,7 @@ defmodule Blockytalky.UserState do
     |> Enum.map fn port_id -> GP.get_component_value(port_id) end
 
     Enum.zip(port_values,port_list)
-    |> Enum.map fn {v,p} -> put_value(v,p) end 
+    |> Enum.map fn {v,p} -> put_value(v,p) end
   end
   defp update_mock_state do
     sensor_ports = for {key,_} <- MockHW.port_map, do: key
@@ -308,6 +312,17 @@ defmodule Blockytalky.UserState do
     updated = case Map.get(var_map, var_name) do
       nil -> [{l,value}]
       list -> [{l, value} | list] |> Enum.take(@max_history_size)
+      end
+    {:noreply, {mq, port_values, Map.put(var_map, var_name, updated), ucs, upid, l, init_funs, loop_funs}}
+  end
+  def handle_cast({:update_var, var_name, fun}, {mq, port_values, var_map, ucs, upid, l, init_funs, loop_funs}) do
+    updated = case Map.get(var_map, var_name) do
+      nil -> nil
+      list ->
+        [{_, head} | _ ] = list
+        value = fun.(head)
+        [{l, value} | list]
+          |> Enum.take(@max_history_size)
       end
     {:noreply, {mq, port_values, Map.put(var_map, var_name, updated), ucs, upid, l, init_funs, loop_funs}}
   end

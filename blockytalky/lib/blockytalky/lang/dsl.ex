@@ -4,7 +4,7 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.GrovePi, as: GP
-  alias Blockytalky.CommsModule, as: CM
+  #alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
 
   require Logger
@@ -44,8 +44,8 @@ defmodule Blockytalky.DSL do
   end
 
   ####
-  # The entry points of the user program. These get stored as asts in an @attribute (:once or :everytime)
-  # and then run as lambas (anonymous callbacks) either in the init function or the loop function.
+  # The entry points of the user program.
+  # and then run as lambdas (anonymous callbacks) either in the init function or the loop function.
   defmacro start([do: body]) do
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :init, fn -> unquote(body) end})
@@ -210,14 +210,14 @@ defmodule Blockytalky.DSL do
   # Helper functions called by macros
   # timer Events
   def process_time_events() do
-    stack = get_sys_timer
-      |> Enum.filter(fn x -> do_timer_action(x) end)
-    set(:sys_timer, stack)
+    US.update_var(:sys_timer, fn stack ->
+      stack |> Enum.filter(fn x ->
+        Blockytalky.DSL.do_timer_action(x)
+      end)
+    end)
   end
   def push_time_event(event) do
-    stack = get_sys_timer
-    new_stack  = [event | stack]
-    set(:sys_timer, new_stack)
+      US.update_var(:sys_timer, fn stack -> [event | stack] end)
   end
   defp get_sys_timer do
     case get(:sys_timer) do
@@ -344,26 +344,29 @@ defmodule Blockytalky.DSL do
   end
   ## Comms
   # message <msg> to <unit>
-  defmacro send_message(msg, to, opt \\ []) do
-    context = Keyword.get(opt,:context)
-    program = case context do
-      :music ->
-        quote do #turn this into a sonic pi "send message" if inside of a motif definition
-          var!(my_motif) = var!(my_motif) ++ [SP.send_music_message(unquote(msg), unquote(to))]
-        end
-      _ ->
-        quote do
-          Blockytalky.CommsModule.send_message(unquote(msg),unquote(to))
-        end
+  defmacro send_message(msg, to)do
+    quote do
+      case Module.get_attribute(__MODULE__, :context) do
+        :music -> var!(my_motif) = var!(my_motif) ++ [SP.send_music_message(unquote(msg), unquote(to))] end
+        _ -> Blockytalky.CommsModule.send_message(unquote(msg),unquote(to))
     end
-    #return
-    program
   end
+  defmacro send_message(msg, to, [context: context]) do
+    case context do
+      :music ->
+        #turn this into a sonic pi "send message" if inside of a motif definition
+        quote do var!(my_motif) = var!(my_motif) ++ [SP.send_music_message(unquote(msg), unquote(to))] end
+      _ ->
+        quote do Blockytalky.CommsModule.send_message(unquote(msg),unquote(to)) end
+    end
+  end
+
   def get_message() do
     {_sender, msg} = US.dequeue_message
     msg
   end
   def say(msg) do
+    Logger.debug "hello"
     Blockytalky.Endpoint.broadcast "comms:message", "say", %{"body" => msg}
   end
   ## Music
@@ -385,11 +388,13 @@ defmodule Blockytalky.DSL do
   defmacro defmotif(name, [do: body]) do
     #do compile time checks here
     quote do
+      Module.put_attribute(__MODULE__, :context, :music)
       def motif(unquote(name)) do
         var!(my_motif) = []
         unquote(body)
         var!(my_motif) #return value
       end
+      Module.put_attribute(__MODULE__, :context, :top)
     end
   end
   @doc """
