@@ -14,6 +14,10 @@ defmodule Blockytalky.UserState do
 
   """
   @max_history_size 1_000
+  #the state that gets passed around by this gen server e.g. %Blockytalky.UserState{}
+  defstruct message_queue: [], port_values: %{},
+  var_map: %{}, user_code: "", upid: nil,
+  l: 0, init_funs: [], loop_funs: []
   ####
   # External API
   ## UserCode state State
@@ -118,7 +122,11 @@ defmodule Blockytalky.UserState do
        [{_, value} | _ ] -> value
        _ -> nil
      end
-   end
+  end
+  def update_var(var_name, fun) do
+    GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+  end
+
   def get_var_history(var_name) do
     GenServer.call(__MODULE__, {:get_var,var_name})
   end
@@ -149,7 +157,7 @@ defmodule Blockytalky.UserState do
     |> Enum.map fn port_id -> GP.get_component_value(port_id) end
 
     Enum.zip(port_values,port_list)
-    |> Enum.map fn {v,p} -> put_value(v,p) end 
+    |> Enum.map fn {v,p} -> put_value(v,p) end
   end
   defp update_mock_state do
     sensor_ports = for {key,_} <- MockHW.port_map, do: key
@@ -246,86 +254,97 @@ defmodule Blockytalky.UserState do
          end
     #state = message queue, port_values, user defined var values, user_code_string, user_code pid, and loop iteration number (FRP)
     #port_values var_values are both maps of ids to lists of tuples of the form: %{id => [{iteration_number, value} ... ] ... }
-    state = {[],%{},%{},uc,nil,0,[],[]}
+    state = %Blockytalky.UserState{user_code: uc}
     {:ok, state}
   end
-  def handle_call(:dequeue_message, _from, {[], port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
-    {:reply, {:nosender, :nomsg}, {[], port_values, var_map, ucs, upid,l, init_funs, loop_funs}}
+  def handle_call(:dequeue_message, _from, s = %Blockytalky.UserState{message_queue: []}) do
+    {:reply, {:nosender, :nomsg}, s}
   end
-  def handle_call(:dequeue_message, _from, {mq, port_values, var_map, ucs, upid,l, init_funs, loop_funs})  do
+  def handle_call(:dequeue_message, _from, s = %Blockytalky.UserState{message_queue: mq})  do
     rev_q = Enum.reverse(mq)
     [value | new_q_rev] = rev_q
     new_q = Enum.reverse(new_q_rev)
-    {:reply, {:ok, value}, {new_q,port_values, var_map, ucs, upid,l, init_funs, loop_funs}}
+    {:reply, {:ok, value}, %Blockytalky.UserState{s | message_queue: new_q}}
   end
-  def handle_call(:clear_state, _from, {_mq, _port_values, _var_map, ucs, _upid, l, init_funs, loop_funs}) do
+  def handle_call(:clear_state, _from, %Blockytalky.UserState{user_code: ucs}) do
     #we want this to be a call because we want to block progress on the caller (so that they don't try to query until this is done)
-    {:reply,:ok, {[],%{},%{}, ucs, nil, 0,init_funs, loop_funs}}
+    {:reply,:ok, %Blockytalky.UserState{user_code: ucs}}
   end
-  def handle_call({:get_port_value, port_id}, _from, s={_mq, port_values, _var_map, _ucs, _upid,_l, _init_funs, _loop_funs}) do
+  def handle_call({:get_port_value, port_id}, _from, s=%Blockytalky.UserState{port_values: port_values}) do
     value = Map.get(port_values, port_id)
     {:reply, value, s}
   end
-  def handle_call(:get_port_value_map, _from, s={_mq, port_values, _var_map, _ucs, _upid,_l, _init_funs, _loop_funs}) do
+  def handle_call(:get_port_value_map, _from, s=%Blockytalky.UserState{port_values: port_values}) do
     {:reply, port_values, s}
   end
-  def handle_call({:get_var, var_name}, _from, s={_mq, _port_values, var_map, _ucs, _upid,_l, _init_funs, _loop_funs}) do
+  def handle_call({:get_var, var_name}, _from, s=%Blockytalky.UserState{var_map: var_map}) do
     value = Map.get(var_map, var_name)
     {:reply, value, s}
   end
-  def handle_call(:get_user_code, _from, s={_mq, _port_values, _var_map, ucs, _upid,_l, _init_funs, _loop_funs}) do
+  def handle_call(:get_user_code, _from, s=%Blockytalky.UserState{user_code: ucs}) do
     {:reply, ucs, s}
   end
-  def handle_call(:get_upid, _from, s={_mq, _port_values, _var_map, _ucs, upid,_l, _init_funs, _loop_funs}) do
+  def handle_call(:get_upid, _from, s=%Blockytalky.UserState{upid: upid}) do
     {:reply, upid, s}
   end
-  def handle_call(:get_loop_iteration, _from, s={_,_,_,_,_,l,_,_}) do
+  def handle_call(:get_loop_iteration, _from, s=%Blockytalky.UserState{l: l}) do
     {:reply, l, s}
   end
-  def handle_call({:get_funs, type}, _from, s={_,_,_,_,_,_,init_funs, loop_funs}) do
+  def handle_call({:get_funs, type}, _from, s=%Blockytalky.UserState{init_funs: init_funs, loop_funs: loop_funs}) do
     funs = case type do
       :init -> init_funs
       :loop -> loop_funs
     end
     {:reply, funs, s}
   end
-  def handle_call(:clear_funs, _from, {mq, port_values, var_map, ucs, upid, l, _init, _loop}) do
-    {:reply, :ok, {mq, port_values, var_map, ucs, upid, l, [],[]}}
+  def handle_call(:clear_funs, _from, s) do
+    {:reply, :ok, %Blockytalky.UserState{s | init_funs: [], loop_funs: []}}
   end
   #cast
-  def handle_cast({:put_value, value, port_id}, {mq,port_values, var_map, ucs, upid,l, init_funs, loop_funs}) do
+  def handle_cast({:put_value, value, port_id}, s = %Blockytalky.UserState{port_values: port_values, l: l}) do
     updated = case Map.get(port_values, port_id) do
       nil -> [{l,value}]
       list -> [{l, value} | list] |> Enum.take(@max_history_size)
     end
     #Logger.debug("user state values: #{inspect updated}")
-    {:noreply, { mq , Map.put(port_values,port_id,updated), var_map, ucs, upid, l, init_funs, loop_funs } }
+    {:noreply, %Blockytalky.UserState{s | port_values: Map.put(port_values,port_id,updated)} }
   end
-  def handle_cast({:queue_message, msg}, {mq, port_values, var_map, ucs, upid, l, init_funs, loop_funs}) do
-    {:noreply, {[msg | mq], port_values, var_map, ucs, upid, l, init_funs, loop_funs}}
+  def handle_cast({:queue_message, msg}, s=%Blockytalky.UserState{message_queue: mq}) do
+    {:noreply, %Blockytalky.UserState{s | message_queue: [msg | mq]}}
   end
-  def handle_cast({:set_var,var_name, value}, {mq, port_values, var_map, ucs, upid, l, init_funs, loop_funs}) do
+  def handle_cast({:set_var,var_name, value}, s=%Blockytalky.UserState{var_map: var_map, l: l}) do
     updated = case Map.get(var_map, var_name) do
       nil -> [{l,value}]
       list -> [{l, value} | list] |> Enum.take(@max_history_size)
       end
-    {:noreply, {mq, port_values, Map.put(var_map, var_name, updated), ucs, upid, l, init_funs, loop_funs}}
+    {:noreply, %Blockytalky.UserState{s | var_map: Map.put(var_map, var_name, updated)}}
   end
-  def handle_cast({:upload_user_code, code_map}, {mq, port_values, var_map, _ucs, upid, l, init_funs, loop_funs}) do
-    {:noreply, {mq, port_values, var_map, code_map, upid, l, init_funs, loop_funs}}
+  def handle_cast({:update_var, var_name, fun}, s=%Blockytalky.UserState{var_map: var_map, l: l}) do
+    updated = case Map.get(var_map, var_name) do
+      nil -> nil
+      list ->
+        [{_, head} | _ ] = list
+        value = fun.(head)
+        [{l, value} | list]
+          |> Enum.take(@max_history_size)
+      end
+    {:noreply, %Blockytalky.UserState{s | var_map: Map.put(var_map, var_name, updated)}}
   end
-  def handle_cast({:set_upid, pid}, {mq, port_values, var_map, ucs, _upid, l, init_funs, loop_funs}) do
-    {:noreply, {mq, port_values, var_map, ucs, pid, l, init_funs, loop_funs}}
+  def handle_cast({:upload_user_code, code}, s) do
+    {:noreply, %Blockytalky.UserState{s | user_code: code}}
   end
-  def handle_cast(:inc_loop_iteration, {mq,pv,vm,ucs,upid,l, init_funs, loop_funs}) do
-    {:noreply,{mq,pv,vm,ucs,upid,(l+1), init_funs, loop_funs}}
+  def handle_cast({:set_upid, pid}, s) do
+    {:noreply, %Blockytalky.UserState{s | upid: pid}}
   end
-  def handle_cast({:push_fun, type, fun}, {mq,pv,vm,ucs,upid,l, init_funs, loop_funs}) do
+  def handle_cast(:inc_loop_iteration, s=%Blockytalky.UserState{l: l}) do
+    {:noreply,%Blockytalky.UserState{s | l: l+1}}
+  end
+  def handle_cast({:push_fun, type, fun}, s=%Blockytalky.UserState{l: l, init_funs: init_funs, loop_funs: loop_funs}) do
     case type do
       :init ->
-        {:noreply,{mq,pv,vm,ucs,upid,(l+1), [fun | init_funs], loop_funs}}
+        {:noreply,%Blockytalky.UserState{s | l: l+1, init_funs: [fun | init_funs]}}
       :loop ->
-        {:noreply,{mq,pv,vm,ucs,upid,(l+1), init_funs, [fun | loop_funs]}}
+        {:noreply,%Blockytalky.UserState{s | l: l+1, loop_funs: [fun | loop_funs]}}
     end
   end
   def terminate(_reason, _state) do
