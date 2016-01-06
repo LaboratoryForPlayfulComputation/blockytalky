@@ -61,6 +61,30 @@
       </value>
     </block>
     <block type="chord"></block>
+
+    <block type="premade_chord">
+      <field name="NAME">Premade chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>            
+    </block>
+
+     <block type="play_chord_progression">
+       <field name="NAME">progression</field>
+       <statement name="DO"></statement>
+     </block>
     
     <block type="trigger_drum"> </block>
     <block type="rest">
