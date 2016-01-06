@@ -29,7 +29,6 @@ Blockly.Elixir['defmotif'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
-  console.log(code);
   Blockly.Elixir.context = null;
   Blockly.Elixir.macros_.push(code);
   return code;
@@ -58,7 +57,6 @@ Blockly.Elixir['play_synth'] = function(block) {
   var value_notes = Blockly.Elixir.valueToCode(block, 'NOTES', Blockly.Elixir.ORDER_ATOMIC);
   var value_beats = Blockly.Elixir.valueToCode(block, 'BEATS', Blockly.Elixir.ORDER_ATOMIC);
   var code = 'play_synth('+value_notes+','+value_beats+')\n';
-  console.log(code);
   return code;
 };
 Blockly.Blocks['trigger_drum'] = {
@@ -309,9 +307,7 @@ Blockly.Elixir['play_chord_progression'] = function(block) {
   var code = statements_do;
   code = code.replace(/\s/g, '');
   code = code.replace(/\)/g, '\)\n');
-  console.log(code);
   Blockly.Elixir.context = null;
-  Blockly.Elixir.macros_.push(code);
   return code;
 };
 
