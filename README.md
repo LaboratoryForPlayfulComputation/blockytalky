@@ -41,7 +41,7 @@ Edit `/boot/config.txt` and uncomment the line: `dtparam=i2c_arm=on`
 
 ### SonicPi run on start and boot in GUI Modified
 
-Edit `/etc/xdg/lxsession/LXDE-pi/autostart` and add the line `@sonicpi`
+Edit `/etc/xdg/lxsession/LXDE-pi/autostart` and add the line `@sonic-pi`
 
 Run `sudo raspi-config` and enable boot to desktop GUI mode.
 
