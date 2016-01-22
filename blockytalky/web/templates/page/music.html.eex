@@ -108,6 +108,8 @@
       </value>
     </block>
     <block type="with_fx"></block>
+
+    <block type="play_in_key"></block>
   </category>
 
   <category name="Examples">
