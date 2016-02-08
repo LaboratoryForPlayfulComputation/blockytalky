@@ -61,6 +61,31 @@
       </value>
     </block>
     <block type="chord"></block>
+
+    <block type="premade_chord">
+      <field name="NAME">Premade chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>            
+    </block>
+
+     <block type="play_chord_progression">
+       <field name="NAME">progression</field>
+       <statement name="DO"></statement>
+     </block>
+    
     <block type="trigger_drum"> </block>
     <block type="rest">
       <value name="AMOUNT">
@@ -83,5 +108,778 @@
       </value>
     </block>
     <block type="with_fx"></block>
+  </category>
+
+  <category name="Examples">
+      <!-- A Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">A Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- B Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">B Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">B4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">D4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">F#4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- C Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">C Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">D#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">G4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- D Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">D Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">D4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">F4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- E Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">E Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">G4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">B4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- F Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">F Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">F4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">G#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- G Minor chord -->
+   <block type="premade_chord">
+      <field name="NAME">G Minor chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">G4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">A#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">D4</field>
+        </block>
+      </value>            
+    </block>    
+
+    <!-- A Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">A Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">C#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- B Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">B Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">B4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">D#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">F#4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- C Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">C Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">G4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- D Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">D Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">D4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">F#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- E Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">E Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">E4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">G#4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">B4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- F Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">F Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">F4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">A4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">C4</field>
+        </block>
+      </value>            
+    </block>
+
+    <!-- G Major chord -->
+   <block type="premade_chord">
+      <field name="NAME">G Major chord</field>
+      <value name="Note1">
+        <block type="text">
+          <field name="TEXT">G4</field>
+        </block>
+      </value>
+      <value name="Note2">
+        <block type="text">
+          <field name="TEXT">B4</field>
+        </block>
+      </value>
+      <value name="Note3">
+        <block type="text">
+          <field name="TEXT">D4</field>
+        </block>
+      </value>            
+    </block> 
+
+
+    <!-- Play 50s Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">50's Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">E Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">B4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>
+   
+
+    <!-- Play Pachelbel Canon Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Pachelbel Canon Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">E Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">B4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">B Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">F#4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value> 
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value> 
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>                                                     
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>                                        
+        </statement>
+      </block>
+   
+
+    <!-- Play Sweet Home Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Sweet Home Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>
+
+
+    <!-- Play Descending Flamenco Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Descending Flamenco Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">E Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">B4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>             
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>      
+ 
+ 
+    <!-- Play Smoke on the Water Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Smoke on the Water Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">A Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">A4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">E4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>
+
+      
+    <!-- Play Don’t Stop Believing Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Don’t Stop Believing Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">E Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">B4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>             
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>      
+
+
+    <!-- Play Don’t Stop Believing (Rearranged) Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Don’t Stop Believing Progression (Rearrangement)</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">E Minor chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">B4</field></block></value>                
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>                
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>             
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block> 
+
+      
+    <!-- Play Good Love Chord Progression -->
+    <block type="play_chord_progression">
+       <field name="NAME">Good Love Progression</field>
+       <statement name="DO">
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">G Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">G4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">B4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">D4</field></block></value>                
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value>                
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">D Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">D4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">F#4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">A4</field></block></value>
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>             
+          <next>
+          <block type="play_synth">
+             <value name="NOTES">
+                <block type="premade_chord">
+                   <field name="NAME">C Major chord</field>
+                   <value name="Note1"><block type="text"><field name="TEXT">C4</field></block></value>
+                   <value name="Note2"><block type="text"><field name="TEXT">E4</field></block></value>
+                   <value name="Note3"><block type="text"><field name="TEXT">G4</field></block></value> 
+                </block>
+             </value>
+             <value name="BEATS"><block type="math_number"><field name="NUM">2</field></block></value>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+          </next>
+          </block>
+        </statement>
+      </block>      
+
   </category>
 </category>
