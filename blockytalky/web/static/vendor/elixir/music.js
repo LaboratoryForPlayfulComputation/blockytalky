@@ -305,8 +305,6 @@ Blockly.Elixir['play_chord_progression'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = statements_do;
-  code = code.replace(/\s/g, '');
-  code = code.replace(/\)/g, '\)\n');
   Blockly.Elixir.context = null;
   return code;
 };
@@ -314,23 +312,25 @@ Blockly.Elixir['play_chord_progression'] = function(block) {
 Blockly.Blocks['play_in_key'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("play in key of:")
-        .appendField(new Blockly.FieldTextInput("C"), "NAME");
+        .appendField("Play in key of ")
+        .appendField(new Blockly.FieldDropdown([["C", "OPTIONNAME"], ["Bb", "OPTIONNAME"], ["D", "OPTIONNAME"], ["F", "OPTIONNAME"]]), "KEY")
+        .appendField(new Blockly.FieldDropdown([["Major", "OPTIONNAME"], ["Minor", "OPTIONNAME"]]), "MODE");
     this.appendStatementInput("DO");
     this.setPreviousStatement(true, 'Music');
     this.setNextStatement(true, 'Music');
     this.setColour(275);
-    this.setTooltip('Contains a sequence of play chords blocks that will be played in order');
+    this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
   }
 };
+
 Blockly.Elixir['play_in_key'] = function(block) {
   Blockly.Elixir.context = ":music";
-  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+  var key_name = Blockly.Elixir.valueToCode(block, 'KEY', Blockly.Elixir.ORDER_ATOMIC);
+  var mode_name = Blockly.Elixir.valueToCode(block, 'MODE', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = statements_do;
-  code = code.replace(/\s/g, '');
-  code = code.replace(/\)/g, '\)\n');
+  console.log(code);
   Blockly.Elixir.context = null;
   return code;
 };

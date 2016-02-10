@@ -397,12 +397,26 @@ defmodule Blockytalky.DSL do
     end
   end
   @doc """
+  changes key
+  """
+  defmacro play_in_key(key, mode, do: body) do
+    quote do
+      var!(music_metadata) = %{key: unquote(key), mode: unquote(mode)}
+      unquote body
+      var!(music_metadata) = nil
+    end
+  end  
+  @doc """
   This macro should only every be invoked inside a defmotif macro
   This macro needs to be aware of the my_motif variable defmotif declares
   """
   defmacro play_synth(pitch,duration) do
     quote do
-      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(unquote(pitch), unquote(duration))]
+      #key = if var!(music_metadata), do: var!(music_metadata)[:key]
+      #mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
+      key = nil
+      mode = nil
+      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
@@ -424,6 +438,7 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [tail]
     end
   end
+
   @doc """
   music event must be an atom such as
   :down_beat, :up_beat, :beat1, :beat2 ...
@@ -492,4 +507,27 @@ defmodule Blockytalky.DSL do
     program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
   end
+  def map_finger_num_to_pitch(nil, nil, pitch), do: pitch
+  def map_finger_num_to_pitch(key, mode, finger_num) do
+    tuple = octave_amount(finger_num)
+    finger_num = elem(tuple, 0)
+    octave_offset = elem(tuple, 1)
+    #list of pitches in MIDI middle octave
+    middle_octave_pitches = %{"C" => 60, "C#" => 61, "D" => 62, "D#" => 63, "E" => 64, "F" => 65, "F#" => 66, "G" => 67, "G#" => 68, "A" => 69, "A#" => 70, "B" => 71}
+    #based on if the key is major and minor we know we can just add a specific
+    #number to the midi value to match the finger num (all major/minor scales share same pattern)
+    major = %{1 => 0, 2 => 2, 3 => 4, 4 => 5, 5 => 7, 6 => 9, 7 => 11}
+    minor = %{1 => 0, 2 => 2, 3 => 3, 4 => 5, 5 => 7, 6 => 8, 7 => 10}
+    case mode do
+      "Major" -> middle_octave_pitches[:key] + major[:finger_num] + octave_offset
+      _       -> middle_octave_pitches[:key] + minor[:finger_num] + octave_offset
+    end
+  end
+  def octave_amount("HHH" <> num), do: {String.to_integer(num), 36}
+  def octave_amount("HH" <> num), do: {String.to_integer(num), 24}
+  def octave_amount("H"  <> num), do: {String.to_integer(num), 12}
+  def octave_amount("LLL" <> num), do: {String.to_integer(num), 36}
+  def octave_amount("LL" <> num), do: {String.to_integer(num), 24}
+  def octave_amount("L" <> num), do: {String.to_integer(num), 12}
+  def octave_amount(num), do: {String.to_integer(num)}
 end
