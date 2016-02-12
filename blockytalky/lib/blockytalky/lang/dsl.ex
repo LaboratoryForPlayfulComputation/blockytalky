@@ -418,6 +418,7 @@ defmodule Blockytalky.DSL do
       mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
       var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
+      IO.puts(var!(my_motif))
     end
   end
   defmacro rest(duration, units) do
@@ -511,7 +512,7 @@ defmodule Blockytalky.DSL do
   def map_finger_num_to_pitch(key, mode, finger_num) do
     {finger_num, octave_offset} = octave_amount(finger_num)
     #list of pitches in MIDI middle octave
-    middle_octave_pitches = %{"C" => 60, "C#" => 61, "D" => 62, "D#" => 63, "E" => 64, "F" => 65, "F#" => 66, "G" => 67, "G#" => 68, "A" => 69, "A#" => 70, "B" => 71}
+    middle_octave_pitches = %{"C" => 60, "C#" => 61, "D" => 62, "D#" => 63, "E" => 64, "F" => 65, "F#" => 66, "G" => 67, "G#" => 68, "A" => 69, "A#" => 70, "Bb" => 70,"B" => 71}
     #based on if the key is major and minor we know we can just add a specific
     #number to the midi value to match the finger num (all major/minor scales share same pattern)
     major = %{1 => 0, 2 => 2, 3 => 4, 4 => 5, 5 => 7, 6 => 9, 7 => 11}
