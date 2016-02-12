@@ -320,7 +320,9 @@ Blockly.Blocks['play_in_key'] = {
     this.setPreviousStatement(true, 'Music');
     this.setNextStatement(true, 'Music');
     this.setColour(275);
-    this.setTooltip('');
+    this.setTooltip('Change the pitch using the numbers 1-7, increase the octave by putting 1 or \
+      more "H" in front of the number, lower the octave by putting 1 or more "L" in front of the number. \
+      Ex) "2", "HHH4", "H1", "L2" are all examples of valid options');
     this.setHelpUrl('http://www.example.com/');
   }
 };
