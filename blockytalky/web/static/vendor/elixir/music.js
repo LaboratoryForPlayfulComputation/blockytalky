@@ -314,7 +314,7 @@ Blockly.Blocks['play_in_key'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Play in key of ")
-        .appendField(new Blockly.FieldDropdown([["C", "C"], ["Bb", "Bb"], ["D", "D"], ["F", "F"]]), "KEY")
+        .appendField(new Blockly.FieldDropdown([["A", "A"], ["B", "B"], ["Bb", "Bb"], ["C", "C"], ["D", "D"], ["E", "E"], ["F", "F"],  ["G", "G"]]), "KEY")
         .appendField(new Blockly.FieldDropdown([["Major", "Major"], ["Minor", "Minor"]]), "MODE");
     this.appendStatementInput("DO");
     this.setPreviousStatement(true, 'Music');

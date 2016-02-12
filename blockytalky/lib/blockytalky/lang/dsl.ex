@@ -402,7 +402,6 @@ defmodule Blockytalky.DSL do
   """
   defmacro play_in_key(key, mode, [do: body]) do
     quote do
-      IO.puts("test")
       var!(music_metadata) = %{key: unquote(key), mode: unquote(mode)}
       unquote(body)
       var!(music_metadata) = nil
@@ -418,7 +417,6 @@ defmodule Blockytalky.DSL do
       mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
       var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
-      IO.puts(var!(my_motif))
     end
   end
   defmacro rest(duration, units) do
