@@ -390,6 +390,7 @@ defmodule Blockytalky.DSL do
       Module.put_attribute(__MODULE__, :context, :music)
       def motif(unquote(name)) do
         var!(my_motif) = []
+        var!(music_metadata) = nil
         unquote(body)
         var!(my_motif) #return value
       end
@@ -403,7 +404,7 @@ defmodule Blockytalky.DSL do
     quote do
       IO.puts("test")
       var!(music_metadata) = %{key: unquote(key), mode: unquote(mode)}
-      unquote body
+      unquote(body)
       var!(music_metadata) = nil
     end
   end  
@@ -508,9 +509,7 @@ defmodule Blockytalky.DSL do
   end
   def map_finger_num_to_pitch(nil, nil, pitch), do: pitch
   def map_finger_num_to_pitch(key, mode, finger_num) do
-    tuple = octave_amount(finger_num)
-    finger_num = elem(tuple, 0)
-    octave_offset = elem(tuple, 1)
+    {finger_num, octave_offset} = octave_amount(finger_num)
     #list of pitches in MIDI middle octave
     middle_octave_pitches = %{"C" => 60, "C#" => 61, "D" => 62, "D#" => 63, "E" => 64, "F" => 65, "F#" => 66, "G" => 67, "G#" => 68, "A" => 69, "A#" => 70, "B" => 71}
     #based on if the key is major and minor we know we can just add a specific
@@ -518,15 +517,16 @@ defmodule Blockytalky.DSL do
     major = %{1 => 0, 2 => 2, 3 => 4, 4 => 5, 5 => 7, 6 => 9, 7 => 11}
     minor = %{1 => 0, 2 => 2, 3 => 3, 4 => 5, 5 => 7, 6 => 8, 7 => 10}
     case mode do
-      "Major" -> middle_octave_pitches[:key] + major[:finger_num] + octave_offset
-      _       -> middle_octave_pitches[:key] + minor[:finger_num] + octave_offset
+      "Major" -> middle_octave_pitches[key] + major[finger_num] + octave_offset
+      _       -> middle_octave_pitches[key] + minor[finger_num] + octave_offset
     end
   end
+  #can just do the math within the helper, add num to octave offset here
   def octave_amount("HHH" <> num), do: {String.to_integer(num), 36}
   def octave_amount("HH" <> num), do: {String.to_integer(num), 24}
   def octave_amount("H"  <> num), do: {String.to_integer(num), 12}
-  def octave_amount("LLL" <> num), do: {String.to_integer(num), 36}
-  def octave_amount("LL" <> num), do: {String.to_integer(num), 24}
-  def octave_amount("L" <> num), do: {String.to_integer(num), 12}
-  def octave_amount(num), do: {String.to_integer(num)}
+  def octave_amount("LLL" <> num), do: {String.to_integer(num), -36}
+  def octave_amount("LL" <> num), do: {String.to_integer(num), -24}
+  def octave_amount("L" <> num), do: {String.to_integer(num), -12}
+  def octave_amount(num), do: {String.to_integer(num), 0}
 end

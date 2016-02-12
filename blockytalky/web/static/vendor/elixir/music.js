@@ -314,8 +314,8 @@ Blockly.Blocks['play_in_key'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Play in key of ")
-        .appendField(new Blockly.FieldDropdown([["C", "OPTIONNAME"], ["Bb", "OPTIONNAME"], ["D", "OPTIONNAME"], ["F", "OPTIONNAME"]]), "KEY")
-        .appendField(new Blockly.FieldDropdown([["Major", "OPTIONNAME"], ["Minor", "OPTIONNAME"]]), "MODE");
+        .appendField(new Blockly.FieldDropdown([["C", "C"], ["Bb", "Bb"], ["D", "D"], ["F", "F"]]), "KEY")
+        .appendField(new Blockly.FieldDropdown([["Major", "Major"], ["Minor", "Minor"]]), "MODE");
     this.appendStatementInput("DO");
     this.setPreviousStatement(true, 'Music');
     this.setNextStatement(true, 'Music');
@@ -332,7 +332,7 @@ Blockly.Elixir['play_in_key'] = function(block) {
   //Blockly.Elixir.valueToCode(block, "KEY", Blockly.Elixir.ORDER_ATOMIC);
   //var mode = Blockly.Elixir.valueToCode(block, "MODE", Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, "DO");
-  var code = 'play_in_key('+key+','+mode+','+statements_do+')\n';
+  var code = 'play_in_key("'+key+'","'+mode+'")' + ' do\n' + statements_do +'\nend\n';
   Blockly.Elixir.context = null;
   return code;
 };
