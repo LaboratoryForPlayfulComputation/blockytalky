@@ -106,7 +106,7 @@ defmodule Blockytalky.DSL do
       iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
   """
   defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-  quote do
+   quote do
     GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
@@ -399,8 +399,9 @@ defmodule Blockytalky.DSL do
   @doc """
   changes key
   """
-  defmacro play_in_key(key, mode, do: body) do
+  defmacro play_in_key(key, mode, [do: body]) do
     quote do
+      IO.puts("test")
       var!(music_metadata) = %{key: unquote(key), mode: unquote(mode)}
       unquote body
       var!(music_metadata) = nil
@@ -412,10 +413,8 @@ defmodule Blockytalky.DSL do
   """
   defmacro play_synth(pitch,duration) do
     quote do
-      #key = if var!(music_metadata), do: var!(music_metadata)[:key]
-      #mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
-      key = nil
-      mode = nil
+      key = if var!(music_metadata), do: var!(music_metadata)[:key]
+      mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
       var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end

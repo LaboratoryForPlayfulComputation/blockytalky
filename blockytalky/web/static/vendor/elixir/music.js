@@ -30,6 +30,7 @@ Blockly.Elixir['defmotif'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
   Blockly.Elixir.context = null;
+  console.log(code)
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -326,11 +327,12 @@ Blockly.Blocks['play_in_key'] = {
 
 Blockly.Elixir['play_in_key'] = function(block) {
   Blockly.Elixir.context = ":music";
-  var key_name = Blockly.Elixir.valueToCode(block, 'KEY', Blockly.Elixir.ORDER_ATOMIC);
-  var mode_name = Blockly.Elixir.valueToCode(block, 'MODE', Blockly.Elixir.ORDER_ATOMIC);
-  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = statements_do;
-  console.log(code);
+  var key = block.getFieldValue("KEY");
+  var mode = block.getFieldValue("MODE");
+  //Blockly.Elixir.valueToCode(block, "KEY", Blockly.Elixir.ORDER_ATOMIC);
+  //var mode = Blockly.Elixir.valueToCode(block, "MODE", Blockly.Elixir.ORDER_ATOMIC);
+  var statements_do = Blockly.Elixir.statementToCode(block, "DO");
+  var code = 'play_in_key('+key+','+mode+','+statements_do+')\n';
   Blockly.Elixir.context = null;
   return code;
 };
