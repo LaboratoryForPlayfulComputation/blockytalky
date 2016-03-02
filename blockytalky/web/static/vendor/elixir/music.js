@@ -30,7 +30,6 @@ Blockly.Elixir['defmotif'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
   Blockly.Elixir.context = null;
-  console.log(code)
   Blockly.Elixir.macros_.push(code);
   return code;
 };
