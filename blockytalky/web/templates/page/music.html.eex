@@ -72,12 +72,12 @@
       </value>
       <value name="Note2">
         <block type="text">
-          <field name="TEXT">2</field>
+          <field name="TEXT">3</field>
         </block>
       </value>
       <value name="Note3">
         <block type="text">
-          <field name="TEXT">3</field>
+          <field name="TEXT">5</field>
         </block>
       </value>            
     </block>

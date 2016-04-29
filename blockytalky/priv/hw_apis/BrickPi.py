@@ -120,7 +120,7 @@ TYPE_SENSOR_COLOR_NONE       = 40
 TYPE_SENSOR_I2C              = 41
 TYPE_SENSOR_I2C_9V           = 42
 
-# Mode information for EV3 is here: https://github.com/mindboards/ev3dev/wiki/LEGO-EV3-Ultrasonic-Sensor-%2845504%29
+# Mode information for EV3 is here: http://www.ev3dev.org/docs/sensors/lego-ev3-ultrasonic-sensor/
 
 TYPE_SENSOR_EV3_US_M0        = 43	# Continuous measurement, distance, cm
 TYPE_SENSOR_EV3_US_M1        = 44	# Continuous measurement, distance, in
@@ -151,7 +151,7 @@ TYPE_SENSOR_EV3_GYRO_M2      = 58	# Raw sensor value ???
 TYPE_SENSOR_EV3_GYRO_M3      = 59	# Angle and Rotational Speed?
 TYPE_SENSOR_EV3_GYRO_M4      = 60 	# Calibration ???
 
-# Mode information is here:  https://github.com/mindboards/ev3dev/wiki/LEGO-EV3-Infrared-Sensor-%2845509%29
+# Mode information is here:  http://www.ev3dev.org/docs/sensors/lego-ev3-infrared-sensor/
 TYPE_SENSOR_EV3_INFRARED_M0   = 61	# Proximity, 0 to 100
 TYPE_SENSOR_EV3_INFRARED_M1   = 62	# IR Seek, -25 (far left) to 25 (far right)
 TYPE_SENSOR_EV3_INFRARED_M2   = 63	# IR Remote Control, 0 - 11
@@ -400,7 +400,7 @@ def BrickPiSetupSensors():
         for ii in range(2):
             port = i*2 + ii
 	    #Jan's US fix###########
-            if(Array[BYTE_SENSOR_1_TYPE + ii] == TYPE_SENSOR_ULTRASONIC_CONT):
+            if(Array[BYTE_SENSOR_1_TYPE + ii] == TYPE_SENSOR_ULTRASONIC_CONT or Array[BYTE_SENSOR_1_TYPE + ii] == TYPE_SENSOR_EV3_US_M0):
                 Array[BYTE_SENSOR_1_TYPE + ii] = TYPE_SENSOR_I2C
                 BrickPi.SensorI2CSpeed[port] = US_I2C_SPEED
                 BrickPi.SensorI2CDevices[port] = 1
@@ -551,7 +551,7 @@ def BrickPiUpdateValues():
         for ii in range(2):
             port = ii + (i * 2)
             #print BrickPi.SensorType[port]
-            if BrickPi.SensorType[port] == TYPE_SENSOR_TOUCH :
+            if (BrickPi.SensorType[port] == TYPE_SENSOR_TOUCH or BrickPi.SensorType[port] == TYPE_SENSOR_EV3_TOUCH_0):
                 BrickPi.Sensor[port] = GetBits(1,0,1)
             #elif BrickPi.SensorType[port] == TYPE_SENSOR_ULTRASONIC_CONT or BrickPi.SensorType[port] == TYPE_SENSOR_ULTRASONIC_SS :
 			#Jan's US fix##########
