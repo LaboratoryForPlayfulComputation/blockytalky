@@ -155,7 +155,7 @@ $(".save-button").click(function(){
 
   document.body.removeChild(element);
 });
-$(".sample-upload").click(function(){ /*To do fix backend side of things*/
+$(".sample-upload").click(function(){
   updateSampleBlock() //To do: move this to bottom and only update block if worked
   var fileName = filePicker.value.split('C:\\fakepath\\')[1]
   var file = document.getElementById("filePicker").files[0];
