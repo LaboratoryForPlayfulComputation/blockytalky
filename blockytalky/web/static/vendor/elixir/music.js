@@ -8,7 +8,6 @@
 'use strict';
 
 goog.provide('Blockly.Elixir.music');
-
 goog.require('Blockly.Elixir');
 //motif and playing
 Blockly.Blocks['defmotif'] = {
@@ -390,5 +389,26 @@ Blockly.Elixir['with_fx'] = function(block) {
   var dropdown_effect = block.getFieldValue('EFFECT');
   var statements_commands = Blockly.Elixir.statementToCode(block, 'COMMANDS');
   var code = 'with_fx('+ dropdown_effect + ')\ndo\n' + statements_commands + '\nend\n';
+  return code;
+};
+
+
+Blockly.Blocks['trigger_sample'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("play sample:")
+        .appendField("", "NAME")
+        .appendField(new MyFieldImage("images/wav-icon.png", 18, 18, "click to upload wav file", true, this), "FILE");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(275);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['trigger_sample'] = function(block) {
+  Blockly.Elixir.context = ":music";
+  Blockly.Elixir.context = null;
+  code = 'trigger_sample("' + block.getFieldValue('NAME') + '")\n';
   return code;
 };

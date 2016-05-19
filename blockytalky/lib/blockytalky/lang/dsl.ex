@@ -410,7 +410,6 @@ defmodule Blockytalky.DSL do
   @doc """
   This macro should only every be invoked inside a defmotif macro
   This macro needs to be aware of the my_motif variable defmotif declares
-  TO DO: Fix chords, map_finger_num_to_pitch is being passed in a string that it can't understand??
   """
   defmacro play_synth(pitch,duration) do
     quote do
@@ -432,7 +431,8 @@ defmodule Blockytalky.DSL do
   end
   defmacro trigger_sample(sample_name) do
     quote do
-      var!(my_motif) = var!(my_motif) ++ [SP.trigger_sample(unquote(sample_name))]
+      file_path = Application.get_env(:blockytalky,:user_code_dir) <> "/samples/" <> unquote(Blockytalky.RuntimeUtils.btu_id) <> "_" <> unquote(sample_name)
+      var!(my_motif) = var!(my_motif) ++ [SP.trigger_sample(file_path)]
     end
   end
   defmacro with_fx(fx, [do: body]) do

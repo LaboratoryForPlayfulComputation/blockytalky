@@ -33,6 +33,10 @@ defmodule Blockytalky.UserCodeChannel do
     {:noreply, socket}
   end
   def handle_in("upload_sample", %{"body" => sample}, socket) do
+    spawn fn ->
+      US.upload_sample_file(sample)
+      write_sample_file(sample)
+    end
     {:noreply, socket}
   end
   @doc """
@@ -67,4 +71,14 @@ defmodule Blockytalky.UserCodeChannel do
       _           -> Blockytalky.Endpoint.broadcast! "uc:command", "progress",  %{body: "Code uploaded!"}
     end
   end
+  defp write_sample_file(map) do
+    file_name = Enum.join([Blockytalky.RuntimeUtils.btu_id, map["name"]], "_")
+    samples_dir = Enum.join([Application.get_env(:blockytalky,:user_code_dir)]) <> "/samples/"
+    File.mkdir(samples_dir)
+    file_path = Enum.join([samples_dir, file_name])
+    case File.write(file_path, :erlang.term_to_binary(map["contents"])) do
+      {_, reason} -> Blockytalky.Endpoint.broadcast! "uc:command", "error",  %{body: reason}
+      _           -> Blockytalky.Endpoint.broadcast! "uc:command", "progress",  %{body: "Code uploaded!"}
+    end
+  end    
 end
