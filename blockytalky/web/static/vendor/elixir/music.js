@@ -397,7 +397,7 @@ Blockly.Blocks['trigger_sample'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("play sample:")
-        .appendField("", "NAME")
+        .appendField("no file selected", "NAME")
         .appendField(new MyFieldImage("images/wav-icon.png", 18, 18, "click to upload wav file", true, this), "FILE");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);

@@ -62,7 +62,9 @@
       </value>
     </block>
     <block type="chord"></block>
-    <block type="trigger_sample"></block>
+    <block type="trigger_sample">
+      <field name="NAME">no file chosen</field>
+    </block>
     <block type="premade_chord">
       <field name="NAME">Premade chord</field>
       <value name="Note1">
