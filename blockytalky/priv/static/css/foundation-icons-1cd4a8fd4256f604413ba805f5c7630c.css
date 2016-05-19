@@ -6,10 +6,10 @@
 
 @font-face {
   font-family: "foundation-icons";
-  src: url("./foundation-icons-92827f088b9eda87169bdc2b9888ce52.eot");
+  src: url("./foundation-icons-92827f088b9eda87169bdc2b9888ce52.eot?vsn=d");
   src: url("foundation-icons.eot?#iefix") format("embedded-opentype"),
-       url("./foundation-icons-a188c2f768ce5033d3f5d47be7280e25.woff") format("woff"),
-       url("./foundation-icons-e20945d7c929279ef7a6f1db184a4470.ttf") format("truetype"),
+       url("./foundation-icons-a188c2f768ce5033d3f5d47be7280e25.woff?vsn=d") format("woff"),
+       url("./foundation-icons-e20945d7c929279ef7a6f1db184a4470.ttf?vsn=d") format("truetype"),
        url("foundation-icons.svg#fontcustom") format("svg");
   font-weight: normal;
   font-style: normal;
