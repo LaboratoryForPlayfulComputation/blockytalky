@@ -109,7 +109,6 @@ var App = {
   }
 };
 
-
 //button-bar callbacks:
 $(".run-button").click(function(){
   socket.flushSendBuffer();
@@ -156,9 +155,30 @@ $(".save-button").click(function(){
 
   document.body.removeChild(element);
 });
+$(".sample-upload").click(function(){
+  updateSampleBlock() //To do: move this to bottom and only update block if worked
+  var fileName = filePicker.value.split('C:\\fakepath\\')[1]
+  var file = document.getElementById("filePicker").files[0];
+  if (file) {
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+          var buffer = reader.result;
+          socket.flushSendBuffer();
+
+          sys_log("Uploading sample wav file to "+ $(".name-header").text() +"!");
+          var payload = {
+            name: fileName,
+            contents: buffer
+          };
+          uc_chan.push("upload_sample", {body: payload})          
+      }
+      reader.onerror = function (evt) {
+          console.log("error reading file");
+      }
+      reader.readAsText(file);
+  }
+});
 $(document).on('change','#fileupload', function(e){
-  //console.log("loading file:");
-  //console.log(e);
   var file = e.target.files[0];
   if (!file) {
     return;
@@ -166,7 +186,6 @@ $(document).on('change','#fileupload', function(e){
   var reader = new FileReader();
   reader.onload = function(e) {
     var contents = e.target.result;
-    //console.log(contents);
     App.workspace.clear();
     Blockly.Xml.domToWorkspace(App.workspace, Blockly.Xml.textToDom(contents));
   };
@@ -182,7 +201,6 @@ $(".fullscreen-button").click(function(){
    //move trashcan
 
    $('body')[0].webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-
 });
 
 var changeHandler = function(e){

@@ -6,6 +6,7 @@ defmodule Blockytalky.UserState do
   alias Blockytalky.GrovePi, as: GP
   alias Blockytalky.GrovePiState, as: GPS
   alias Blockytalky.MockHW, as: MockHW
+  alias Blockytalky.Music, as: Music
   @moduledoc """
   Keeps track of the stateful-ness of the client's BT program.
   e.g. hardware change over time, message queue to be handled
@@ -31,6 +32,9 @@ defmodule Blockytalky.UserState do
   end
   def upload_user_code(code_map) do
     GenServer.cast(__MODULE__, {:upload_user_code, code_map})
+  end
+  def upload_sample_file(contents) do
+    GenServer.cast(__MODULE__, {:upload_sample_file, contents})
   end
 
   def execute_user_code() do
@@ -332,6 +336,9 @@ defmodule Blockytalky.UserState do
   end
   def handle_cast({:upload_user_code, code}, s) do
     {:noreply, %Blockytalky.UserState{s | user_code: code}}
+  end
+  def handle_cast({:upload_sample_file, contents}, s) do
+    {:noreply, %Blockytalky.UserState{s | user_code: contents}}
   end
   def handle_cast({:set_upid, pid}, s) do
     {:noreply, %Blockytalky.UserState{s | upid: pid}}
