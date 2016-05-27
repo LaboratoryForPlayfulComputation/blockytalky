@@ -410,19 +410,13 @@ defmodule Blockytalky.DSL do
   @doc """
   This macro should only every be invoked inside a defmotif macro
   This macro needs to be aware of the my_motif variable defmotif declares
-  TO DO: Fix chords, map_finger_num_to_pitch is being passed in a string that it can't understand??
   """
   defmacro play_synth(pitch,duration) do
     quote do
       key = if var!(music_metadata), do: var!(music_metadata)[:key]
       mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
-      if(key && mode) do #if there is a key and mode we are using finger numbers
-        var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
-        var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
-      else
-        var!(my_motif) = var!(my_motif) ++ [SP.play_synth(unquote(pitch), unquote(duration))]
-        var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
-      end
+      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
+      var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
   defmacro rest(duration, units) do
@@ -443,6 +437,7 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [tail]
     end
   end
+
   @doc """
   music event must be an atom such as
   :down_beat, :up_beat, :beat1, :beat2 ...
