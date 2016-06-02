@@ -106,7 +106,7 @@ defmodule Blockytalky.DSL do
       iex> when_sensor "PORT_1" in 1..get("my_var"), do: 1 + 1
   """
   defmacro when_sensor({:in, _m, [port_id, range={:.., _m2, [_left,_right]}]}, do: body) do
-  quote do
+   quote do
     GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
       when_sensor_value_range(unquote(port_id),
         unquote(range), #could be a constant or a var
@@ -390,6 +390,7 @@ defmodule Blockytalky.DSL do
       Module.put_attribute(__MODULE__, :context, :music)
       def motif(unquote(name)) do
         var!(my_motif) = []
+        var!(music_metadata) = nil
         unquote(body)
         var!(my_motif) #return value
       end
@@ -397,12 +398,24 @@ defmodule Blockytalky.DSL do
     end
   end
   @doc """
+  changes key
+  """
+  defmacro play_in_key(key, mode, [do: body]) do
+    quote do
+      var!(music_metadata) = %{key: unquote(key), mode: unquote(mode)}
+      unquote(body)
+      var!(music_metadata) = nil
+    end
+  end  
+  @doc """
   This macro should only every be invoked inside a defmotif macro
   This macro needs to be aware of the my_motif variable defmotif declares
   """
   defmacro play_synth(pitch,duration) do
     quote do
-      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(unquote(pitch), unquote(duration))]
+      key = if var!(music_metadata), do: var!(music_metadata)[:key]
+      mode = if var!(music_metadata), do: var!(music_metadata)[:mode]
+      var!(my_motif) = var!(my_motif) ++ [SP.play_synth(map_finger_num_to_pitch(key, mode, unquote(pitch)), unquote(duration))]
       var!(my_motif) = var!(my_motif) ++ [SP.sleep(unquote(duration))]
     end
   end
@@ -424,6 +437,7 @@ defmodule Blockytalky.DSL do
       var!(my_motif) = var!(my_motif) ++ [tail]
     end
   end
+
   @doc """
   music event must be an atom such as
   :down_beat, :up_beat, :beat1, :beat2 ...
@@ -492,4 +506,43 @@ defmodule Blockytalky.DSL do
     program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
   end
+  def map_finger_num_to_pitch(nil, nil, pitch) do
+    {finger_num, octave_offset} = octave_amount(pitch)
+    if(finger_num == 0) do #letter pitches notes can be played outside of play_in_key blocks
+      pitch
+    else
+      Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "Must specify key when using finger numbers"} #user is trying to play finger numbers outside of play_in_key block
+    end
+  end
+  def map_finger_num_to_pitch(key, mode, pitches) when is_list(pitches) do
+    Enum.map(pitches, fn(pitch) -> map_finger_num_to_pitch(key,mode,pitch) end)
+  end
+  def map_finger_num_to_pitch(key, mode, finger_num) do
+    {finger_num, octave_offset} = octave_amount(finger_num)
+    #list of pitches in MIDI middle octave
+    middle_octave_pitches = %{"C" => 60, "C#" => 61, "D" => 62, "D#" => 63, "E" => 64, "F" => 65, "F#" => 66, "G" => 67, "G#" => 68, "A" => 69, "A#" => 70, "Bb" => 70,"B" => 71}
+    #based on if the key is major and minor we know we can just add a specific
+    #number to the midi value to match the finger num (all major/minor scales share same pattern)
+    major = %{1 => 0, 2 => 2, 3 => 4, 4 => 5, 5 => 7, 6 => 9, 7 => 11}
+    minor = %{1 => 0, 2 => 2, 3 => 3, 4 => 5, 5 => 7, 6 => 8, 7 => 10}
+    case mode do
+      "Major" -> middle_octave_pitches[key] + major[finger_num] + octave_offset
+      _       -> middle_octave_pitches[key] + minor[finger_num] + octave_offset
+    end
+  end
+  #can just do the math within the helper, add num to octave offset here
+  def octave_amount("HHH" <> num), do: {String.to_integer(num), 36}
+  def octave_amount("HH" <> num), do: {String.to_integer(num), 24}
+  def octave_amount("H"  <> num), do: {String.to_integer(num), 12}
+  def octave_amount("LLL" <> num), do: {String.to_integer(num), -36}
+  def octave_amount("LL" <> num), do: {String.to_integer(num), -24}
+  def octave_amount("L" <> num), do: {String.to_integer(num), -12}
+  def octave_amount("A" <> num), do: {0, 0} #letter pitch notes can be played outside of play_in_key blocks
+  def octave_amount("B" <> num), do: {0, 0}
+  def octave_amount("C" <> num), do: {0, 0}
+  def octave_amount("D" <> num), do: {0, 0}
+  def octave_amount("E" <> num), do: {0, 0}
+  def octave_amount("F" <> num), do: {0, 0}
+  def octave_amount("G" <> num), do: {0, 0}
+  def octave_amount(num), do: {String.to_integer(num), 0}
 end
