@@ -17,6 +17,12 @@ defmodule Blockytalky.BrickPi do
       "TYPE_SENSOR_ULTRASONIC_SS" ->
         v = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num]) #turn the error case into a max (default) case
         if v == -1, do: 255
+      "TYPE_SENSOR_EV3_TOUCH_DEBOUNCE" -> #filter to more accurately display a 0 or 1
+          v = get_ev3_touch_sensor_value(port_num, 0, 5)
+          case v do
+            5 -> 1
+            _ -> 0
+          end
       _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
       end
 
@@ -28,6 +34,16 @@ defmodule Blockytalky.BrickPi do
     end
     case type do
       _ -> value
+    end
+  end
+  def get_ev3_touch_sensor_value(port_num, num_ones_seen, n) do
+    case n do
+      0 -> num_ones_seen
+      _ ->
+          case PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num]) do #turn the error case into a max (default) case
+            1 -> get_ev3_touch_sensor_value(port_num, num_ones_seen+1, n-1)
+            _ -> get_ev3_touch_sensor_value(port_num, 0, 0)
+          end
     end
   end
   def get_encoder_value(port_id) do
