@@ -21,7 +21,7 @@ defmodule Blockytalky.HardwareDaemon do
   @basic_sensor_types [
     %{:id => "TYPE_SENSOR_NONE", :label => "None"},
     %{:id => "TYPE_SENSOR_TOUCH", :label => "Touch (Orange)"},
-    %{:id => "TYPE_SENSOR_EV3_TOUCH_DEBOUNCE", :label => "Touch (Red)"},
+    %{:id => "TYPE_SENSOR_EV3_TOUCH_0", :label => "Touch (Red)"},
     %{:id => "TYPE_SENSOR_ULTRASONIC_CONT", :label => "Ultrasonic (Orange)"},
     %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Ambient Light (Orange)"},
     %{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Reflective Light (Orange)"}
