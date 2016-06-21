@@ -53,6 +53,7 @@ defmodule Blockytalky.UserCodeChannel do
   ####
   #Internal API
   defp backup_code(map) do
+    #IO.puts(map)
     #backup usercode (code and xml representation)
     {{y,mo,d},{h,mi,s}} = :calendar.universal_time
     [y | _] =  :io_lib.format('~4..0B~n', [y]) #format to 4 digits

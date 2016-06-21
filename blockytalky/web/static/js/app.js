@@ -145,6 +145,7 @@ $(".clear-button").click(function(){
 });
 $(".save-button").click(function(){
   var text = new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace));
+  //text = '<!--'
   var filename = $(".name-header").text() + "blockytalky_program.blockytalky";
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(text));

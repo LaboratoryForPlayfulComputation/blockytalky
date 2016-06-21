@@ -52,7 +52,7 @@
     <block type="play_synth">
       <value name="NOTES">
         <block type="text">
-          <field name="TEXT">1</field>
+          <field name="TEXT">5</field>
         </block>
       </value>
       <value name="BEATS">

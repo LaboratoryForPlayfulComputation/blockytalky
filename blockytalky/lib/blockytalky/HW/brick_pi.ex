@@ -18,12 +18,13 @@ defmodule Blockytalky.BrickPi do
         v = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num]) #turn the error case into a max (default) case
         if v == -1, do: 255
       "TYPE_SENSOR_EV3_TOUCH_DEBOUNCE" -> #filter to more accurately display a 0 or 1
-          v = get_ev3_touch_sensor_value(port_num, 0, 5)
-          case v do
-            5 -> 1
-            _ -> 0
+          v = PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
+          unless v == 1023 do
+            case v do
+               v when v >= 1020 -> 1
+               _ -> 0
+            end
           end
-      _ -> PythonQuerier.run_result(:btbrickpi, :get_sensor_value,[port_num])
       end
 
     type = BrickPiState.get_sensor_type(port_id)
