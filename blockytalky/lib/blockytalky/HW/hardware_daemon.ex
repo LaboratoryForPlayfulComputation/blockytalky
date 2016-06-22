@@ -22,8 +22,15 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => "TYPE_SENSOR_NONE", :label => "None"},
     %{:id => "TYPE_SENSOR_TOUCH", :label => "Touch"},
     %{:id => "TYPE_SENSOR_ULTRASONIC_CONT", :label => "Ultrasonic (Distance)"},
-    %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Light (ambient)"},
-    %{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Light (reflective)"}
+    %{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Light (Ambient)"},
+    %{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Light (Reflective)"}
+    #%{:id => "TYPE_SENSOR_NONE", :label => "None"},
+    #%{:id => "TYPE_SENSOR_TOUCH", :label => "Touch (Orange)"},
+    #%{:id => "TYPE_SENSOR_EV3_TOUCH_0", :label => "Touch (Red)"},
+    #%{:id => "TYPE_SENSOR_ULTRASONIC_CONT", :label => "Ultrasonic (Orange)"},
+    #%{:id => "TYPE_SENSOR_EV3_US_M0", :label => "Ultrasonic (Red)"},
+    #%{:id => "TYPE_SENSOR_LIGHT_OFF", :label => "Ambient Light (Orange)"},
+    #%{:id => "TYPE_SENSOR_LIGHT_ON", :label => "Reflective Light (Orange)"}
   ]
  @grove_analog_types [
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},

@@ -30,6 +30,7 @@ Blockly.Elixir['defmotif'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'defmotif ' + value_name + ' do\n' + statements_do + '\nend\n';
   Blockly.Elixir.context = null;
+  console.log(code)
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -305,8 +306,35 @@ Blockly.Elixir['play_chord_progression'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = statements_do;
-  code = code.replace(/\s/g, '');
-  code = code.replace(/\)/g, '\)\n');
+  Blockly.Elixir.context = null;
+  return code;
+};
+
+Blockly.Blocks['play_in_key'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Play in key of ")
+        .appendField(new Blockly.FieldDropdown([["A", "A"], ["B", "B"], ["Bb", "Bb"], ["C", "C"], ["D", "D"], ["E", "E"], ["F", "F"],  ["G", "G"]]), "KEY")
+        .appendField(new Blockly.FieldDropdown([["Major", "Major"], ["Minor", "Minor"]]), "MODE");
+    this.appendStatementInput("DO");
+    this.setPreviousStatement(true, 'Music');
+    this.setNextStatement(true, 'Music');
+    this.setColour(275);
+    this.setTooltip('Change the pitch using the numbers 1-7, increase the octave by putting 1 or \
+      more "H" in front of the number, lower the octave by putting 1 or more "L" in front of the number. \
+      Ex) "2", "HHH4", "H1", "L2" are all examples of valid options');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Elixir['play_in_key'] = function(block) {
+  Blockly.Elixir.context = ":music";
+  var key = block.getFieldValue("KEY");
+  var mode = block.getFieldValue("MODE");
+  //Blockly.Elixir.valueToCode(block, "KEY", Blockly.Elixir.ORDER_ATOMIC);
+  //var mode = Blockly.Elixir.valueToCode(block, "MODE", Blockly.Elixir.ORDER_ATOMIC);
+  var statements_do = Blockly.Elixir.statementToCode(block, "DO");
+  var code = 'play_in_key("'+key+'","'+mode+'")' + ' do\n' + statements_do +'\nend\n';
   Blockly.Elixir.context = null;
   return code;
 };
