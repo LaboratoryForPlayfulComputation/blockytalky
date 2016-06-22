@@ -338,14 +338,11 @@ Blockly.Blocks['math_scale'] = {
 
 Blockly.Elixir['math_scale'] = function(block) {
   var dropdown_scale_type = block.getFieldValue('scale_type');
-  var var_name = Blockly.Elixir.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Variables.NAME_TYPE);
-  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+  var variable_name = Blockly.Elixir.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Variables.NAME_TYPE);
+  var value = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'math_scale(:' + var_name + ',"'+ dropdown_scale_type +'",' + value_name');\n';
+  var code = 'math_scale("' + variable_name + '", "' + dropdown_scale_type + '", ' + value + ');\n';
+  console.log(code);
   return code;
 };
-
-
-
-
 
