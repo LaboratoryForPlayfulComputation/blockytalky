@@ -545,4 +545,17 @@ defmodule Blockytalky.DSL do
   def octave_amount("F" <> num), do: {0, 0}
   def octave_amount("G" <> num), do: {0, 0}
   def octave_amount(num), do: {String.to_integer(num), 0}
+
+  #macro to take variable and multiple/divide it by a value
+  defmacro math_scale(var_name, dropdown_scale_type, value) do
+    case US.get_var(var_name) do #runtime error message
+    nil ->
+      Blockytalky.Endpoint.broadcast! "uc:command", "error", %{bodt: "#{var_name} has not been set!"}
+      nil
+    v -> 
+      case dropdown_scale_type do
+        'multiply' -> US.set_var(var_name, v * value)
+        _ -> US.set_var(var_name, v / value)
+      end
+  end
 end

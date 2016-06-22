@@ -72,6 +72,7 @@
        </value>
      </block>
      <block type="math_random_float"></block>
+     <block type="math_scale"></block>
    </category>
    <!-- <category name="Lists">
      <block type="lists_create_empty"></block>

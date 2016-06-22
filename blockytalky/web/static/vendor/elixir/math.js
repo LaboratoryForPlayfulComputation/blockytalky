@@ -321,3 +321,31 @@ Blockly.Elixir['math_random_float'] = function(block) {
   // Random fraction between 0 and 1.
   return [':random.uniform()', Blockly.Elixir.ORDER_FUNCTION_CALL];
 };
+
+Blockly.Blocks['math_scale'] = {
+  init: function() {
+    this.appendValueInput("NAME")
+        .setCheck("Number")
+        .appendField(new Blockly.FieldDropdown([["multiply", "multiply"], ["divide", "divide"]]), "scale_type")
+        .appendField(new Blockly.FieldVariable("item"), "NAME")
+        .appendField("by");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Elixir['math_scale'] = function(block) {
+  var dropdown_scale_type = block.getFieldValue('scale_type');
+  var var_name = Blockly.Elixir.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Variables.NAME_TYPE);
+  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'math_scale(:' + var_name + ',"'+ dropdown_scale_type +'",' + value_name');\n';
+  return code;
+};
+
+
+
+
+
