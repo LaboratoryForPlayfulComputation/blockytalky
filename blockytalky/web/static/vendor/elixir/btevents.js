@@ -26,6 +26,7 @@
    var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
    var code = 'start do\n '+ statements_do +' \nend\n';
    Blockly.Elixir.macros_.push(code);
+   console.log(code);
    return code;
  };
  Blockly.Blocks['repeatedly_do'] = {
