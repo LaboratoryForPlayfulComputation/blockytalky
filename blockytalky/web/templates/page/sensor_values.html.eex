@@ -1,6 +1,6 @@
 <ul id="sensors-bin" class="small-block-grid-<%= size_of_sensor_bar %>">
     <%= for sensor <- sensors do %>
-      <%= if Map.get(sensor, :hw) != "btgrovepi" do %>
+      <%= if Map.get(sensor, :hw) != "btbbg" or "btgrovepi" do %>
         <li><%= render "sensor_box.html", sensor: sensor%></li>
       <% else %>
         <li><%= render "grove_sensor_box.html", sensor: sensor%></li>

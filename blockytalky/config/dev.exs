@@ -41,5 +41,5 @@ config :blockytalky, Blockytalky.Repo,
   ####
   #custom configuration
   config :blockytalky,
-    supported_hardware: [:btbrickpi],
+    supported_hardware: [:btbbg],
     user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"

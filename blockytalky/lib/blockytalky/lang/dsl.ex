@@ -4,6 +4,8 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.GrovePi, as: GP
+  alias Blockytalky.BBG, as: BBG
+  alias Blockytalky.BBGState, as: BBGS
   #alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
 
@@ -341,6 +343,14 @@ defmodule Blockytalky.DSL do
        [temp, hum] -> hum
        _ -> nil
      end
+  end
+  #set BBG component value
+  def bbg_set_value(port_id, value) do
+    if value in 0..1023 do
+      BBG.set_component_value(port_id, value)
+    else
+      Blockytalky.Endpoint.broadcast "uc:command", "error", %{"body" => "Tried to set component to value not between 0 and 1023: #{inspect value}"}
+    end
   end
   ## Comms
   # message <msg> to <unit>

@@ -69,7 +69,9 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btgrovepi", :id => :D5, :label => "Port D5", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
-    %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types}
+    %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types},
+    %{:hw => "btbbg", :id => :I2C, :label => "Port I2C", :type => "sensor", :types => @grove_analog_types},
+    %{:hw => "btbbg", :id => :UART, :label => "Port UART", :type => "sensor", :types => @grove_digital_types}
   ]
   ####
   #External API
@@ -83,6 +85,11 @@ defmodule Blockytalky.HardwareDaemon do
         :btbrickpi ->
            @basic_sensor_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
         :btgrovepi ->
+           sensor_id = case sensor_id do
+       b when is_binary(b) -> String.to_atom(b)
+             a -> a
+           end
+        :btbbg ->
            sensor_id = case sensor_id do
 	     b when is_binary(b) -> String.to_atom(b)
              a -> a
@@ -132,9 +139,12 @@ defmodule Blockytalky.HardwareDaemon do
         :btbrickpi ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),
              worker(Blockytalky.BrickPiState,[])]
-	:btgrovepi ->
-	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
-	     worker(Blockytalky.GrovePiState, [])]
+	      :btgrovepi ->
+      	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
+      	     worker(Blockytalky.GrovePiState, [])]
+        :btbbg ->
+            [worker(PythonQuerier, [hw], id: hw, restart: :transient),
+             worker(Blockytalky.BBGState, [])]
         _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end
