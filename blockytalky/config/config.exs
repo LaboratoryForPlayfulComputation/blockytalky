@@ -20,7 +20,7 @@ config :logger, :console,
   metadata: [:request_id]
 config :blockytalky,
   dax: "ws://btrouter.getdown.org:8005/dax",
-  music: true, #set to true if sonic pi is running / this is a synth unit
+  music: false, #set to true if sonic pi is running / this is a synth unit
   music_port: 9090,
   music_eval_port: 5050,
   update_rate: 30,
