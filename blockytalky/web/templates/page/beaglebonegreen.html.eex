@@ -1,0 +1,57 @@
+<category name="Grove Components">
+  <category name="Event">
+    <block type="beaglebonegreen_when_button"></block>
+    <block type="beaglebonegreen_when_port">
+      <value name="NUM">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="beaglebonegreen_when_range">
+      <value name="NUM1">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+      <value name="NUM2">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="beaglebonegreen_while_button"></block>
+    <block type="beaglebonegreen_while_port">
+       <value name="NUM">
+          <block type="math_number">
+             <field name="NUM">0</field>
+          </block>
+       </value>
+    </block>
+    <block type="beaglebonegreen_while_range">
+      <value name="NUM1">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+      <value name="NUM2">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+  </category>
+  <category name="Values">
+    <block type="beaglebonegreen_get_value"></block>
+    <block type="beaglebonegreen_get_temp"></block>
+    <block type="beaglebonegreen_get_hum"></block>
+    <block type="beaglebonegreen_set_value">
+      <value name="VALUE">
+         <block type="math_number">
+            <field name="NUM">0</field>
+         </block>
+      </value>
+    </block>
+    <block type="beaglebonegreen_set_digital"></block>
+  </category>
+</category>

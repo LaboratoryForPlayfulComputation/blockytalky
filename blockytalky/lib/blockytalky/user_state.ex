@@ -5,6 +5,8 @@ defmodule Blockytalky.UserState do
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.GrovePi, as: GP
   alias Blockytalky.GrovePiState, as: GPS
+  alias Blockytalky.BeagleBoneGreen, as: BBG
+  alias Blockytalky.BeagleBoneGreenState, as: BBGS
   alias Blockytalky.MockHW, as: MockHW
   @moduledoc """
   Keeps track of the stateful-ness of the client's BT program.
@@ -28,6 +30,8 @@ defmodule Blockytalky.UserState do
     if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware, do: update_bp_state()
     #update grove state
     if :btgrovepi in Blockytalky.RuntimeUtils.supported_hardware, do: update_gp_state()
+    #update bbg state
+    if :beaglebonegreen in Blockytalky.RuntimeUtils.supported_hardware, do: update_bbg_state()
   end
   def upload_user_code(code_map) do
     GenServer.cast(__MODULE__, {:upload_user_code, code_map})
@@ -155,6 +159,16 @@ defmodule Blockytalky.UserState do
     |> Enum.filter fn port_id -> GPS.get_port_component(port_id) != nil end
     port_values = port_list
     |> Enum.map fn port_id -> GP.get_component_value(port_id) end
+
+    Enum.zip(port_values,port_list)
+    |> Enum.map fn {v,p} -> put_value(v,p) end
+  end
+  defp update_bbg_state do
+    port_list = BBG.port_id_map
+    |> Map.keys
+    |> Enum.filter fn port_id -> BBGS.get_port_component(port_id) != nil end
+    port_values = port_list
+    |> Enum.map fn port_id -> BBG.get_component_value(port_id) end
 
     Enum.zip(port_values,port_list)
     |> Enum.map fn {v,p} -> put_value(v,p) end

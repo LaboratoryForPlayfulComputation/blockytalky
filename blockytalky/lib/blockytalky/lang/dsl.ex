@@ -4,8 +4,8 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.GrovePi, as: GP
-  alias Blockytalky.BBG, as: BBG
-  alias Blockytalky.BBGState, as: BBGS
+  alias Blockytalky.BeagleBoneGreen, as: BBG
+  alias Blockytalky.BeagleBoneGreenState, as: BBGS
   #alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
 

@@ -1,6 +1,6 @@
-defmodule Blockytalky.BBG do
+defmodule Blockytalky.BeagleBoneGreen do
 	alias Blockytalky.PythonQuerier, as: PythonQuerier
-	alias Blockytalky.BBGState, as: BBGState
+	alias Blockytalky.BeagleBoneGreenState, as: BBGState
 	require Logger
 	
 	def port_id_map do
@@ -18,7 +18,7 @@ defmodule Blockytalky.BBG do
                 case io do
 		   "OUTPUT" -> BBGState.get_last_set_value(port_id) 
                     _ -> 
-			{_,v} = PythonQuerier.run_result(:btbbg,:get_sensor_value,[port_num,type,io])		
+			{_,v} = PythonQuerier.run_result(:beaglebonegreen,:get_sensor_value,[port_num,type,io])		
 		        if v == "Error", do: nil, else: v
 	        end
 	end
@@ -26,7 +26,7 @@ defmodule Blockytalky.BBG do
 	def set_component_type(port_id, component_id) do
 		{port_num, _} = Map.get(port_id_map, port_id)
 		component_io = Map.get(component_id_map, component_id)
-		PythonQuerier.run(:btbbg, :set_sensor_type, [port_num, component_io])
+		PythonQuerier.run(:beaglebonegreen, :set_sensor_type, [port_num, component_io])
 		BBGState.set_component_type(port_id, component_id)
 		:ok
 	end
@@ -50,15 +50,15 @@ defmodule Blockytalky.BBG do
 				true -> value
 				end
 		end
-		PythonQuerier.run(:btbbg, :set_component, [port_num, value, type])
+		PythonQuerier.run(:beaglebonegreen, :set_component, [port_num, value, type])
                 BBGState.set_component_value(port_id, value)
 		:ok		
 	end
 end
 
-defmodule Blockytalky.BBGState do
+defmodule Blockytalky.BeagleBoneGreenState do
 	use GenServer
-	alias Blockytalky.BBG, as: BBG
+	alias Blockytalky.BeagleBoneGreen, as: BBG
 	require Logger
 	def start_link() do
 		GenServer.start_link(__MODULE__, [], name: __MODULE__)

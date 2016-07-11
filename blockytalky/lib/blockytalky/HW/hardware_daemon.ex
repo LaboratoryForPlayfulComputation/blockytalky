@@ -70,8 +70,8 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types},
-    %{:hw => "btbbg", :id => :I2C, :label => "Port I2C", :type => "sensor", :types => @grove_analog_types},
-    %{:hw => "btbbg", :id => :UART, :label => "Port UART", :type => "sensor", :types => @grove_digital_types}
+    %{:hw => "beaglebonegreen", :id => :I2C, :label => "Port I2C", :type => "sensor", :types => @grove_analog_types},
+    %{:hw => "beaglebonegreen", :id => :UART, :label => "Port UART", :type => "sensor", :types => @grove_digital_types}
   ]
   ####
   #External API
@@ -89,7 +89,7 @@ defmodule Blockytalky.HardwareDaemon do
        b when is_binary(b) -> String.to_atom(b)
              a -> a
            end
-        :btbbg ->
+        :beaglebonegreen ->
            sensor_id = case sensor_id do
 	     b when is_binary(b) -> String.to_atom(b)
              a -> a
@@ -142,9 +142,9 @@ defmodule Blockytalky.HardwareDaemon do
 	      :btgrovepi ->
       	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
       	     worker(Blockytalky.GrovePiState, [])]
-        :btbbg ->
+        :beaglebonegreen ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),
-             worker(Blockytalky.BBGState, [])]
+             worker(Blockytalky.BeagleBoneGreenState, [])]
         _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end

@@ -7,8 +7,8 @@
    <%= if :btgrovepi in Blockytalky.RuntimeUtils.supported_hardware do %>
     <%= render Blockytalky.PageView, "grovepi.html" %>
    <% end %>
-   <%= if :btbbg in Blockytalky.RuntimeUtils.supported_hardware do %>
-    <%= render Blockytalky.PageView, "grovepi.html" %>
+   <%= if :beaglebonegreen in Blockytalky.RuntimeUtils.supported_hardware do %>
+    <%= render Blockytalky.PageView, "beaglebonegreen.html" %>
    <% end %>
    <%= if Application.get_env(:blockytalky, :music) do %>
     <%= render Blockytalky.PageView, "music.html" %>

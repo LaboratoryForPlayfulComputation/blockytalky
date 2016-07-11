@@ -4,8 +4,8 @@ defmodule Blockytalky.PageView do
   #alias Blockytalky.UserState, as: US
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.GrovePiState, as: GPS
-  alias Blockytalky.BBG, as: BBG
-  alias Blockytalky.BBGState, as: BBGS
+  alias Blockytalky.BeagleBoneGreen, as: BBG
+  alias Blockytalky.BeagleBoneGreenState, as: BBGS
   def sensors do
     HD.get_sensor_names
   end
@@ -19,7 +19,7 @@ defmodule Blockytalky.PageView do
       "mock" -> "None"
       "btbrickpi" -> BP.get_sensor_type(port_id) |> HD.get_sensor_type_label_for_id
       "btgrovepi" -> GPS.get_port_component(port_id) |> HD.get_sensor_type_label_for_id
-      "btbbg" -> BBGS.get_port_component(port_id) |> HD.get_sensor_type_label_for_id
+      "beaglebonegreen" -> BBGS.get_port_component(port_id) |> HD.get_sensor_type_label_for_id
     end
   end
   def sensor_width do
