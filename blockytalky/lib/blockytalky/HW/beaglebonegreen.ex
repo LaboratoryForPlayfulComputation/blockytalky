@@ -51,7 +51,7 @@ defmodule Blockytalky.BeagleBoneGreen do
 				end
 		end
 		PythonQuerier.run(:beaglebonegreen, :set_component, [port_num, value, type])
-                BBGState.set_component_value(port_id, value)
+        BBGState.set_component_value(port_id, value)
 		:ok		
 	end
 end
@@ -70,36 +70,36 @@ defmodule Blockytalky.BeagleBoneGreenState do
 	def set_component_type(port_id, component_id) do
 		GenServer.cast(__MODULE__, {:set_port, port_id, component_id})		
 	end
-        def set_component_value(port_id, value) do
-                GenServer.cast(__MODULE__, {:set_value, port_id, value})
-        end
+    def set_component_value(port_id, value) do
+        GenServer.cast(__MODULE__, {:set_value, port_id, value})
+    end
 	def get_last_set_value(port_id) do
-                GenServer.call(__MODULE__, {:get_last_set_value, port_id})
-        end
+        GenServer.call(__MODULE__, {:get_last_set_value, port_id})
+    end
 	def get_port_io(port_id) do
 		Map.get(BBG.component_id_map, get_port_component(port_id))
 	end
-        def get_port_component(port_id) do
-                { component_id, _ } = GenServer.call(__MODULE__, {:get_port, port_id})
+    def get_port_component(port_id) do
+        { component_id, _ } = GenServer.call(__MODULE__, {:get_port, port_id})
 		component_id
-        end
+    end
 	def terminate(_reason,_state) do
 		Logger.info("Terminating #{inspect __MODULE__}")
 	end
 	def handle_call({:get_port, port_id}, _from, map) do
 		{:reply, Map.get(map, port_id, {nil, nil}), map}
 	end
-        def handle_call({:get_last_set_value, port_id}, _from, map) do
-                { _, value} = Map.get(map, port_id, {nil, nil})
-                {:reply, value, map}
-        end
+    def handle_call({:get_last_set_value, port_id}, _from, map) do
+        { _, value} = Map.get(map, port_id, {nil, nil})
+        {:reply, value, map}
+    end
 	def handle_cast({:set_port, port_id, component_id}, map) do	
 		map = Map.put(map, port_id, {component_id, nil})
 		{:noreply, map}
 	end
-        def handle_cast({:set_value, port_id, value}, map) do
+    def handle_cast({:set_value, port_id, value}, map) do
 		{ component_id, _ } = Map.get(map, port_id, {nil, nil})
 		map = Map.put(map, port_id, { component_id, value })
-                {:noreply, map}
-        end	
+        {:noreply, map}
+    end	
 end
