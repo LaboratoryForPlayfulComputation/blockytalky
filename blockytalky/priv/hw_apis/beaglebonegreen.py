@@ -22,8 +22,9 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
 	    if sensor_type == "analog":
 	    	adc = I2C_ADC()
 			val = adc.read_adc()
+            val = 2 #check for value on front-end
 	    elif sensor_type == "digital":
-			val = GPIO.input("P9_22")  
+			val = 1 #GPIO.input("P9_22") check hw update on front-end  
     except: 
 	    return "Error"
     if (val != val or val2 != val2):
@@ -33,7 +34,7 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
 
 def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
     if (sensor_io == "OUTPUT"):
-        print "*********** setting sensor value **************"
+        print "*********** setting sensor type **************"
     	if (port_num == 1):
     		GPIO.setup("P9_22", GPIO.OUT)
     	else:
