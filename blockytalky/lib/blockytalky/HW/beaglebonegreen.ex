@@ -5,6 +5,7 @@ defmodule Blockytalky.BeagleBoneGreen do
 	
 	def port_id_map do
 		%{:I2C => {0, "analog"}, :UART => {1, "digital"}}
+		#check if these IDs need to change to specific pins
 	end
 
 	def component_id_map do 
@@ -15,11 +16,13 @@ defmodule Blockytalky.BeagleBoneGreen do
 	def get_component_value(port_id) do
 		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
 		io = BBGState.get_port_io(port_id)
-                case io do
-		   "OUTPUT" -> BBGState.get_last_set_value(port_id) 
-                    _ -> 
-			{_,v} = PythonQuerier.run_result(:beaglebonegreen,:get_sensor_value,[port_num,type,io])		
-		        if v == "Error", do: nil, else: v
+            case io do
+		   "OUTPUT" -> Logger.debug("getting last OUTPUT value")
+		   			BBGState.get_last_set_value(port_id) 
+	            _ -> 
+	            	Logger.debug("getting INPUT value from python api")
+					{_,v} = PythonQuerier.run_result(:beaglebonegreen,:get_sensor_value,[port_num,type,io])		
+			        if v == "Error", do: nil, else: v
 	        end
 	end
 	
@@ -44,12 +47,8 @@ defmodule Blockytalky.BeagleBoneGreen do
 				value < 0 -> 0
 				true -> value
 				end
-			"PWM" -> cond do
-				value > 255 -> 255
-				value < 0 -> 0
-				true -> value
-				end
 		end
+		Logger.debug("setting component...")
 		PythonQuerier.run(:beaglebonegreen, :set_component, [port_num, value, type])
         BBGState.set_component_value(port_id, value)
 		:ok		
@@ -98,6 +97,7 @@ defmodule Blockytalky.BeagleBoneGreenState do
 		{:noreply, map}
 	end
     def handle_cast({:set_value, port_id, value}, map) do
+    	Logger.debug("adding value to port_values map")
 		{ component_id, _ } = Map.get(map, port_id, {nil, nil})
 		map = Map.put(map, port_id, { component_id, value })
         {:noreply, map}

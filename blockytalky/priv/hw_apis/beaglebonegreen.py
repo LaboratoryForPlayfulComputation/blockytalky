@@ -2,8 +2,6 @@ from grovepi import *
 from beaglebonegreen_adc import *
 import Adafruit_BBIO.GPIO as GPIO
 
-I2C = "P9_20" #grove SDA line for Grove I2C port
-#UART = "P9_22" #grove GPIO line for Grove UART port
 NO_SENSOR = -1
 #def setup(sensorA0 = NO_SENSOR, sensorA1 = NO_SENSOR, sensorA2 = NO_SENSOR, sensorD2 = NO_SENSOR, sensorD3 = NO_SENSOR, sensorD4 = NO_SENSOR, sensorD5 = NO_SENSOR, sensorD6 = NO_SENSOR, sensorD7 = NO_SENSOR, sensorD8 = NO_SENSOR):
 def setup(io_vals = []): #array with indices as ports and values as plugged-in-component io types 
@@ -22,7 +20,6 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
 	    if sensor_type == "analog":
 	    	adc = I2C_ADC()
 			val = adc.read_adc()
-            val = 2 #check for value on front-end
 	    elif sensor_type == "digital":
 			val = 1 #GPIO.input("P9_22") check hw update on front-end  
     except: 
@@ -33,23 +30,24 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
         return val
 
 def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
+    print "*********** setting sensor type **************"
+    print "port number: ", port_num, "sensor_io: ", sensor_io
     if (sensor_io == "OUTPUT"):
-        print "*********** setting sensor type **************"
     	if (port_num == 1):
     		GPIO.setup("P9_22", GPIO.OUT)
     	else:
     		print "okay" #add I2C support
-    else: 
+    else: #INPUT
     	if (port_num == 1):
     		GPIO.setup("P9_22", GPIO.IN)
-    	else: 
+    	else:
     		print "okay" #add I2C support
     return
 
 #Writes values to ports
 def set_component(port_num,value,component_type):
     if component_type == "digital":
-        print "setting digital component"
+        print "setting digital component..."
 	    set_digital_component(port_num,value)
 	#for now we do not have I2C output
     return
@@ -66,8 +64,3 @@ def set_digital_component(port_num,value):
 def set_analog_component(port_num,value):
     	analogWrite(port_num,value)
     return
-
-#Write analog value to PWM component
-#def set_pwm_component(port_num,value):
-#    analogWrite(port_num,value)
-#    return
