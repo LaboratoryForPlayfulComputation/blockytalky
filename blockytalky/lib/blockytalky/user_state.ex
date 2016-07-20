@@ -165,11 +165,13 @@ defmodule Blockytalky.UserState do
   end
   defp update_bbg_state do
     port_list = BBG.port_id_map
+    Logger.debug("updating BBG state ...")
     |> Map.keys
     |> Enum.filter fn port_id -> BBGS.get_port_component(port_id) != nil end
+    Logger.debug("we have BBG port component: {#inspect port_list}, now for compenent value")
     port_values = port_list
     |> Enum.map fn port_id -> BBG.get_component_value(port_id) end
-
+    Logger.debug("port componant and port value have been set: {#inspect port_values}")
     Enum.zip(port_values,port_list)
     |> Enum.map fn {v,p} -> put_value(v,p) end
   end
