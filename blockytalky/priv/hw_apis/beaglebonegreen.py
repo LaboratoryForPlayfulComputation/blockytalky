@@ -42,14 +42,13 @@ def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
     		GPIO.setup("P9_22", GPIO.IN)
     	else:
             port_i2c = I2C_ADC()
-    		print "okay" #add I2C support
     return
 
 #Writes values to ports
 def set_component(port_num,value,component_type):
     if component_type == "digital":
         print "setting digital component..."
-	    set_digital_component(port_num,value)
+        set_digital_component(port_num,value)
 	#for now we do not have I2C output
     return
 
