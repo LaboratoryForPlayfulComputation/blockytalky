@@ -16,7 +16,7 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
 def get_sensor_value(port_num,sensor_type,sensor_io):
     val = 0
     val2 = 0
-    print "sensor io is INPUT"
+    print "sensor io is INPUT, port_num:", port_num
     try: 
 	    if sensor_type == "analog":
 	    	val = 2

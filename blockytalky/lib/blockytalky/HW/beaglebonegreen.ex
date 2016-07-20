@@ -4,7 +4,7 @@ defmodule Blockytalky.BeagleBoneGreen do
 	require Logger
 	
 	def port_id_map do
-		%{:I2C => {0, "analog"}, :UART => {1, "digital"}}
+		%{:I2C => {"P9_20", "analog"}, :UART => {"P9_22", "digital"}}
 		#check if these IDs need to change to specific pins
 	end
 
