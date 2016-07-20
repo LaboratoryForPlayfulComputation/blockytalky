@@ -29,6 +29,7 @@ defmodule Blockytalky.BeagleBoneGreen do
 	def set_component_type(port_id, component_id) do
 		{port_num, _} = Map.get(port_id_map, port_id)
 		component_io = Map.get(component_id_map, component_id)
+		Logger.debug("setting sensor type ...")
 		PythonQuerier.run(:beaglebonegreen, :set_sensor_type, [port_num, component_io])
 		BBGState.set_component_type(port_id, component_id)
 		:ok
@@ -94,6 +95,7 @@ defmodule Blockytalky.BeagleBoneGreenState do
     end
 	def handle_cast({:set_port, port_id, component_id}, map) do	
 		map = Map.put(map, port_id, {component_id, nil})
+		Logger.debug("#{inspect map}")
 		{:noreply, map}
 	end
     def handle_cast({:set_value, port_id, value}, map) do
