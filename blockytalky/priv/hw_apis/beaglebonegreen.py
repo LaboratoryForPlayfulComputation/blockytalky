@@ -1,8 +1,8 @@
-from grovepi import *
 from beaglebonegreen_adc import *
 import Adafruit_BBIO.GPIO as GPIO
 
 NO_SENSOR = -1
+global port_i2c
 #def setup(sensorA0 = NO_SENSOR, sensorA1 = NO_SENSOR, sensorA2 = NO_SENSOR, sensorD2 = NO_SENSOR, sensorD3 = NO_SENSOR, sensorD4 = NO_SENSOR, sensorD5 = NO_SENSOR, sensorD6 = NO_SENSOR, sensorD7 = NO_SENSOR, sensorD8 = NO_SENSOR):
 def setup(io_vals = []): #array with indices as ports and values as plugged-in-component io types 
     #0  1  2  3  4  5  6  7  8  9  ... 10     11    12    13
@@ -10,7 +10,7 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
    #loop through and check all
     for i in range(len(io_vals)):
         print "port" + io_vals[i]
-		set_sensor_type(i,io_vals[i])
+        set_sensor_type(i,io_vals[i])
     return
 
 def get_sensor_value(port_num,sensor_type,sensor_io):
@@ -19,9 +19,9 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
     print "sensor io is INPUT, port_num:", port_num
     try: 
 	    if sensor_type == "analog":
-	    	val = 2
+	    	val = port_i2c.read_adc()
 	    elif sensor_type == "digital":
-			val = 1 #GPIO.input("P9_22") check hw update on front-end  
+			val = GPIO.input("P9_22") check hw update on front-end  
     except: 
 	    return "Error"
     if (val != val or val2 != val2):
@@ -33,14 +33,15 @@ def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
     print "*********** setting sensor type **************"
     print "port number: ", port_num, "sensor_io: ", sensor_io
     if (sensor_io == "OUTPUT"):
-    	if (port_num == 1):
+    	if (port_num == "P9_22"):
     		GPIO.setup("P9_22", GPIO.OUT)
-    	else:
+    	else: #INPUT
     		print "okay" #add I2C support
     else: #INPUT
-    	if (port_num == 1):
+    	if (port_num == "P9_22"):
     		GPIO.setup("P9_22", GPIO.IN)
     	else:
+            port_i2c = I2C_ADC()
     		print "okay" #add I2C support
     return
 
@@ -62,5 +63,5 @@ def set_digital_component(port_num,value):
 
 #Writes analog value to analog component
 def set_analog_component(port_num,value):
-    	analogWrite(port_num,value)
+    print "okay"
     return
