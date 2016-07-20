@@ -50,6 +50,7 @@ defmodule Blockytalky.PythonQuerier do
   def handle_call({:run, method, args}, _from, state={python_env, python_module}) do
     #erlport run the script
     result = try do
+        Logger.debug("running python module: #{inspect state}")
         :python.call(python_env, python_module, method, args)
     rescue
         _ -> nil
