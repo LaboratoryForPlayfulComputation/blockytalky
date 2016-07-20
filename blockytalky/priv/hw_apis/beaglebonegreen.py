@@ -16,10 +16,10 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
 def get_sensor_value(port_num,sensor_type,sensor_io):
     val = 0
     val2 = 0
+    print "sensor io is INPUT"
     try: 
 	    if sensor_type == "analog":
-	    	adc = I2C_ADC()
-			val = adc.read_adc()
+	    	val = 2
 	    elif sensor_type == "digital":
 			val = 1 #GPIO.input("P9_22") check hw update on front-end  
     except: 
