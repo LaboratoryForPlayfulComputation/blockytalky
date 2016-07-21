@@ -2,7 +2,7 @@ from beaglebonegreen_adc import *
 import Adafruit_BBIO.GPIO as GPIO
 
 NO_SENSOR = -1
-global port_i2c
+
 #def setup(sensorA0 = NO_SENSOR, sensorA1 = NO_SENSOR, sensorA2 = NO_SENSOR, sensorD2 = NO_SENSOR, sensorD3 = NO_SENSOR, sensorD4 = NO_SENSOR, sensorD5 = NO_SENSOR, sensorD6 = NO_SENSOR, sensorD7 = NO_SENSOR, sensorD8 = NO_SENSOR):
 def setup(io_vals = []): #array with indices as ports and values as plugged-in-component io types 
     #0  1  2  3  4  5  6  7  8  9  ... 10     11    12    13
@@ -16,22 +16,21 @@ def setup(io_vals = []): #array with indices as ports and values as plugged-in-c
 def get_sensor_value(port_num,sensor_type,sensor_io):
     val = 0
     val2 = 0
-    print "sensor io is INPUT, port_num:", port_num
     try: 
-	    if sensor_type == "analog":
-	    	val = port_i2c.read_adc()
-	    elif sensor_type == "digital":
-			val = GPIO.input("P9_22") 
-    except: 
+        if sensor_type == "analog":
+            adc = I2C_ADC()
+            val = adc.read_adc()
+        elif sensor_type == "digital":
+            val = GPIO.input("P9_22") #seems to be giving more than 1/0s...
+    except:
 	    return "Error"
+        
     if (val != val or val2 != val2):
 	    return -2
     else:
         return val
 
 def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
-    print "*********** setting sensor type **************"
-    print "port number: ", port_num, "sensor_io: ", sensor_io
     if (sensor_io == "OUTPUT"):
         if (port_num == "P9_22"):
     	   GPIO.setup("P9_22", GPIO.OUT)
@@ -41,7 +40,7 @@ def set_sensor_type(port_num, sensor_io): #sets the pinmode (I/O) if applicable
     	if (port_num == "P9_22"):
     		GPIO.setup("P9_22", GPIO.IN)
     	else:
-            port_i2c = I2C_ADC()
+            print "okay"
     return
 
 #Writes values to ports

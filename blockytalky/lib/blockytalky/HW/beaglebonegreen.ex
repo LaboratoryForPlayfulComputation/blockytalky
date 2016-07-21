@@ -17,12 +17,10 @@ defmodule Blockytalky.BeagleBoneGreen do
 		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
 		io = BBGState.get_port_io(port_id)
             case io do
-		   "OUTPUT" -> Logger.debug("getting last OUTPUT value")
-		   			BBGState.get_last_set_value(port_id) 
+		   "OUTPUT" -> BBGState.get_last_set_value(port_id) 
 	            _ -> 
-	            	Logger.debug("getting INPUT value from python api ...")
 					{_,v} = PythonQuerier.run_result(:beaglebonegreen,:get_sensor_value,[port_num,type,io])	
-					Logger.debug("INPUT value is: #{inspect v}")	
+					Logger.debug("value from get_sensor_value is: #{inspect v}")	
 			        if v == "Error", do: nil, else: v
 	        end
 	end

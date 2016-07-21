@@ -47,6 +47,13 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :TEMP_HUM, :label => "Temp & Humidity sensor"},
     %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"}
   ]
+
+  @beablebonegreen_digital [
+    %{:id => :TYPE_SENSOR_NONE, :label => "None"},
+    %{:id => :BUTTON, :label => "Button"},
+    %{:id => :LED, :label => "LED Light"},
+    %{:id => :RELAY, :label => "Relay"},
+  ]
   @sensor_data [
     %{:hw => "mock", :id => "MOCK_1", :label => "Mock 1", :type => "sensor", :types => @basic_sensor_types},
     %{:hw => "mock", :id => "MOCK_2", :label => "Mock 2", :type => "sensor", :types => @basic_sensor_types},
@@ -70,8 +77,8 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types},
-    %{:hw => "beaglebonegreen", :id => :I2C, :label => "Port I2C", :type => "sensor", :types => @grove_analog_types},
-    %{:hw => "beaglebonegreen", :id => :UART, :label => "Port UART", :type => "sensor", :types => @grove_digital_types}
+    %{:hw => "beaglebonegreen", :id => :I2C, :label => "Port I2C", :type => "sensor", :types => @beablebonegreen_digital},
+    %{:hw => "beaglebonegreen", :id => :UART, :label => "Port UART", :type => "sensor", :types => @beablebonegreen_digital}
   ]
   ####
   #External API
