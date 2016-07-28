@@ -17,14 +17,17 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
     val = 0
     val2 = 0
     try: 
-        if sensor_type == "analog":
+        if (sensor_type == "analog" and sensor_io == "INPUT"):
             adc = I2C_ADC()
             val = adc.read_adc()
-        elif sensor_type == "digital":
+        elif (sensor_type == "digital" and sensor_io == "INPUT"):
             val = GPIO.input("P9_22") #seems to be giving more than 1/0s...
+        else: 
+            print "This isn't an input sensor"
+            return -42
     except:
 	    return "Error"
-        
+
     if (val != val or val2 != val2):
 	    return -2
     else:

@@ -11,7 +11,8 @@ defmodule Blockytalky.BeagleBoneGreen do
 	def component_id_map do 
 		%{:LIGHT => "INPUT", :SOUND => "INPUT", :ROTARY_ANGLE => "INPUT",
 			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",
-			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
+			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC",
+			:WATER => "INPUT", :MOISTURE => "INPUT"}
 	end 
 	def get_component_value(port_id) do
 		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
