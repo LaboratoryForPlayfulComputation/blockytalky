@@ -122,14 +122,20 @@ defmodule Blockytalky.BrickPiState do
     {:reply,constants, state}
   end
   def handle_call({:get_sensor_type, port_id}, _from, state={constants, sensor_types}) do
-    type = Map.get(sensor_types,port_id,@no_sensor)
+    sensors = case sensor_types do
+      {:ok, types} -> types
+      _ ->
+    end
+    type = Map.get(sensors,port_id,@no_sensor)
     {:reply,type, state}
   end
   def handle_cast({:set_sensor_type,port_id, sensor_type},{constants, sensor_types}) do
     sensor_types = Map.put(sensor_types,port_id, sensor_type)
     #backup sensor types
     {status, json} = JSX.encode sensor_types
-    if status == :ok, do: File.write("#{@sensor_dir}/#{@sensor_file}", json)
+    if status == :ok, do:
+      File.write("#{@sensor_dir}/#{@sensor_file}", json)
+      File.write("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}", json)
     {:noreply,{constants, sensor_types}}
   end
   def terminate(_reason, _state) do
