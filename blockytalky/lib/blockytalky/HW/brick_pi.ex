@@ -106,7 +106,11 @@ defmodule Blockytalky.BrickPiState do
     File.mkdir(Application.app_dir(:blockytalky, @sensor_dir))
     File.touch("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}")
     sensor_types = case File.read("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}") do
-      {:ok, text} when text != "" -> JSX.decode(text)
+      {:ok, text} when text != "" ->
+        case JSX.decode(text) do
+          {:ok, json} -> json
+          _ -> %{}
+        end
       _ -> %{}
     end
     {:ok, {map, sensor_types}}
@@ -122,12 +126,8 @@ defmodule Blockytalky.BrickPiState do
     {:reply,constants, state}
   end
   def handle_call({:get_sensor_type, port_id}, _from, state={constants, sensor_types}) do
-    sensors = case sensor_types do
-      {:ok, types} -> types
-      _ ->
-    end
-    type = Map.get(sensors,port_id,@no_sensor)
-    {:reply,type, state}
+    type = Map.get(sensor_types, port_id, @no_sensor)
+    {:reply, type, state}
   end
   def handle_cast({:set_sensor_type,port_id, sensor_type},{constants, sensor_types}) do
     sensor_types = Map.put(sensor_types,port_id, sensor_type)

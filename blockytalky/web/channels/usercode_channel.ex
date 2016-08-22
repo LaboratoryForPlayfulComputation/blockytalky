@@ -27,6 +27,7 @@ defmodule Blockytalky.UserCodeChannel do
         {:ok, text} -> text
         _ -> ""
       end
+      map = Map.put(map, "sensors", sensors)
       backup_code(map)
     end
     {:noreply, socket}
