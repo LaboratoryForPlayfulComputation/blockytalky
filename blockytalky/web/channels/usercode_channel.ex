@@ -27,7 +27,6 @@ defmodule Blockytalky.UserCodeChannel do
         {:ok, text} -> text
         _ -> ""
       end
-      IO.inspect sensors
       backup_code(map)
     end
     {:noreply, socket}
