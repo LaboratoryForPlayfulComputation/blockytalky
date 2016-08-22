@@ -16,6 +16,7 @@ defmodule Blockytalky.UserCodeChannel do
     US.stop_user_code
     Blockytalky.HardwareDaemon.stop_signal
     Blockytalky.Music.stop_signal
+    #need a sonic pi "stop motif" command here?
     {:noreply, socket}
   end
   def handle_in("upload", %{"body" => map}, socket) do

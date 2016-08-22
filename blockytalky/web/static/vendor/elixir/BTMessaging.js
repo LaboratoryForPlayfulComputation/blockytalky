@@ -99,7 +99,8 @@ Blockly.Blocks['osc'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(120);
-    this.setTooltip('');
+    this.setTooltip('This block is for sending OSC messages to addresses within or outside the network.' +
+      'The destination must be in the format <IP_ADDRESS>:<PORT>, and the parameters must be stored in a list.');
     this.setHelpUrl('http://www.example.com/');
   }
 };
