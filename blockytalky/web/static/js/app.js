@@ -129,7 +129,8 @@ $(".upload-button").click(function(){
   sys_log("Uploading code from the browser to "+ $(".name-header").text() +"!");
   var payload = {
     xml: new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace)),
-    code: Blockly.Elixir.workspaceToCode(App.workspace)
+    code: Blockly.Elixir.workspaceToCode(App.workspace),
+    sensors: ''
   };
   uc_chan.push("upload", {body: payload})
 });
