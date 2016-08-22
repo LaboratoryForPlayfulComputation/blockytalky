@@ -79,3 +79,34 @@ Blockly.Elixir['say'] = function(block) {
   var code = 'say('+value_msg+')\n';
   return code;
 };
+Blockly.Blocks['osc'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Send OSC message");
+    this.appendValueInput("MESSAGE")
+        .setCheck(null)
+        .setAlign(Blockly.ALIGN_CENTRE);
+    this.appendDummyInput()
+        .appendField("to");
+    this.appendValueInput("DEST")
+        .setCheck(null)
+        .setAlign(Blockly.ALIGN_CENTRE);
+    this.appendDummyInput()
+        .appendField("with parameters");
+    this.appendValueInput("PARAMS")
+        //.setCheck("Lists")
+        .setAlign(Blockly.ALIGN_CENTRE);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['osc'] = function(block) {
+  var value_message = Blockly.JavaScript.valueToCode(block, 'MESSAGE', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_dest = Blockly.JavaScript.valueToCode(block, 'DEST', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_params = Blockly.JavaScript.valueToCode(block, 'PARAMS', Blockly.JavaScript.ORDER_ATOMIC);
+  var code = '...;\n';
+  return code;
+};

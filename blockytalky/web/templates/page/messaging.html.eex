@@ -28,5 +28,16 @@
       </block>
     </value>
   </block>
-
+  <block type="osc">
+    <value name="MESSAGE">
+      <block type="text">
+        <field name="TEXT">message</field>
+      </block>
+    </value>
+    <value name="DEST">
+      <block type="text">
+        <field name="TEXT">dest</field>
+      </block>
+    </value>      
+  </block> 
 </category>
