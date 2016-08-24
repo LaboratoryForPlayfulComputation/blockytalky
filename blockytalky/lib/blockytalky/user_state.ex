@@ -136,6 +136,10 @@ defmodule Blockytalky.UserState do
     sensor_ports = ~w/PORT_1 PORT_2 PORT_3 PORT_4/
     motor_ports = ~w/PORT_A PORT_B PORT_C PORT_D/
     _ = for x <- sensor_ports do
+       type = BP.get_sensor_type(x)
+       BP.set_sensor_type(x, type) #will cause an error to show when running w/o BrickPi hardware
+    end
+    _ = for x <- sensor_ports do
       case BP.get_sensor_value(x) do
         :undefined -> :ok # if no value, drop it for now
         v -> put_value(v,x) #value, port
@@ -183,6 +187,7 @@ defmodule Blockytalky.UserState do
   defp push_to_clients do
     #push to clients
     #broadcase sensor / motor values
+    update_bp_state() #maybe this will help update the values before responding to client?? UNTESTED
     values_json = GenServer.call(__MODULE__,:get_port_value_map) |> strip_oks
     #Logger.debug("#{inspect values_json}")
     Blockytalky.Endpoint.broadcast "hardware:values", "all",  %{body: values_json}
@@ -244,6 +249,9 @@ defmodule Blockytalky.UserState do
     uc = case savefiles do
           [] -> %{"code" => "", "xml" => "<xml></xml>", "sensors" => ""} #empty savefile
           [head | _ ] ->
+            #refresh sensor values properly
+            #put some code here ?
+            #decode json usercode file
             file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
             file = case JSX.decode(file) do
               {:ok, f} -> f

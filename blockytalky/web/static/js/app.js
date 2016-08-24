@@ -103,12 +103,10 @@ var App = {
         var xml = Blockly.Xml.textToDom(save_file.xml);
         Blockly.Xml.domToWorkspace(App.workspace,xml);
       }
-
       sys_log("System: Code Downloaded from " + $(".name-header").text())
     });
   }
 };
-
 
 //button-bar callbacks:
 $(".run-button").click(function(){
