@@ -15,7 +15,7 @@ defmodule Blockytalky.Music do
     Application.get_env(:blockytalky, :music_respond_port, 9091)
   end
   def stop_signal do
-    send_music_program(SonicPi.stop_motif, true)
+    send_music_program(SonicPi.stop_motif, false)
   end
   def listen(udp_conn) do
     {data, ip} = udp_conn
