@@ -1,4 +1,4 @@
-Copyright (c) 2015, University of Colorado Boulder
+Copyright (c) 2015, 2016 University of Colorado Boulder
 Copyright (c) 2015, Tufts University
 All rights reserved.
 
