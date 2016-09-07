@@ -156,8 +156,6 @@ $(".save-button").click(function(){
   document.body.removeChild(element);
 });
 $(document).on('change','#fileupload', function(e){
-  //console.log("loading file:");
-  //console.log(e);
   var file = e.target.files[0];
   if (!file) {
     return;
@@ -165,9 +163,12 @@ $(document).on('change','#fileupload', function(e){
   var reader = new FileReader();
   reader.onload = function(e) {
     var contents = e.target.result;
-    //console.log(contents);
     App.workspace.clear();
-    Blockly.Xml.domToWorkspace(App.workspace, Blockly.Xml.textToDom(contents));
+    try{
+      Blockly.Xml.domToWorkspace(App.workspace, Blockly.Xml.textToDom(contents));
+    } catch(err){
+       sys_log("File upload error: " + file.name + " is not compatible with this version of BlockyTalky");
+    }
   };
   reader.readAsText(file);
   e.targetvalue = null;
