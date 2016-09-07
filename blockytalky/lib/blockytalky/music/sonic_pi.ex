@@ -52,6 +52,7 @@ defmodule Blockytalky.SonicPi do
       false -> "#"
       name -> #Ruby code to listen until the parent sends a sync message
       """
+      $playing = false
       synced = false
       until synced  do
         begin
@@ -133,6 +134,7 @@ defmodule Blockytalky.SonicPi do
   def start_motif(body_program, opts \\ [])  do
     loop = Keyword.get(opts,:loop,false)
     """
+    $playing = true
     $keep_looping = #{loop}
     $cueued = true
     define :next_motif do
@@ -152,6 +154,8 @@ defmodule Blockytalky.SonicPi do
   end
   def stop_motif() do
     """
+    $playing = false
+    print "stopping!"
     $my_motif_thread.kill
     if $next_beat != nil && $next_beat.alive?
       $next_beat.kill
@@ -186,7 +190,9 @@ defmodule Blockytalky.SonicPi do
     if $synth != nil
       use_synth $synth
     end
-    play #{p}, sustain: #{duration}, amp: $amp
+    if $playing
+      play #{p}, sustain: #{duration}, amp: $amp
+    end
     """
   end
   def send_music_message(message, to) do
@@ -208,13 +214,17 @@ defmodule Blockytalky.SonicPi do
     t = t * 0.995
     """
     use_bpm $tempo
-    sleep #{t}
+    if $playing
+      sleep #{t}
+    end
     """
   end
   def trigger_sample(sample) do
     """
-    use_bpm $tempo
-    sample #{inspect sample}, amp: $amp
+    if $playing
+      use_bpm $tempo
+      sample #{inspect sample}, amp: $amp
+    end
     """
   end
   def sync(flag) do
