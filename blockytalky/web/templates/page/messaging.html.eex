@@ -34,10 +34,15 @@
         <field name="TEXT">message</field>
       </block>
     </value>
-    <value name="DEST">
+    <value name="IP">
       <block type="text">
-        <field name="TEXT">dest</field>
+        <field name="TEXT">IP</field>
       </block>
-    </value>      
+    </value> 
+    <value name="PORT">
+      <block type="text">
+        <field name="TEXT">PORT</field>
+      </block>
+    </value>          
   </block> 
 </category>

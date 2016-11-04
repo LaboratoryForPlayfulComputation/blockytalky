@@ -2,6 +2,7 @@ defmodule Blockytalky.CommsModule do
   use Supervisor
   alias Blockytalky.DaxListener, as: DL
   alias Blockytalky.LocalListener, as: LL
+  alias Blockytalky.Processing, as: P
   alias Blockytalky.UserState, as: US
   require Logger
   @moduledoc """
@@ -66,7 +67,8 @@ defmodule Blockytalky.CommsModule do
     #try to connect to
     comms_children = [
       worker(DL, [], restart: :transient),
-      worker(LL, [], restart: :transient)
+      worker(LL, [], restart: :transient),
+      #worker(LL, [], restart: :transient)
     ]
     supervise comms_children, strategy: :one_for_one, max_restarts: 5, max_seconds: 1
   end

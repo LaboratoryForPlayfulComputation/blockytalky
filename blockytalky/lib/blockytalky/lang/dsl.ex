@@ -4,6 +4,7 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.GrovePi, as: GP
+  alias Blockytalky.Processing, as: PR
   #alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
 
@@ -361,6 +362,9 @@ defmodule Blockytalky.DSL do
     end
   end
 
+  def send_osc(msg, ip, port, args) do
+    PR.send_osc_message(ip, port, msg, args)
+  end
   def get_message() do
     {_sender, msg} = US.dequeue_message
     msg
