@@ -38,7 +38,7 @@ defmodule Blockytalky.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:erlport, git: "https://github.com/hdima/erlport.git"},
-     {:osc,     git: "https://github.com/mujaheed/erlang-osc.git"},
+     {:osc, "~> 0.1.1"},
      {:httpoison, "~> 0.7"},
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },

@@ -18,7 +18,7 @@
   "jsx": {:hex, :jsx, "2.6.2", "213721e058da0587a4bce3cc8a00ff6684ced229c8f9223245c6ff2c88fbaa5a", [:mix, :rebar], []},
   "mimerl": {:hex, :mimerl, "1.0.2", "993f9b0e084083405ed8252b99460c4f0563e41729ab42d9074fd5e52439be88", [:rebar3], []},
   "neotoma": {:hex, :neotoma, "1.7.3", "d8bd5404b73273989946e4f4f6d529e5c2088f5fa1ca790b4dbe81f4be408e61", [:rebar], []},
-  "osc": {:git, "https://github.com/mujaheed/erlang-osc.git", "203d67f836ad01600297042d33096c3b1efede3c", []},
+  "osc": {:hex, :osc, "0.1.1", "19c33d2579c0cdc3780b3ad17bc34a0365a0ed3b52df3cf78c12b5357dbde48d", [:mix], []},
   "phoenix": {:hex, :phoenix, "1.1.3", "0d5a4b6013db63f68b606f5edd860a0189702ac33cc22cb5d7c861b4a37a6c10", [:mix], [{:cowboy, "~> 1.0", [hex: :cowboy, optional: true]}, {:plug, "~> 1.0", [hex: :plug, optional: false]}, {:poison, "~> 1.5 or ~> 2.0", [hex: :poison, optional: false]}]},
   "phoenix_ecto": {:hex, :phoenix_ecto, "0.9.0", "ca60235ffbc7eed4c6e0cfe93a10111af348007b99f51a70e1a9aa86e8194984", [:mix], [{:ecto, "~> 0.15 or ~> 0.14.3", [hex: :ecto, optional: false]}, {:phoenix_html, "~> 2.0", [hex: :phoenix_html, optional: true]}, {:poison, "~> 1.3", [hex: :poison, optional: true]}]},
   "phoenix_html": {:hex, :phoenix_html, "2.4.0", "3bdd99de5cacc35faa5e93cb2448f2454e8566949cb90a5e77b898a35135aeb2", [:mix], [{:plug, "~> 0.13 or ~> 1.0", [hex: :plug, optional: false]}]},
