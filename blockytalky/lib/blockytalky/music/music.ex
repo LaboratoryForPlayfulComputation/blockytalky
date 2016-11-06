@@ -45,8 +45,8 @@ defmodule Blockytalky.Music do
       udp_conn
       |> Socket.Datagram.send!(program, {"127.0.0.1", eval_port})
     else #this case is used for initializing before the eval port is listening
-      m = {:message, '/run-code',[String.to_char_list(program)]}
-          |> :osc_lib.encode
+      {reply, m} = %OSC.Message{address: "/run-code", arguments: [program]}
+           |> OSC.encode
       #send program via udp to sonic pi port
       udp_conn
       |> Socket.Datagram.send!( m, {"127.0.0.1", @sonicpi_port})
