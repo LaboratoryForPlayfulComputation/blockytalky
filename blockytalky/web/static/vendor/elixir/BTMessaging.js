@@ -97,7 +97,7 @@ Blockly.Blocks['osc'] = {
     this.appendDummyInput()
         .appendField("with parameters");
     this.appendValueInput("PARAMS")
-        //.setCheck("Lists")
+        .setCheck("Lists")
         .setAlign(Blockly.ALIGN_CENTRE);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -116,7 +116,7 @@ Blockly.Elixir['osc'] = function(block) {
   var value_message = Blockly.Elixir.valueToCode(block, 'MESSAGE', Blockly.Elixir.ORDER_ATOMIC).slice(1, -1);
   var value_ip = Blockly.Elixir.valueToCode(block, 'IP', Blockly.Elixir.ORDER_ATOMIC).slice(1, -1);
   var value_port = Blockly.Elixir.valueToCode(block, 'PORT', Blockly.Elixir.ORDER_ATOMIC);
-  var value_params = Blockly.Elixir.valueToCode(block, 'PARAMS', Blockly.Elixir.ORDER_ATOMIC).slice(1, -1);
-  var code = 'send_osc(\''+ value_message +'\',\''+ value_ip +'\','+ value_port +',"'+ value_params+'")\n';
+  var value_params = Blockly.Elixir.valueToCode(block, 'PARAMS', Blockly.Elixir.ORDER_ATOMIC);
+  var code = 'send_osc(\''+ value_message +'\',\''+ value_ip +'\','+ value_port +','+ value_params+')\n';
   return code;
 };
