@@ -32,14 +32,15 @@ defmodule Blockytalky.Mixfile do
   # Type `mix help deps` for examples and options
   defp deps do
     [{:phoenix, "~> 1.0", override: true},
-     {:phoenix_ecto, "~> 0.8"},
+     {:phoenix_ecto, "~> 0.8", override: true},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.0"},
+     {:phoenix_html, "~> 2.1.0", override: true},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:erlport, git: "https://github.com/hdima/erlport.git"},
+     {:erlware_commons, "~> 0.21.0", override: true},
      {:osc, "~> 0.1.1"},
-     {:httpoison, "~> 0.7"},
+     {:httpoison, "~> 0.7", override: true},
      {:syslog, git: "https://github.com/smpallen99/syslog.git"},
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
      { :socket, git: "https://github.com/meh/elixir-socket.git"},

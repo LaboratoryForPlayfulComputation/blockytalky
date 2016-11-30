@@ -40,8 +40,8 @@
       </block>
     </value> 
     <value name="PORT">
-      <block type="text">
-        <field name="TEXT">PORT</field>
+      <block type="math_number">
+        <field name="NUM">PORT</field>
       </block>
     </value>          
   </block> 
