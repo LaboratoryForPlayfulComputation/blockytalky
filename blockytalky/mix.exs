@@ -3,7 +3,7 @@ defmodule Blockytalky.Mixfile do
 
   def project do
     [app: :blockytalky,
-     version: "0.4.3",
+     version: "0.4.4",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix] ++ Mix.compilers,
@@ -18,7 +18,8 @@ defmodule Blockytalky.Mixfile do
   def application do
     [mod: {Blockytalky, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex, :httpoison, :syslog,
+                    :phoenix_ecto, :postgrex, :phoenix_live_reload,
+		    :phoenix_pubsub, :httpoison, :syslog, :erlware_commons,
                     :erlport,:osc, :exjsx, :socket, :crypto, :conform,
                     :conform_exrm]]
   end
@@ -45,8 +46,8 @@ defmodule Blockytalky.Mixfile do
      { :exjsx, git: "https://github.com/talentdeficit/exjsx.git" },
      { :socket, git: "https://github.com/meh/elixir-socket.git"},
      {:exrm, "~> 1.0.0-rc7", override: true},
-     {:conform, git: "https://github.com/bitwalker/conform", tag: "1.0.0-rc8", override: true},
-     {:conform_exrm, "~> 0.2"}
+     {:conform, "~> 2.0"},
+     {:conform_exrm, "~> 1.0"}
    ]
   end
 end

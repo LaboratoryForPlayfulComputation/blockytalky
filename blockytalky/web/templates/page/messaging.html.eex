@@ -1,4 +1,4 @@
-<category name="BT Messaging">
+me<category name="BT Messaging">
   <block type="text">
     <field name="TEXT">hello</field>
   </block>
