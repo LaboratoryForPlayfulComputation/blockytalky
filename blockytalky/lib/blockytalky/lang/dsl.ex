@@ -361,7 +361,16 @@ defmodule Blockytalky.DSL do
         quote do Blockytalky.CommsModule.send_message(unquote(msg),unquote(to)) end
     end
   end
-
+  defmacro when_receive_osc(msg, [do: body]) do
+    #msg could be get("var"), need to unquote
+    quote do
+      GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
+        if(unquote(msg) == get(:sys_message)) do #dequeue message is set at the beginning of the loop
+          unquote(body)
+        end
+      end})
+    end
+  end
   def send_osc(msg, ip, port, args) do
     PR.send_osc_message(ip, port, msg, args)
   end

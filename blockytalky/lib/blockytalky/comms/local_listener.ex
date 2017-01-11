@@ -24,7 +24,12 @@ defmodule Blockytalky.LocalListener do
     #Logger.debug "Listeneing for UDP messages"
     #listen for UDP messages
     {data, ip} = udp_conn |> Socket.Datagram.recv!
-    msg = message_decode(data)
+    #case if osc message or json message
+    case data |> String.contains?("py/object") do # if it's true it's not an OSC message
+      true -> msg = message_decode(data)
+      _ -> msg = osc_message_decode(data)
+    end
+     # need to decode osc messages and json messages differently
     #store result:
     case msg do
       {:announce, value} ->
@@ -34,6 +39,13 @@ defmodule Blockytalky.LocalListener do
         CM.receive_message(value)
     end
     listen(udp_conn)
+  end
+  defp osc_message_decode(msg_string) do
+    {status, message} = msg_string |> OSC.decode
+    address = message |> Map.get("address")
+    IO.puts address
+    #{:message, {address, address}}
+    {:message, {"/test", "/test"}}
   end
   defp message_decode(msg_string) do
     result = msg_string

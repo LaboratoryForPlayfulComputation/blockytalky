@@ -79,44 +79,4 @@ Blockly.Elixir['say'] = function(block) {
   var code = 'say('+value_msg+')\n';
   return code;
 };
-Blockly.Blocks['osc'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Send OSC message");
-    this.appendValueInput("MESSAGE")
-        .setCheck(null)
-        .setAlign(Blockly.ALIGN_CENTRE);
-    this.appendDummyInput()
-        .appendField("to");
-    this.appendValueInput("IP")
-        .setCheck(null)
-        .setAlign(Blockly.ALIGN_CENTRE);
-    this.appendValueInput("PORT")
-        .setCheck(null)
-        .setAlign(Blockly.ALIGN_CENTRE);        
-    this.appendDummyInput()
-        .appendField("with parameters");
-    this.appendValueInput("PARAMS")
-        .setCheck("Lists")
-        .setAlign(Blockly.ALIGN_CENTRE);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(120);
-    this.setTooltip('This block is for sending OSC messages to addresses within or outside the network.' +
-      'The destination must be in the format <IP_ADDRESS>:<PORT>, and the parameters must be stored in a list.');
-    this.setHelpUrl('http://www.example.com/');
-  }
-};
-/* TO DO 
-- remove string slicing stuff, find a better method of fixing the quotation mark bug
-- allow parameters to be lists, floats, ints, strings, etc.
-- need to add a when I receive OSC block...
-*/
-Blockly.Elixir['osc'] = function(block) {
-  var value_message = Blockly.Elixir.valueToCode(block, 'MESSAGE', Blockly.Elixir.ORDER_ATOMIC);
-  var value_ip = Blockly.Elixir.valueToCode(block, 'IP', Blockly.Elixir.ORDER_ATOMIC);
-  var value_port = Blockly.Elixir.valueToCode(block, 'PORT', Blockly.Elixir.ORDER_ATOMIC);
-  var value_params = Blockly.Elixir.valueToCode(block, 'PARAMS', Blockly.Elixir.ORDER_ATOMIC);
-  var code = 'send_osc('+ value_message +','+ value_ip +','+ value_port +','+ value_params+')\n';
-  return code;
-};
+

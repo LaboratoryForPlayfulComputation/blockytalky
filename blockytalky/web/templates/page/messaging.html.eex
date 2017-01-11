@@ -1,4 +1,4 @@
-me<category name="BT Messaging">
+<category name="BT Messaging">
   <block type="text">
     <field name="TEXT">hello</field>
   </block>
@@ -28,6 +28,10 @@ me<category name="BT Messaging">
       </block>
     </value>
   </block>
+
+</category>
+
+<category name="OSC Messaging">
   <block type="osc">
     <value name="MESSAGE">
       <block type="text">
@@ -43,6 +47,13 @@ me<category name="BT Messaging">
       <block type="math_number">
         <field name="NUM">PORT</field>
       </block>
-    </value>          
+    </value>   
+    <value name="PARAMS">
+      <block type="variables_get">
+        <field name="VAR">values</field>
+      </block>
+    </value>       
   </block> 
+
+  <block type="receive_osc"></block>
 </category>
