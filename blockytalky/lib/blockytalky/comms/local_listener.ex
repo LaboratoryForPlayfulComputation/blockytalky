@@ -37,6 +37,8 @@ defmodule Blockytalky.LocalListener do
         spawn  fn -> expire(value) end
       {:message, value} ->
         CM.receive_message(value)
+      {:oscmessage, value} ->
+        CM.receive_osc_message(value) # should probably do something different here eventually       
     end
     listen(udp_conn)
   end
@@ -46,7 +48,7 @@ defmodule Blockytalky.LocalListener do
     message = packet.contents
     address = message.address
     arguments = message.arguments
-    {:message, {ip, address}}
+    {:oscmessage, {ip, address, arguments}}
   end
   defp message_decode(msg_string) do
     result = msg_string

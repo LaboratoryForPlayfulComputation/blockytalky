@@ -38,6 +38,7 @@ defmodule Blockytalky.DSL do
         #loop over timer stack global var and see if it is time to do those lambdas
         process_time_events
         set(:sys_message, get_message()) #get the latest message for all of the receive if blocks, msg is :nomsg if nothing in queue
+        set(:sys_osc_message, get_osc_message()) #get the latest message for all of the receive if blocks, msg is :nomsg if nothing in queue
         GenServer.call(Blockytalky.UserState, {:get_funs,:loop})
         |> Enum.map(fn x -> x.() end)
       end
@@ -365,8 +366,18 @@ defmodule Blockytalky.DSL do
     #msg could be get("var"), need to unquote
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
-        IO.inspect get(:sys_message)
-        if(unquote(msg) == get(:sys_message)) do #dequeue message is set at the beginning of the loop
+        {reply, osc_message} = get(:sys_osc_message)
+        addr = case osc_message do
+          {:nosender, :noaddr, :noargs} -> 
+            set(:dequeued_osc_args, [])
+            set(:dequeued_osc_sender, :nosender)    
+            :noaddr
+          _ ->
+            set(:dequeued_osc_args, osc_message[:args])    
+            set(:dequeued_osc_sender, osc_message[:sender])    
+            osc_message[:addr]       
+        end
+        if(unquote(msg) == addr) do #dequeue message is set at the beginning of the loop
           unquote(body)
         end
       end})
@@ -379,6 +390,9 @@ defmodule Blockytalky.DSL do
     {_sender, msg} = US.dequeue_message
     msg
   end
+  def get_osc_message() do
+    US.dequeue_osc_message
+  end  
   def say(msg) do
     Blockytalky.Endpoint.broadcast "comms:message", "say", %{"body" => msg}
   end

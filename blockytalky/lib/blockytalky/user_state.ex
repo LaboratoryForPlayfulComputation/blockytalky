@@ -17,7 +17,7 @@ defmodule Blockytalky.UserState do
   #the state that gets passed around by this gen server e.g. %Blockytalky.UserState{}
   defstruct message_queue: [], port_values: %{},
   var_map: %{}, user_code: "", upid: nil,
-  l: 0, init_funs: [], loop_funs: []
+  l: 0, init_funs: [], loop_funs: [], osc_message_queue: []
   ####
   # External API
   ## UserCode state State
@@ -77,6 +77,9 @@ defmodule Blockytalky.UserState do
   def queue_message(msg) do
     GenServer.cast(__MODULE__, {:queue_message, msg})
   end
+  def queue_osc_message(msg) do
+    GenServer.cast(__MODULE__, {:queue_osc_message, msg})
+  end  
   @doc """
   returns {:ok, msg} if there is one,
   returns {:nosender,:nomsg} if the queue is empty
@@ -84,6 +87,9 @@ defmodule Blockytalky.UserState do
   def dequeue_message do
     GenServer.call(__MODULE__, :dequeue_message)
   end
+  def dequeue_osc_message do
+    GenServer.call(__MODULE__, :dequeue_osc_message)
+  end  
   @doc """
   updates the state with the new value for that port,
   setting the old value to the previous new value if there was one
@@ -266,6 +272,15 @@ defmodule Blockytalky.UserState do
     new_q = Enum.reverse(new_q_rev)
     {:reply, {:ok, value}, %Blockytalky.UserState{s | message_queue: new_q}}
   end
+  def handle_call(:dequeue_osc_message, _from, s = %Blockytalky.UserState{osc_message_queue: []}) do
+    {:reply, {:ok, {:nosender, :noaddr, :noargs}}, s}
+  end
+  def handle_call(:dequeue_osc_message, _from, s = %Blockytalky.UserState{osc_message_queue: mq})  do
+    rev_q = Enum.reverse(mq)
+    [value | new_q_rev] = rev_q
+    new_q = Enum.reverse(new_q_rev)
+    {:reply, {:ok, value}, %Blockytalky.UserState{s | osc_message_queue: new_q}}
+  end  
   def handle_call(:clear_state, _from, %Blockytalky.UserState{user_code: ucs}) do
     #we want this to be a call because we want to block progress on the caller (so that they don't try to query until this is done)
     {:reply,:ok, %Blockytalky.UserState{user_code: ucs}}
@@ -312,6 +327,9 @@ defmodule Blockytalky.UserState do
   def handle_cast({:queue_message, msg}, s=%Blockytalky.UserState{message_queue: mq}) do
     {:noreply, %Blockytalky.UserState{s | message_queue: [msg | mq]}}
   end
+  def handle_cast({:queue_osc_message, msg}, s=%Blockytalky.UserState{osc_message_queue: mq}) do
+    {:noreply, %Blockytalky.UserState{s | osc_message_queue: [msg | mq]}}
+  end  
   def handle_cast({:set_var,var_name, value}, s=%Blockytalky.UserState{var_map: var_map, l: l}) do
     updated = case Map.get(var_map, var_name) do
       nil -> [{l,value}]

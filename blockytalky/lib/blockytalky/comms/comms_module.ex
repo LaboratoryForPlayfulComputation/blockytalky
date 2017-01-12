@@ -51,6 +51,15 @@ defmodule Blockytalky.CommsModule do
         Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: body}
     end
   end
+  def receive_osc_message msg do
+      Logger.debug "received osc message: #{inspect msg}"
+      case msg do
+        _ ->
+          {sender, addr, args} = msg
+          US.queue_osc_message(%{sender: sender, addr: addr, args: args}) 
+          Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: addr}
+      end
+    end  
   ####
   #Internal functions and helpers
   @doc """

@@ -31,6 +31,7 @@ Blockly.Elixir['receive_osc'] = function(block) {
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'when_receive_osc('+value_msg+') do\n '+statements_do+' end\n';
   Blockly.Elixir.macros_.push(code);
+  console.log(code);
   return code;
 };
 
@@ -69,5 +70,41 @@ Blockly.Elixir['osc'] = function(block) {
   var value_params = Blockly.Elixir.valueToCode(block, 'PARAMS', Blockly.Elixir.ORDER_ATOMIC);
   var code = 'send_osc('+ value_message +','+ value_ip +','+ value_port +','+ value_params+')\n';
   return code;
+};
+
+Blockly.Blocks['get_osc_args'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("get arguments list");
+    this.setOutput(true, null);
+    this.setColour(270);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+Blockly.Elixir['get_osc_args'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = "get(:dequeued_osc_args)";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Elixir.ORDER_NONE];
+  //return [code, Blockly.Elixir.ORDER_ATOMIC];
+};
+
+Blockly.Blocks['get_osc_sender'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("get sender");
+    this.setOutput(true, null);
+    this.setColour(270);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+Blockly.Elixir['get_osc_sender'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = "get(:dequeued_osc_sender)";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Elixir.ORDER_NONE];
+  //return [code, Blockly.Elixir.ORDER_ATOMIC];
 };
 
