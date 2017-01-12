@@ -365,6 +365,7 @@ defmodule Blockytalky.DSL do
     #msg could be get("var"), need to unquote
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
+        IO.inspect get(:sys_message)
         if(unquote(msg) == get(:sys_message)) do #dequeue message is set at the beginning of the loop
           unquote(body)
         end

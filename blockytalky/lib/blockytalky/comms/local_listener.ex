@@ -27,7 +27,7 @@ defmodule Blockytalky.LocalListener do
     #case if osc message or json message
     case data |> String.contains?("py/object") do # if it's true it's not an OSC message
       true -> msg = message_decode(data)
-      _ -> msg = osc_message_decode(data)
+      _ -> msg = osc_message_decode(data, ip)
     end
      # need to decode osc messages and json messages differently
     #store result:
@@ -40,14 +40,13 @@ defmodule Blockytalky.LocalListener do
     end
     listen(udp_conn)
   end
-  defp osc_message_decode(msg_string) do
-    packet = msg_string |> OSC.decode!
+  defp osc_message_decode(msg_string, ip) do
+    packet = msg_string 
+              |> OSC.decode!
     message = packet.contents
     address = message.address
     arguments = message.arguments
-    IO.inspect arguments
-    #{:message, {address, address}}
-    {:message, {"/test", "/test"}}
+    {:message, {ip, address}}
   end
   defp message_decode(msg_string) do
     result = msg_string
