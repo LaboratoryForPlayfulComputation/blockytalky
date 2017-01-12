@@ -41,9 +41,11 @@ defmodule Blockytalky.LocalListener do
     listen(udp_conn)
   end
   defp osc_message_decode(msg_string) do
-    {status, message} = msg_string |> OSC.decode
-    address = message |> Map.get("address")
-    IO.puts address
+    packet = msg_string |> OSC.decode!
+    message = packet.contents
+    address = message.address
+    arguments = message.arguments
+    IO.inspect arguments
     #{:message, {address, address}}
     {:message, {"/test", "/test"}}
   end
