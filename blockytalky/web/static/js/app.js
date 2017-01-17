@@ -100,6 +100,10 @@ var App = {
     .receive("ok", (save_file) =>{
       if(save_file.autostart != null){
         if(save_file.autostart){
+            socket.flushSendBuffer();
+
+            sys_log("Telling "+$(".name-header").text()+" to run code!");
+            uc_chan.push("run", {body: ":ok"});
           $('.autostart-checkbox').prop('checked', true);
         } else{
           $('.autostart-checkbox').prop('checked', false);
