@@ -30,6 +30,8 @@
     <%= if(Blockytalky.RuntimeUtils.coder?) do %>
       <li class="coder-button"><a href="/app/auth" onclick="javascript:event.target.port=8080">Coder</a></li>
     <% end %>
+    <li class="auto-button">Run Code on Startup &nbsp<input class="autostart-checkbox" type="checkbox"></input></li>
+
     <!--<li class="shutdown-button"><i class="fi-power" style="color: #444;"></i><a href="#">Power Down</a></li>-->
   </ul>
 </div>

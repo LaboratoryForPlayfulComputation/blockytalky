@@ -98,6 +98,13 @@ var App = {
     console.log("downloading code from btu")
     uc_chan.push("download", {body: ""})
     .receive("ok", (save_file) =>{
+      if(save_file.autostart != null){
+        if(save_file.autostart){
+          $('.autostart-checkbox').prop('checked', true);
+        } else{
+          $('.autostart-checkbox').prop('checked', false);
+        }
+      }
       if(save_file.xml && save_file.xml != "<xml></xml>"){
         App.workspace.clear();
         var xml = Blockly.Xml.textToDom(save_file.xml);
@@ -129,7 +136,8 @@ $(".upload-button").click(function(){
   sys_log("Uploading code from the browser to "+ $(".name-header").text() +"!");
   var payload = {
     xml: new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace)),
-    code: Blockly.Elixir.workspaceToCode(App.workspace)
+    code: Blockly.Elixir.workspaceToCode(App.workspace),
+    autostart: $('.autostart-checkbox').is(":checked")
   };
   uc_chan.push("upload", {body: payload})
 });
@@ -142,6 +150,9 @@ $(".tour-button").click(function(){
 });
 $(".clear-button").click(function(){
   App.workspace.clear();
+});
+$(".auto-button").click(function(){
+  //stub
 });
 $(".save-button").click(function(){
   var text = new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace));
