@@ -173,6 +173,7 @@ defmodule Blockytalky.DSL do
     #msg could be get("var")
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
+        Logger.debug "debug when_receive"
         if(unquote(msg) == get(:sys_message)) do #dequeue message is set at the beginning of the loop
           unquote(body)
         end
@@ -366,6 +367,7 @@ defmodule Blockytalky.DSL do
     #msg could be get("var"), need to unquote
     quote do
       GenServer.cast(Blockytalky.UserState, {:push_fun, :loop, fn ->
+        Logger.debug "debug when_receive_osc"
         {reply, osc_message} = get(:sys_osc_message)
         addr = case osc_message do
           {:nosender, :noaddr, :noargs} -> 
