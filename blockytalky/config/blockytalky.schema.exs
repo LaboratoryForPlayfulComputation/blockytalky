@@ -160,10 +160,18 @@ See the moduledoc for `Conform.Schema.Validator` for more details and examples.
       commented: false,
       datatype: :integer,
       default: 5050,
-      doc: "Provide documentation for blockytalky.music_eval_port here.",
+      doc: "Add blocks for Johnson's Melody rules ('finger numbers')?",
       hidden: true,
       to: "blockytalky.music_eval_port"
     ],
+    "blockytalky.johnsons_rules": [
+      commented: false,
+      datatype: :atom,
+      default: false,
+      doc: "Provide documentation for blockytalky.music_eval_port here.",
+      hidden: true,
+      to: "blockytalky.johnsons_rules"
+    ],    
     "blockytalky.update_rate": [
       commented: false,
       datatype: :integer,

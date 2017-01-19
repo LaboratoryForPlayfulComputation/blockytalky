@@ -48,11 +48,11 @@
         </block>
       </value>
     </block>
-    <block type="play_in_key"></block>
+
     <block type="play_synth">
       <value name="NOTES">
         <block type="text">
-          <field name="TEXT">1</field>
+          <field name="TEXT">C</field>
         </block>
       </value>
       <value name="BEATS">
@@ -61,8 +61,40 @@
         </block>
       </value>
     </block>
+
+    <block type="play_synth">
+      <value name="NOTES">
+        <block type="chord">
+          <value name="Note1">
+            <block type="text">
+              <field name="TEXT">C</field>
+            </block>
+          </value>
+          <value name="Note2">
+            <block type="text">
+              <field name="TEXT">E</field>
+            </block>
+          </value>
+          <value name="Note3">
+            <block type="text">
+              <field name="TEXT">G</field>
+            </block>
+          </value>            
+        </block> 
+      </value>
+      <value name="BEATS">
+        <block type="math_number">
+          <field name="NUM">2</field>
+        </block>
+      </value>
+    </block>
+
     <block type="chord"></block>
 
+
+  <%= if Application.get_env(:blockytalky, :johnsons_rules) do %>
+    <block type="play_in_key"></block>
+    
     <block type="premade_chord">
       <field name="NAME">Premade chord</field>
       <value name="Note1">
@@ -80,8 +112,10 @@
           <field name="TEXT">5</field>
         </block>
       </value>            
-    </block>
-    
+    </block>    
+  <% end %>
+
+
     <block type="trigger_drum"> </block>
     <block type="rest">
       <value name="AMOUNT">
