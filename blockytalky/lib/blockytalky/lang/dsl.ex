@@ -536,6 +536,12 @@ defmodule Blockytalky.DSL do
     program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
   end
+  def map_finger_num_to_pitch(nil, nil, pitches) when is_list(pitches) do
+    Enum.map(pitches, fn(pitch) -> map_finger_num_to_pitch(nil,nil,pitch) end)
+  end
+  def map_finger_num_to_pitch(key, mode, pitches) when is_list(pitches) do
+    Enum.map(pitches, fn(pitch) -> map_finger_num_to_pitch(key,mode,pitch) end)
+  end  
   def map_finger_num_to_pitch(nil, nil, pitch) do
     {finger_num, octave_offset} = octave_amount(pitch)
     if(finger_num == 0) do #letter pitches notes can be played outside of play_in_key blocks
@@ -543,9 +549,6 @@ defmodule Blockytalky.DSL do
     else
       Blockytalky.Endpoint.broadcast! "uc:command", "error", %{"body" => "Must specify key when using finger numbers"} #user is trying to play finger numbers outside of play_in_key block
     end
-  end
-  def map_finger_num_to_pitch(key, mode, pitches) when is_list(pitches) do
-    Enum.map(pitches, fn(pitch) -> map_finger_num_to_pitch(key,mode,pitch) end)
   end
   def map_finger_num_to_pitch(key, mode, finger_num) do
     {finger_num, octave_offset} = octave_amount(finger_num)
