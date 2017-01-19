@@ -36,7 +36,8 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},
     %{:id => :LIGHT, :label => "Light sensor"},
     %{:id => :SOUND, :label => "Sound sensor"},
-    %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"}
+    %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"},
+    %{:id => :MOISTURE, :label => "Moisture sensor"}
   ]
   @grove_digital_types [
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},
@@ -45,7 +46,8 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :LED, :label => "LED Light"},
     %{:id => :RELAY, :label => "Relay"},
     %{:id => :TEMP_HUM, :label => "Temp & Humidity sensor"},
-    %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"}
+    %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"},
+    %{:id => :WATER, :label => "Water sensor"}
   ]
   @sensor_data [
     %{:hw => "mock", :id => "MOCK_1", :label => "Mock 1", :type => "sensor", :types => @basic_sensor_types},
