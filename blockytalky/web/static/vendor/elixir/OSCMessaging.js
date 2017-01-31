@@ -53,7 +53,7 @@ Blockly.Blocks['osc'] = {
     this.appendDummyInput()
         .appendField("with parameters");
     this.appendValueInput("PARAMS")
-        .setCheck("Lists")
+        .setCheck("Array")
         .setAlign(Blockly.ALIGN_CENTRE);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
