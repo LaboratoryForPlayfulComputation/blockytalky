@@ -37,6 +37,7 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :LIGHT, :label => "Light sensor"},
     %{:id => :SOUND, :label => "Sound sensor"},
     %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"},
+    %{:id => :SLIDE, :label => "Slide potentiometer"},
     %{:id => :MOISTURE, :label => "Moisture sensor"}
   ]
   @grove_digital_types [

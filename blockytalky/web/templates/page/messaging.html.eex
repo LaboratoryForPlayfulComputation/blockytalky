@@ -59,6 +59,6 @@
 
   <block type="get_osc_args"></block>
   
-  <block type="get_osc_sender"></block>
+  <!--<block type="get_osc_sender"></block>-->
 
 </category>
