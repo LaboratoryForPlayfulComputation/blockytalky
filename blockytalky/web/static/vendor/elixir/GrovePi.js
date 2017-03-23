@@ -78,6 +78,7 @@ Blockly.Elixir['when_port'] = function(block) {
   var value_name = Blockly.Elixir.valueToCode(block, 'NUM', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'when_sensor ' + dropdown_port + ' ' + dropdown_comp + ' ' + value_name + ' do\n ' + statements_do + '\n end\n';
+  console.log(code);
   Blockly.Elixir.macros_.push(code);
 };
 Blockly.Blocks['while_port'] = {
@@ -114,7 +115,7 @@ Blockly.Blocks['when_range'] = {
     this.appendValueInput("NUM1")
         .setCheck("Number")
         .appendField("is")
-        .appendField(new Blockly.FieldDropdown([["in", "true"], ["not", "false"]]), "range")
+        //.appendField(new Blockly.FieldDropdown([["in", ""], ["not", "not"]]), "range")
         .appendField("between");
     this.appendValueInput("NUM2")
         .setCheck("Number");
@@ -132,7 +133,7 @@ Blockly.Elixir['when_range'] = function(block) {
   var value_num1 = Blockly.Elixir.valueToCode(block, 'NUM1', Blockly.Elixir.ORDER_ATOMIC);
   var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
-  var code = 'when_sensor ' + dropdown_range + ' ' + dropdown_port + ' in ' + value_num1 + '..' + value_num2 + ' do\n ' + statements_do + '\n end\n';
+  var code = 'when_sensor ' + dropdown_port +  " in " + value_num1 + '..' + value_num2 + ' do\n ' + statements_do + '\n end\n';
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -145,7 +146,7 @@ Blockly.Blocks['while_range'] = {
     this.appendValueInput("NUM1")
         .setCheck("Number")
         .appendField("is")
-        .appendField(new Blockly.FieldDropdown([["in", "true"], ["not", "false"]]), "range")
+        //.appendField(new Blockly.FieldDropdown([["in", "true"], ["not", "false"]]), "range")
         .appendField("between");
     this.appendValueInput("NUM2")
         .setCheck("Number");
@@ -164,7 +165,7 @@ Blockly.Elixir['while_range'] = function(block) {
   var value_num2 = Blockly.Elixir.valueToCode(block, 'NUM2', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
 
-  var code = 'while_sensor ' + dropdown_range + ' ' + dropdown_port + ' in ' + value_num1 + '..' + value_num2 + ' do\n ' + statements_do + '\n end\n';
+  var code = 'while_sensor ' + dropdown_port + " in " + value_num1 + '..' + value_num2 + ' do\n ' + statements_do + '\n end\n';
   Blockly.Elixir.macros_.push(code);
   return code;
 };
@@ -182,7 +183,7 @@ Blockly.Blocks['get_value'] = {
 };
 Blockly.Elixir['get_value'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
-  var code = 'get_sensor_value('+dropdown_port+')\n';
+  var code = 'get_sensor_value('+dropdown_port+')';
   return [code, Blockly.Elixir.ORDER_NONE];
 };
 Blockly.Blocks['set_value'] = {
@@ -249,7 +250,7 @@ Blockly.Blocks['get_temp'] = {
 };
 Blockly.Elixir['get_temp'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
-  var code = 'gp_get_temp('+dropdown_port+')\n';
+  var code = 'gp_get_temp('+dropdown_port+')';
   return [code, Blockly.Elixir.ORDER_NONE];
 };
 Blockly.Blocks['get_hum'] = {
@@ -266,6 +267,6 @@ Blockly.Blocks['get_hum'] = {
 };
 Blockly.Elixir['get_hum'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
-  var code = 'gp_get_hum('+dropdown_port+')\n';
+  var code = 'gp_get_hum('+dropdown_port+')';
   return [code, Blockly.Elixir.ORDER_NONE];
 };

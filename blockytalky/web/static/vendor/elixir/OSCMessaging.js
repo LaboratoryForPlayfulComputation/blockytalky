@@ -43,10 +43,12 @@ Blockly.Blocks['osc'] = {
         .setCheck(null)
         .setAlign(Blockly.ALIGN_CENTRE);
     this.appendDummyInput()
-        .appendField("to");
+        .appendField("to IP");
     this.appendValueInput("IP")
         .setCheck(null)
         .setAlign(Blockly.ALIGN_CENTRE);
+    this.appendDummyInput()
+        .appendField("on port");        
     this.appendValueInput("PORT")
         .setCheck(null)
         .setAlign(Blockly.ALIGN_CENTRE);        

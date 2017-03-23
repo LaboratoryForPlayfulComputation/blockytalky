@@ -42,6 +42,8 @@ Blockly.Elixir['lists_create_with'] = function(block) {
         Blockly.Elixir.ORDER_NONE) || 'nil';
   }
   code = '[' + code.join(', ') + ']';
+  code = code.replace('\n','');
+  console.log(code);
   return [code, Blockly.Elixir.ORDER_ATOMIC];
 };
 

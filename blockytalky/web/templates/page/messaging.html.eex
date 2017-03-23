@@ -35,17 +35,17 @@
   <block type="osc">
     <value name="MESSAGE">
       <block type="text">
-        <field name="TEXT">message</field>
+        <field name="TEXT">/message</field>
       </block>
     </value>
     <value name="IP">
       <block type="text">
-        <field name="TEXT">IP</field>
+        <field name="TEXT">192.168.1.122</field>
       </block>
     </value> 
     <value name="PORT">
       <block type="math_number">
-        <field name="NUM">PORT</field>
+        <field name="NUM">12000</field>
       </block>
     </value>   
     <value name="PARAMS">
@@ -55,10 +55,15 @@
     </value>       
   </block> 
 
-  <block type="receive_osc"></block>
+  <block type="receive_osc">
+    <value name="msg">
+      <block type="text">
+        <field name="TEXT">/message</field>
+      </block>
+    </value>    
+  </block>
 
   <block type="get_osc_args"></block>
-  
-  <block type="get_osc_sender"></block>
+
 
 </category>

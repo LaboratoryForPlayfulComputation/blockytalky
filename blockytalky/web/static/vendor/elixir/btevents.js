@@ -59,7 +59,7 @@ Blockly.Blocks['for_time'] = {
         .appendField("repeatedly do:");
     this.setInputsInline(true,['BP','Event','Message']);
     this.setPreviousStatement(true, ['BP','Event','Message']);
-    this.setNextStatement(false, null);
+    this.setNextStatement(true, null);
     this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');

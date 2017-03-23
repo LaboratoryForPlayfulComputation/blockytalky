@@ -5,15 +5,15 @@ defmodule Blockytalky.GrovePi do
 	
 	def port_id_map do
 		%{:A0 => {0, "analog"}, :A1 => {1, "analog"}, :A2 => {2, "analog"}, :D2 => {2, "digital"},
-			:D3 => {3, "PWM"}, :D4 => {4, "digital"}, :D5 => {5, "PWM"}, :D6 => {6, "PWM"}, 
+			:D3 => {3, "digital"}, :D4 => {4, "digital"}, :D5 => {5, "digital"}, :D6 => {6, "digital"}, 
 			:D7 => {7, "digital"}, :D8 => {8, "digital"}}
 	end
 
 	def component_id_map do 
 		%{:LIGHT => "INPUT", :SOUND => "INPUT", :ROTARY_ANGLE => "INPUT",
 			:BUTTON => "INPUT", :MOISTURE => "INPUT", :WATER => "INPUT",
-			:BUZZER => "OUTPUT", :LED => "OUTPUT", :RELAY => "OUTPUT",
-			:TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
+			:SLIDE_POT => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",
+			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
 	end 
 	def get_component_value(port_id) do
 		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
