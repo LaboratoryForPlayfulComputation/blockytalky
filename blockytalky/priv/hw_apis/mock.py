@@ -15,7 +15,8 @@ def get_sensor_value(port_num):
     if port_num == 1:
         return 1
     if port_num == 2:
-        return random.randint(0,1)
+        return None
+        #return random.randint(0,1)
     if port_num == 3:
         return random.randint(-100,100)
 def set_sensor_type(port_num, type):

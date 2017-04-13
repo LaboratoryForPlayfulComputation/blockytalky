@@ -96,7 +96,15 @@ defmodule Blockytalky.UserState do
   or both to the new value if there wasn't a previous value
   """
   def put_value(value, port_id) do
-    GenServer.cast(__MODULE__,{:put_value, value, port_id})
+    if value == nil do
+      case get_value port_id do
+        nil -> :ok
+        v   -> GenServer.cast(__MODULE__,{:put_value, v, port_id})
+      end
+    else
+      GenServer.cast(__MODULE__,{:put_value, value, port_id})
+    end
+    :ok
   end
   def get_value(port_id) do
     case GenServer.call(__MODULE__, {:get_port_value, port_id}) do
