@@ -64,46 +64,81 @@ defmodule Blockytalky.GrovePiState do
 	use GenServer
 	alias Blockytalky.GrovePi, as: GrovePi
 	require Logger
+
+    @sensor_dir "data"
+    @sensor_file "sensors.json"
+
 	def start_link() do
 		GenServer.start_link(__MODULE__, [], name: __MODULE__)
 	end
 	def init(_) do
 		Logger.info("Initializing #{inspect __MODULE__}")
-		{:ok, %{}}
+  	File.mkdir(Application.app_dir(:blockytalky, @sensor_dir))
+    File.touch("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}")		
+    sensors = case File.read("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}") do
+      {:ok, text} when text != "" -> JSX.decode(text)
+      _ -> %{}
+    end    
+    {status, sensor_types} = sensors
+    new_sensor_types = Map.new(sensor_types, fn {k, v} -> {String.to_atom(k), String.to_atom(v)} end)
+		{:ok, new_sensor_types}
 	end
 	def set_component_type(port_id, component_id) do
 		GenServer.cast(__MODULE__, {:set_port, port_id, component_id})		
 	end
-        def set_component_value(port_id, value) do
-                GenServer.cast(__MODULE__, {:set_value, port_id, value})
-        end
+  def set_component_value(port_id, value) do
+    GenServer.cast(__MODULE__, {:set_value, port_id, value})
+  end
 	def get_last_set_value(port_id) do
-                GenServer.call(__MODULE__, {:get_last_set_value, port_id})
-        end
+    GenServer.call(__MODULE__, {:get_last_set_value, port_id})
+  end
 	def get_port_io(port_id) do
 		Map.get(GrovePi.component_id_map, get_port_component(port_id))
 	end
-        def get_port_component(port_id) do
-                { component_id, _ } = GenServer.call(__MODULE__, {:get_port, port_id})
-		component_id
-        end
+  def get_port_component(port_id) do
+    component_info = GenServer.call(__MODULE__, {:get_port, port_id})
+    case component_info do
+      { component_id, _ } -> component_id
+      _                   -> component_info
+    end
+  end
 	def terminate(_reason,_state) do
 		Logger.info("Terminating #{inspect __MODULE__}")
 	end
 	def handle_call({:get_port, port_id}, _from, map) do
 		{:reply, Map.get(map, port_id, {nil, nil}), map}
 	end
-        def handle_call({:get_last_set_value, port_id}, _from, map) do
-                { _, value} = Map.get(map, port_id, {nil, nil})
-                {:reply, value, map}
-        end
+  def handle_call({:get_last_set_value, port_id}, _from, map) do
+   { _, value} = Map.get(map, port_id, {nil, nil})
+   {:reply, value, map}
+  end
 	def handle_cast({:set_port, port_id, component_id}, map) do	
 		map = Map.put(map, port_id, {component_id, nil})
+    map = Map.new(map, fn {key, value} ->
+      case value do
+        {v1, nil} -> {key, value}
+        _ -> {key, {value, nil}}
+      end
+    end)
+
+    #backup sensor types
+    json_map = Map.new(map, fn {k, v} -> 
+      case v do
+        {v1, nil} -> {k, v1}
+        _ -> {String.to_atom(k), String.to_atom(v)}
+      end
+    end)
+
+    {status, json} = JSX.encode json_map
+ 	  if status == :ok, do:
+      File.write("#{@sensor_dir}/#{@sensor_file}", json)
+      File.write("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}", json)
+
 		{:noreply, map}
 	end
-        def handle_cast({:set_value, port_id, value}, map) do
+  def handle_cast({:set_value, port_id, value}, map) do
 		{ component_id, _ } = Map.get(map, port_id, {nil, nil})
 		map = Map.put(map, port_id, { component_id, value })
-                {:noreply, map}
-        end	
+    {:noreply, map}
+  end	
 end

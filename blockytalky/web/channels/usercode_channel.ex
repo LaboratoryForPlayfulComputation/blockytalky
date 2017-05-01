@@ -3,6 +3,8 @@ defmodule Blockytalky.UserCodeChannel do
   alias Blockytalky.UserState, as: US
   require Logger
   
+  @sensor_dir "data"
+  @sensor_file "sensors.json"
 
   def join("uc:" <> _any, _auth_msg, socket) do
     {:ok, socket}
@@ -21,7 +23,12 @@ defmodule Blockytalky.UserCodeChannel do
   end
   def handle_in("upload", %{"body" => map}, socket) do
     spawn fn ->
-      US.upload_user_code(map)
+      US.upload_user_code(map)  
+      sensors = case File.read("#{Application.app_dir(:blockytalky, @sensor_dir)}/#{@sensor_file}") do
+        {:ok, text} -> text
+        _ -> ""
+      end
+      map = Map.put(map, "sensors", sensors)
       backup_code(map)
     end
     {:noreply, socket}

@@ -141,7 +141,8 @@ $(".upload-button").click(function(){
   var payload = {
     xml: new XMLSerializer().serializeToString(Blockly.Xml.workspaceToDom(App.workspace)),
     code: Blockly.Elixir.workspaceToCode(App.workspace),
-    autostart: $('.autostart-checkbox').is(":checked")
+    autostart: $('.autostart-checkbox').is(":checked"), 
+    sensors: ''
   };
   uc_chan.push("upload", {body: payload})
 });

@@ -228,7 +228,7 @@ defmodule Blockytalky.UserState do
       |> Enum.sort # sort in ascending order
       |> Enum.reverse #reverse so most recent is head of list
     uc = case savefiles do
-      [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
+      [] -> %{"code" => "", "xml" => "<xml></xml>", "sensors" => ""} #empty savefile
       [head | _ ] ->
         file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
         file = case JSX.decode(file) do
@@ -238,7 +238,7 @@ defmodule Blockytalky.UserState do
             File.rm! "#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}"
             latest_usercode
           end
-      _ -> %{"code" => "", "xml" => "<xml></xml>"}
+      _ -> %{"code" => "", "xml" => "<xml></xml>", "sensors" => ""}
       end
     uc
   end
@@ -256,7 +256,7 @@ defmodule Blockytalky.UserState do
       |> Enum.sort # sort in ascending order
       |> Enum.reverse #reverse so most recent is head of list
     uc = case savefiles do
-          [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
+          [] -> %{"code" => "", "xml" => "<xml></xml>", "sensors" => ""} #empty savefile
           [head | _ ] ->
             file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
             file = case JSX.decode(file) do
