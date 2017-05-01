@@ -79,8 +79,12 @@ defmodule Blockytalky.GrovePiState do
       {:ok, text} when text != "" -> JSX.decode(text)
       _ -> %{}
     end    
-    {status, sensor_types} = sensors
-    new_sensor_types = Map.new(sensor_types, fn {k, v} -> {String.to_atom(k), String.to_atom(v)} end)
+    new_sensor_types = case sensors do
+      {status, sensor_types} ->
+         Map.new(sensor_types, fn {k, v} -> {String.to_atom(k), String.to_atom(v)} end)    
+      %{} -> %{}
+      _ -> %{}
+    end
 		{:ok, new_sensor_types}
 	end
 	def set_component_type(port_id, component_id) do
