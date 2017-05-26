@@ -2,7 +2,7 @@ defmodule Blockytalky.RuntimeUtils do
   def btu_id do
     case System.find_executable "hostname" do
     nil -> System.get_env("HOSTNAME") || "Unknown"
-    v ->
+    _   ->
       {hostname, _} = System.cmd "hostname", []
       String.strip(hostname)
     end
@@ -16,7 +16,7 @@ defmodule Blockytalky.RuntimeUtils do
     case system do
       nil ->
         Application.get_env(:blockytalky, :supported_hardware) || [:mock]
-      v -> String.split() |> Enum.map(&String.to_atom/1)
+      v -> v |> String.split() |> Enum.map(&String.to_atom/1)
     end
   end
   @doc """

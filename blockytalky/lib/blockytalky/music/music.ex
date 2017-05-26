@@ -18,7 +18,7 @@ defmodule Blockytalky.Music do
     send_music_program(SonicPi.stop_motif, true)
   end
   def listen(udp_conn) do
-    {data, ip} = udp_conn
+    {data, _ip} = udp_conn
       |> Socket.Datagram.recv!
     case JSX.decode(data) do
       {:ok, map} ->

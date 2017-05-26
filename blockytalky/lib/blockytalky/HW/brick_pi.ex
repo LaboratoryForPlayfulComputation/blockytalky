@@ -121,7 +121,7 @@ defmodule Blockytalky.BrickPiState do
   def handle_call({:get_sensor_type_constants}, _from, state={constants, _sensor_port_types}) do
     {:reply,constants, state}
   end
-  def handle_call({:get_sensor_type, port_id}, _from, state={constants, sensor_types}) do
+  def handle_call({:get_sensor_type, port_id}, _from, state={_constants, sensor_types}) do
     type = Map.get(sensor_types,port_id,@no_sensor)
     {:reply,type, state}
   end
@@ -150,7 +150,11 @@ defmodule Blockytalky.BrickPiState do
 
   defp _get_sensor_type_constants(list, file \\ nil) do
     #open file
-    unless file, do: file = File.open!("#{Application.app_dir(:blockytalky, @script_dir)}/BrickPi.py")
+    file =
+     case file do
+      nil -> File.open!("#{Application.app_dir(:blockytalky, @script_dir)}/BrickPi.py")
+      f   -> f
+    end
     #parse through to find constant declarations at the top of the file
     line = IO.read(file, :line) |> String.strip
     #match = ~r/^([A-Z_]+)(\s*)=(\s*)(((0x)*)[0-9]|[A-Z_]+)/
@@ -166,7 +170,7 @@ defmodule Blockytalky.BrickPiState do
 
   end
   defp _convert_constants_list_to_map(list) do
-    map = for str <- list, into: %{}  do
+    for str <- list, into: %{}  do
       pair = String.split(str, "=")
       [key | [value]] = pair
       key = String.strip key

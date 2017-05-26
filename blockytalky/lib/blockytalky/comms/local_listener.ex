@@ -53,16 +53,15 @@ defmodule Blockytalky.LocalListener do
   end
   def send(msg, socket) do
     Logger.debug "sending message via udp: #{msg} to #{inspect socket}"
-    {ip,port} = socket
+    {ip,_port} = socket
     GenServer.call(__MODULE__,:get_udp_conn)
-    |> Socket.Datagram.send CM.message_encode(Blockytalky.RuntimeUtils.btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_unicast_port}
+    |> Socket.Datagram.send(CM.message_encode(Blockytalky.RuntimeUtils.btu_id,erl_ip_to_socket_ip(ip),"Message", msg), {erl_ip_to_socket_ip(ip), @udp_unicast_port})
     :ok
   end
   defp announce udp_conn do
     #Logger.debug "Announcing UDP status"
     #announce timestamp / ip address
-    status = udp_conn
-    |> Socket.Datagram.send CM.message_encode(Blockytalky.RuntimeUtils.btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port}
+    udp_conn |> Socket.Datagram.send(CM.message_encode(Blockytalky.RuntimeUtils.btu_id, "announce", "announce", ""), {@udp_multicast_ip, @udp_multicast_port})
     #sleep for a short time
     :timer.sleep(@udp_multicast_delay)
     announce(udp_conn)
@@ -104,18 +103,18 @@ defmodule Blockytalky.LocalListener do
     {:noreply,{udp,lis,ann,local_map}}
   end
   def handle_call({:get_locals_ip, btu_name},_from, state={_udp,_lis,_ann,local_map}) do
-    {ip,time} = Map.get(local_map,btu_name,{:NOIP, :NOTIME})
+    {ip,_time} = Map.get(local_map,btu_name,{:NOIP, :NOTIME})
     {:reply,ip,state}
   end
   def handle_call({:get_locals_time, btu_name},_from, state={_udp,_lis,_ann,local_map}) do
-    {ip,time} = Map.get(local_map,btu_name,{:NOIP,:NOTIME})
+    {_ip,time} = Map.get(local_map,btu_name,{:NOIP,:NOTIME})
     {:reply,time,state}
   end
   def handle_call(:get_udp_conn, _from, state={udp,_,_,_}) do
     {udp_conn, _} = udp
     {:reply, udp_conn, state}
   end
-  def terminate(reason, state={{udp_multi_conn, udp_uni_conn}, {mlistener_pid, ulistener_pid}, announcer_pid, _map}) do
+  def terminate(_reason, {{udp_multi_conn, udp_uni_conn}, {mlistener_pid, ulistener_pid}, announcer_pid, _map}) do
     Logger.debug "ShuttingDown #{inspect __MODULE__}"
     Socket.close udp_multi_conn
     Socket.close udp_uni_conn

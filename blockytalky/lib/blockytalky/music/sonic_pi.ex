@@ -176,7 +176,7 @@ defmodule Blockytalky.SonicPi do
   def play_synth(pitch, duration) do
     p = case pitch do
       n when is_integer(n) -> to_string(n)
-      ":" <> s -> pitch
+      ":" <> _s -> pitch
       non_atom -> ":" <> non_atom
     end
     |> String.replace("#","s") #elixir atoms don't support #s so sharps are s'

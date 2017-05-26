@@ -219,12 +219,12 @@ defmodule Blockytalky.DSL do
   def push_time_event(event) do
       US.update_var(:sys_timer, fn stack -> [event | stack] end)
   end
-  defp get_sys_timer do
-    case get(:sys_timer) do
-      nil -> []
-      v -> v
-    end
-  end
+  # defp get_sys_timer do
+  #   case get(:sys_timer) do
+  #     nil -> []
+  #     v -> v
+  #   end
+  # end
   @doc """
   In both of the following cases, if they return false, pop off of the stack
   """
@@ -264,7 +264,7 @@ defmodule Blockytalky.DSL do
     #Purpose: compare the change in the sensor value to a variable or constant, and if true, apply some body function
     #handles the edge case that the sensor stayed the same, but the value being compared against changed thus making the "when" trigger.
     {apply_fun, value} = case value do
-      [{i, latest_value},{j, previous_value} | _ ] ->
+      [{_i, latest_value},{_j, previous_value} | _ ] ->
         {fn(x,y,z) -> x != nil and y != nil and comp_fun.(x,z) and (not comp_fun.(y,z) or not comp_fun.(y,previous_value)) end, latest_value}
       [{_, only_value}] ->
         {fn(x,y,z) -> x != nil and y != nil and comp_fun.(x,z) and not comp_fun.(y,z) end, only_value}
@@ -300,12 +300,7 @@ defmodule Blockytalky.DSL do
                 )
     if is_valid, do: fun.()
   end
-  def while_sensor_value_range(port_num, range, fun, not_in \\ false) do
-    check_function = if not_in do
-       fn(x,_y,z) -> x != nil and not x in z end
-     else
-       fn(x,_y,z) -> x != nil and x in z end
-     end
+  def while_sensor_value_range(port_num, range, fun, _not_in \\ false) do
     is_valid = US.apply(
                 (fn(x,_y,z) -> x != nil and x in z end),
                 port_num,
@@ -332,13 +327,13 @@ defmodule Blockytalky.DSL do
   #get temperature and humidity from Grove
   def gp_get_temp(port_id) do
     case GP.get_component_value(port_id) do
-      [temp, hum] -> temp
+      [temp, _hum] -> temp
       _ -> nil
     end
   end
   def gp_get_hum(port_id) do
      case GP.get_component_value(port_id) do
-       [temp, hum] -> hum
+       [_temp, hum] -> hum
        _ -> nil
      end
   end
@@ -467,10 +462,13 @@ defmodule Blockytalky.DSL do
       first = List.first program
       last = List.last program
       if(String.starts_with?(first,"sync") && String.starts_with?(last,"sleep")) do
-        program = Enum.take(program, length(program) - 1)
+        Enum.take(program, length(program) - 1)
+      else
+        program
       end
+    else
+      program
     end
-    program
   end
   def stop_sound do
     Music.send_music_program(SP.stop_motif)
