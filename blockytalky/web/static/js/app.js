@@ -1,5 +1,5 @@
-import {Socket} from "deps/phoenix/web/static/js/phoenix"
-import "deps/phoenix_html/web/static/js/phoenix_html"
+import {Socket} from "phoenix"
+import "phoenix_html"
 /* after page loads DOM elements */
  //common page elements:
  //humane is the popup notification for logging messages to the client

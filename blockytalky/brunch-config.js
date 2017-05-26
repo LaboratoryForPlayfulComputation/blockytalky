@@ -26,13 +26,14 @@ exports.config = {
       joinTo: 'js/app.js'
     }
   },
-
+  npm: {
+    enabled: true,
+    whitelist: ["phoenix", "phoenix_html"]
+  },
   // Phoenix paths configuration
   paths: {
     // Which directories to watch
-    watched: ["deps/phoenix/web/static",
-              "deps/phoenix_html/web/static",
-              "web/static",
+    watched: ["web/static",
               "test/static",
               "web/static/vendor",
               "web/static/vendor/elixir"],
