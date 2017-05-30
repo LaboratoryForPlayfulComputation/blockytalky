@@ -152,12 +152,12 @@ defmodule Blockytalky.UserState do
   defp update_gp_state do
     port_list = GP.port_id_map
     |> Map.keys
-    |> Enum.filter fn port_id -> GPS.get_port_component(port_id) != nil end
+    |> Enum.filter(fn port_id -> GPS.get_port_component(port_id) != nil end)
     port_values = port_list
-    |> Enum.map fn port_id -> GP.get_component_value(port_id) end
+    |> Enum.map(fn port_id -> GP.get_component_value(port_id) end)
 
     Enum.zip(port_values,port_list)
-    |> Enum.map fn {v,p} -> put_value(v,p) end
+    |> Enum.map(fn {v,p} -> put_value(v,p) end)
   end
   defp update_mock_state do
     sensor_ports = for {key,_} <- MockHW.port_map, do: key
@@ -207,27 +207,26 @@ defmodule Blockytalky.UserState do
     spawn (fn -> loop() end)
     status
   end
-  defp latest_usercode do
-    savefiles =
-      File.ls!(Application.get_env(:blockytalky,:user_code_dir))
-      |> Enum.filter(filter) #only filenames that have "hostname" <> "datetime"
-      |> Enum.sort # sort in ascending order
-      |> Enum.reverse #reverse so most recent is head of list
-    uc = case savefiles do
-      [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
-      [head | _ ] ->
-        file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
-        file = case JSX.decode(file) do
-          {:ok, f} -> f
-          _ -> #the  save file is corrupted
-            #delete the file and try again
-            File.rm! "#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}"
-            latest_usercode
-          end
-      _ -> %{"code" => "", "xml" => "<xml></xml>"}
-      end
-    uc
-  end
+  # defp latest_usercode do
+  #   savefiles =
+  #     File.ls!(Application.get_env(:blockytalky,:user_code_dir))
+  #     |> Enum.filter(filter) #only filenames that have "hostname" <> "datetime"
+  #     |> Enum.sort # sort in ascending order
+  #     |> Enum.reverse #reverse so most recent is head of list
+  #   case savefiles do
+  #     [] -> %{"code" => "", "xml" => "<xml></xml>"} #empty savefile
+  #     [head | _ ] ->
+  #       file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
+  #       case JSX.decode(file) do
+  #         {:ok, f} -> f
+  #         _ -> #the  save file is corrupted
+  #           #delete the file and try again
+  #           File.rm! "#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}"
+  #           latest_usercode
+  #         end
+  #     _ -> %{"code" => "", "xml" => "<xml></xml>"}
+  #   end
+  # end
   def init(_) do
     Logger.info "Initializing #{inspect __MODULE__}"
     #restore user code if possible
@@ -247,8 +246,8 @@ defmodule Blockytalky.UserState do
             file = File.read!("#{Application.get_env(:blockytalky,:user_code_dir)}/#{head}")
             file = case JSX.decode(file) do
               {:ok, f} -> f
-              _ ->
-                #delete the file and try again
+              _ -> %{"code" => "", "xml" => "<xml></xml>"}
+                   #TODO: delete the file and try again
             end
           _ -> ""
          end

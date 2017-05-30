@@ -79,13 +79,13 @@ defmodule Blockytalky.DaxListener do
   ####
   #private API
   defp connect do
-    Task.async fn -> Socket.connect! @dax_router end
-    |> Task.await 10_000 #10 second timeout for waiting to connect
+    Task.async (fn -> Socket.connect! @dax_router end)
+    |> Task.await(10_000) #10 second timeout for waiting to connect
   end
   def handle_call(:get_dax_conn, _from, state={dax_conn,_l}) do
     {:reply, dax_conn, state}
   end
-  def handle_cast({:set_dax_conn, conn}, {dax_conn, l}) do
+  def handle_cast({:set_dax_conn, conn}, {_dax_conn, l}) do
     {:noreply, {conn, l}}
   end
   def terminate(reason, _state) do

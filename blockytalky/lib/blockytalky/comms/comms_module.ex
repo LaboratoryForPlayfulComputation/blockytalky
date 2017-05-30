@@ -12,7 +12,8 @@ defmodule Blockytalky.CommsModule do
   ####
   #External APIs
   def start_link() do
-    status = case Supervisor.start_link(__MODULE__, []) do
+    # status
+    case Supervisor.start_link(__MODULE__, []) do
       {:ok, pid} -> {:ok, pid}
       {:error, reason} ->
         Logger.debug "#{inspect reason}"
@@ -42,10 +43,10 @@ defmodule Blockytalky.CommsModule do
   def receive_message msg do
     Logger.debug "received message: #{inspect msg}"
     case msg do
-      {sender, :network_sync} ->
+      {_sender, :network_sync} ->
         Blockytalky.Endpoint.broadcast! "comms:sync", "network_sync",  %{body: msg}
       _ ->
-        {sender, body} = msg
+        {_sender, body} = msg
         US.queue_message(body)
         Blockytalky.Endpoint.broadcast! "comms:message", "message",  %{body: body}
     end

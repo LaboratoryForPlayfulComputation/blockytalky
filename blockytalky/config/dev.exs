@@ -11,7 +11,8 @@ config :blockytalky, Blockytalky.Endpoint,
   debug_errors: true,
   code_reloader: true,
   cache_static_lookup: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch"]]
+  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
+           cd: Path.expand("../", __DIR__)]]
 
 # Watch static and templates for browser reloading.
 config :blockytalky, Blockytalky.Endpoint,
@@ -32,14 +33,14 @@ config :logger, [
 config :logger, :console, format: "[$level] $message\n"
 
 # Configure your database
-config :blockytalky, Blockytalky.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "blockytalky_dev",
-  size: 10 # The amount of database connections in the pool
+#config :blockytalky, Blockytalky.Repo,
+  #adapter: Ecto.Adapters.Postgres,
+  #username: "postgres",
+  #password: "postgres",
+  #database: "blockytalky_dev",
+  #size: 10 # The amount of database connections in the pool
   ####
   #custom configuration
-  config :blockytalky,
-    supported_hardware: [:btgrovepi],
-    user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"
+config :blockytalky,
+  supported_hardware: [:mock],
+  user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"

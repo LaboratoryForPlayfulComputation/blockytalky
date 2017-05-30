@@ -11,7 +11,7 @@ defmodule Blockytalky do
       # Start the endpoint when the application starts
       supervisor(Blockytalky.Endpoint, []),
       # Start the Ecto repository
-      worker(Blockytalky.Repo, []),
+      # worker(Blockytalky.Repo, []),
 
       ####
       # BT IO stuff

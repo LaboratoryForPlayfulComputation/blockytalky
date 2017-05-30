@@ -80,11 +80,10 @@ defmodule Blockytalky.HardwareDaemon do
 	     b when is_binary(b) -> String.to_atom(b)
              a -> a
            end
-           s = @grove_digital_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
-           if s == nil do
-             s = @grove_analog_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
+           case @grove_digital_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end) do
+             nil -> @grove_analog_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
+             s   -> s
            end
-           s
       end
       Logger.debug "get label for: #{inspect sensor}"
       case sensor do

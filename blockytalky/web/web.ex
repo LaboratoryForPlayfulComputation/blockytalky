@@ -16,11 +16,11 @@ defmodule Blockytalky.Web do
   below.
   """
 
-  def model do
-    quote do
-      use Ecto.Model
-    end
-  end
+  # def model do
+  #   quote do
+  #     use Ecto.Schema
+  #   end
+  # end
 
   def controller do
     quote do
@@ -28,8 +28,8 @@ defmodule Blockytalky.Web do
 
       # Alias the data repository and import query/model functions
       alias Blockytalky.Repo
-      import Ecto.Model
-      import Ecto.Query, only: [from: 2]
+      #import Ecto.Model
+      #import Ecto.Query, only: [from: 2]
 
       # Import URL helpers from the router
       import Blockytalky.Router.Helpers
@@ -63,8 +63,8 @@ defmodule Blockytalky.Web do
 
       # Alias the data repository and import query/model functions
       alias Blockytalky.Repo
-      import Ecto.Model
-      import Ecto.Query, only: [from: 2]
+      #import Ecto.Model
+      #import Ecto.Query, only: [from: 2]
 
     end
   end

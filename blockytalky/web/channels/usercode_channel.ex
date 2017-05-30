@@ -2,7 +2,7 @@ defmodule Blockytalky.UserCodeChannel do
   use Phoenix.Channel
   alias Blockytalky.UserState, as: US
   require Logger
-  
+
 
   def join("uc:" <> _any, _auth_msg, socket) do
     {:ok, socket}
@@ -29,10 +29,10 @@ defmodule Blockytalky.UserCodeChannel do
     map = GenServer.call(US,:get_user_code)
     {:reply, {:ok, map}, socket}
   end
-  def handle_in("select_sample", %{"body" => sample_name}, socket) do
+  def handle_in("select_sample", %{"body" => _sample_name}, socket) do
     {:noreply, socket}
   end
-  def handle_in("upload_sample", %{"body" => sample}, socket) do
+  def handle_in("upload_sample", %{"body" => _sample}, socket) do
     {:noreply, socket}
   end
   @doc """

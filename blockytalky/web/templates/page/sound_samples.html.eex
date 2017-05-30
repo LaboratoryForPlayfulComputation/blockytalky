@@ -13,7 +13,7 @@
            %>
          </button><br>
          <ul id="dropsample<%= i %>" data-dropdown-content class="f-dropdown" aria-hidden="true">
-           <%= for sample <- Blockytalky.Music.get_saved_samples do %>
+           <%= for _sample <- Blockytalky.Music.get_saved_samples do %>
              <li class="sample-select-option"><label data-sample-num="<%= i %>" data-value="<%= Blockytalky.Music.get_sample(i) %>"><%= Blockytalky.Music.get_sample(i) %></label></li>
            <% end %>
            <li class="sample-select-option"><label data-sample-num="<%= i %>" data-value="upload"> upload a new sample </label></li>

@@ -3,7 +3,7 @@ defmodule Blockytalky.HardwareChannel do
   alias Blockytalky.MockHW, as: MockHW
   alias Blockytalky.BrickPi, as: BP
   alias Blockytalky.GrovePi, as: GP
-  alias Blockytalky.GrovePiState, as: GPS
+  #alias Blockytalky.GrovePiState, as: GPS
   #alias Blockytalky.UserState, as: US
   alias Blockytalky.HardwareDaemon, as: HD
   require Logger
