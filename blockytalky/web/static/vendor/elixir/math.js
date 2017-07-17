@@ -39,7 +39,7 @@ Blockly.Elixir['math_number'] = function(block) {
 
 Blockly.Elixir['math_arithmetic'] = function(block) {
   // Basic arithmetic operators, and power.
-  var OPERATORS = {
+  var OPERATORS = { 
     'ADD': [' + ', Blockly.Elixir.ORDER_ADDITIVE],
     'MINUS': [' - ', Blockly.Elixir.ORDER_ADDITIVE],
     'MULTIPLY': [' * ', Blockly.Elixir.ORDER_MULTIPLICATIVE],

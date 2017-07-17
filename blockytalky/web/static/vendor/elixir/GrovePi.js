@@ -15,7 +15,7 @@ Blockly.Blocks['when_button'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("When button on port: ")
-        .appendField(new Blockly.FieldDropdown([["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port")
+        .appendField(new Blockly.FieldDropdown([["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port")
         .appendField(new Blockly.FieldDropdown([["is pressed", "1"], ["is released", "0"]]), "status");
     this.appendStatementInput("DO")
         .setCheck(null);
@@ -37,7 +37,7 @@ Blockly.Blocks['while_button'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("While button on port: ")
-        .appendField(new Blockly.FieldDropdown([["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port")
+        .appendField(new Blockly.FieldDropdown([["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port")
         .appendField(new Blockly.FieldDropdown([["is pressed", "1"], ["is released", "0"]]), "status");
     this.appendStatementInput("DO")
         .setCheck(null);
@@ -60,7 +60,7 @@ Blockly.Blocks['when_port'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("When value of port: ")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port")
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port")
         .appendField(new Blockly.FieldDropdown([["equals", "=="], ["does not equal", "!="], ["is less than", "<"], ["is less than or equal to", "<="], ["is great than", ">"], ["is greater than or equal to", ">="]]), "comp");
     this.appendValueInput("NUM")
         .setCheck("Number");
@@ -84,7 +84,7 @@ Blockly.Blocks['while_port'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("While value of port: ")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port")
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port")
         .appendField(new Blockly.FieldDropdown([["equals", "=="], ["does not equal", "!="], ["is less than", "<"], ["is less than or equal to", "<="], ["is great than", ">"], ["is greater than or equal to", ">="]]), "comp");
     this.appendValueInput("NUM")
         .setCheck("Number");
@@ -110,7 +110,7 @@ Blockly.Blocks['when_range'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("When value of port: ")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port");
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port");
     this.appendValueInput("NUM1")
         .setCheck("Number")
         .appendField("is")
@@ -141,7 +141,7 @@ Blockly.Blocks['while_range'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("While value of port: ")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port");
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port");
     this.appendValueInput("NUM1")
         .setCheck("Number")
         .appendField("is")
@@ -172,7 +172,7 @@ Blockly.Blocks['get_value'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Get value of port")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"]]), "port");
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D2", ":D2"], ["D3", ":D3"], ["D4", ":D4"], ["D5", ":D5"], ["D6", ":D6"], ["D7", ":D7"], ["D8", ":D8"],["RPSIER",":RPSIER"]]), "port");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(260);
@@ -190,7 +190,7 @@ Blockly.Blocks['set_value'] = {
     this.appendValueInput("VALUE")
         .setCheck("Number")
         .appendField("Set component on port")
-        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D3", ":D3"], ["D5", ":D5"], ["D6", ":D6"]]), "port")
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"], ["D3", ":D3"], ["D5", ":D5"], ["D6", ":D6"],["RPSIER",":RPSIER"]]), "port")
         .appendField("to value:");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -264,8 +264,28 @@ Blockly.Blocks['get_hum'] = {
     this.setHelpUrl('');
   }
 };
+
 Blockly.Elixir['get_hum'] = function(block) {
   var dropdown_port = block.getFieldValue('port');
   var code = 'gp_get_hum('+dropdown_port+')\n';
+  return [code, Blockly.Elixir.ORDER_NONE];
+};
+
+Blockly.Blocks['get_percentage'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Get percentage from port")
+        .appendField(new Blockly.FieldDropdown([["A0", ":A0"], ["A1", ":A1"], ["A2", ":A2"]]), "port");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Elixir['get_percentage'] = function(block) {
+  var dropdown_port = block.getFieldValue('port');
+  var code = 'gp_get_percentage('+dropdown_port+')\n';
   return [code, Blockly.Elixir.ORDER_NONE];
 };

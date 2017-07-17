@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   set(:item , get_sensor_value(:D4)\n  )\n  say(get(:item))\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"107\" x=\"248.00000000000068\" y=\"31.999999999999886\"><statement name=\"DO\"><block type=\"variables_set\" id=\"135\" inline=\"true\"><field name=\"VAR\">item</field><value name=\"VALUE\"><block type=\"get_value\" id=\"148\"><field name=\"port\">:D4</field></block></value><next><block type=\"say\" id=\"196\" inline=\"true\"><value name=\"msg\"><block type=\"variables_get\" id=\"203\"><field name=\"VAR\">item</field></block></value></block></next></block></statement></block></xml>"
+}

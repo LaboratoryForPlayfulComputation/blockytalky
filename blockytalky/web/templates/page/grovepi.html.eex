@@ -45,6 +45,7 @@
     <block type="get_value"></block>
     <block type="get_temp"></block>
     <block type="get_hum"></block>
+    <block type="get_percentage"></block>
     <block type="set_value">
       <value name="VALUE">
          <block type="math_number">

@@ -1,4 +1,6 @@
 from grovepi import *
+import serial
+
 
 
 NO_SENSOR = -1
@@ -32,6 +34,9 @@ def get_sensor_value(port_num,sensor_type,sensor_io):
 		val = analogRead(port_num)
 	    elif sensor_type == "digital":
 		val = digitalRead(port_num)
+
+	    elif sensor_type == "serial":
+                val = uart_send(data)
 	    
     except: 
 	    return "Error"
@@ -77,3 +82,23 @@ def set_analog_component(port_num,value):
 def set_pwm_component(port_num,value):
     analogWrite(port_num,value)
     return
+def uart_send(data):
+    time=100000
+    while True:
+        PORT="/dev/ttyACM0"
+        baud=115200
+        s=serial.Serial(PORT)
+        s.baudrate =baud
+        s.parity = serial.PARITY_NONE
+        s.databits = serial.EIGHTBITS
+        s.stopbits = serial.STOPBITS_ONE
+        data=str(data)
+        send=s.write(data)
+
+    return send
+
+
+
+
+
+

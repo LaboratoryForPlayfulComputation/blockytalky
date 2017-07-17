@@ -42,5 +42,5 @@ config :logger, :console, format: "[$level] $message\n"
   ####
   #custom configuration
 config :blockytalky,
-  supported_hardware: [:mock],
+  supported_hardware: [:btgrovepi],
   user_code_dir: "#{Path.dirname(__DIR__)}/priv/usercode"

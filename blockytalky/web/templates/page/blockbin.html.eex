@@ -2,8 +2,8 @@
    <%= if :btbrickpi in Blockytalky.RuntimeUtils.supported_hardware do %>
     <%= render Blockytalky.PageView, "sensors.html" %>
    <% end %>
-   <%= render Blockytalky.PageView, "events.html" %>
-   <%= render Blockytalky.PageView, "messaging.html" %>
+    <%= render Blockytalky.PageView, "events.html" %>
+    <%= render Blockytalky.PageView, "messaging.html" %>
    <%= if :btgrovepi in Blockytalky.RuntimeUtils.supported_hardware do %>
     <%= render Blockytalky.PageView, "grovepi.html" %>
    <% end %>
@@ -91,5 +91,7 @@
    </category> -->
    <category name="Variables" custom="VARIABLE"></category>
    <category name="Functions" custom="PROCEDURE"></category>
+   <catogary name="Grovepi sensors"></catogary>
    <sep></sep>
+   <%= render Blockytalky.PageView, "microbit.html"%>
  </xml>

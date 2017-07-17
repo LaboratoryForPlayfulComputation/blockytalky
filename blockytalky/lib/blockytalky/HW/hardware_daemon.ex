@@ -29,7 +29,8 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},
     %{:id => :LIGHT, :label => "Light sensor"},
     %{:id => :SOUND, :label => "Sound sensor"},
-    %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"}
+    %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"},
+    %{:id => :O2_SENSOR, :label => "O2 sensor"}
   ]
   @grove_digital_types [
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},
@@ -38,10 +39,12 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :LED, :label => "LED Light"},
     %{:id => :RELAY, :label => "Relay"},
     %{:id => :TEMP_HUM, :label => "Temp & Humidity sensor"},
-    %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"}
+    %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"},
+    %{:id => :CO2_SENSOR, :label => "co2_sensor"},
+    %{:id => :PH_SENSOR, :label => "ph_sensor"}
   ]
   @sensor_data [
-    %{:hw => "mock", :id => "MOCK_1", :label => "Mock 1", :type => "sensor", :types => @basic_sensor_types},
+    %{:hw => "mock", :id => "MOCK_1", :label => "A0", :type => "sensor", :types => @basic_sensor_types},
     %{:hw => "mock", :id => "MOCK_2", :label => "Mock 2", :type => "sensor", :types => @basic_sensor_types},
     %{:hw => "mock", :id => "MOCK_3", :label => "Mock 3", :type => "sensor", :types => @basic_sensor_types},
     %{:hw => "mock", :id => "MOCK_4", :label => "Mock 4", :type => "sensor", :types => @basic_sensor_types},
@@ -62,7 +65,9 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btgrovepi", :id => :D5, :label => "Port D5", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
-    %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types}
+    %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types},
+    %{:hw => "btgrovepi", :id => :rpsier, :label => "RPSIER", :type => "digital", :types => @grove_digital_types}
+
   ]
   ####
   #External API

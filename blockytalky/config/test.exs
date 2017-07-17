@@ -17,4 +17,4 @@ config :blockytalky, Blockytalky.Repo,
   database: "blockytalky_test",
   size: 1 # Use a single connection for transactional tests
 config :blockytalky,
-  supported_hardware: [:mock]
+  supported_hardware: [:btgrovepi]

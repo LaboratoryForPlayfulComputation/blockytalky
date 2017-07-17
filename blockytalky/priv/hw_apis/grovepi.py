@@ -233,7 +233,7 @@ def acc_xyz():
 	return (number[1], number[2], number[3])
 
 
-# Read from Grove RTC
+# Read from Grove RTCdht
 def rtc_getTime():
 	write_i2c_block(address, rtc_getTime_cmd + [unused, unused, unused])
 	time.sleep(.1)
@@ -480,3 +480,16 @@ def ir_read_signal():
 # Grove - Infrared Receiver- set the pin on which the Grove IR sensor is connected
 def ir_recv_pin(pin):
 	write_i2c_block(address,ir_recv_pin_cmd+[pin,unused,unused])
+def O2_sensor(pin):
+	# Get sensor value
+   sensor_value = analogRead(pin)
+   MeasuredVout = (sensor_value/ 256.0)
+   # Calculate gas density - large value means more dense gas
+   #density = (float)(sensor_value / 1024)
+   concentration = MeasuredVout*0.21/2.0
+   concentration_percentage =concentration*100
+   return [concentration_percentage]
+
+
+
+        

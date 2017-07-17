@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   set(:item , :math.cos(0 / 180.0 * math.pi))\n  say(get(:item))\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"65\" x=\"7.0000000000001705\" y=\"19.999999999999773\"><statement name=\"DO\"><block type=\"variables_set\" id=\"58\" inline=\"true\"><field name=\"VAR\">item</field><value name=\"VALUE\"><block type=\"math_trig\" id=\"136\" inline=\"false\"><field name=\"OP\">COS</field><value name=\"NUM\"><block type=\"math_number\" id=\"155\"><field name=\"NUM\">0</field></block></value></block></value><next><block type=\"say\" id=\"74\" inline=\"true\"><value name=\"msg\"><block type=\"variables_get\" id=\"78\"><field name=\"VAR\">item</field></block></value></block></next></block></statement></block></xml>"
+}

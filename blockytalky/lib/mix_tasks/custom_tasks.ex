@@ -86,7 +86,7 @@ end
 defmodule Mix.Tasks.Blockytalky.Release do
   use Mix.Task
   def run(_) do
-    System.put_env(%{"MIX_ENV"=>"prod"})
+    System.put_env(%{"MIX_ENV"=>"dev"})
     Mix.shell.info "Compiling Blockytalky with prod environment"
     System.cmd("mix",["compile"])
     Mix.shell.info "Preparing Blockytalky for release: brunch build + phoenix digest"

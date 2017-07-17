@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   gp_set_value(:A0,0)\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"267\" x=\"11\" y=\"11\"><statement name=\"DO\"><block type=\"set_value\" id=\"275\" inline=\"true\"><field name=\"port\">:A0</field><value name=\"VALUE\"><block type=\"math_number\" id=\"276\"><field name=\"NUM\">0</field></block></value></block></statement></block></xml>"
+}

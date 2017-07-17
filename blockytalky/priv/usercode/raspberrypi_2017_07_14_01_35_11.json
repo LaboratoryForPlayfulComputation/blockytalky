@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nstart do\n   set(:item , :a==1 name   say(\"hello\")\n\n  )\n  say(get(:item))\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"when_start\" id=\"7\" x=\"138\" y=\"16\"><statement name=\"DO\"><block type=\"variables_set\" id=\"35\" inline=\"true\"><field name=\"VAR\">item</field><value name=\"VALUE\"><block type=\"microbit_button\" id=\"13\"><field name=\"Button\">:a</field><field name=\"status\">1</field><statement name=\"NAME\"><block type=\"say\" id=\"22\" inline=\"true\"><value name=\"msg\"><block type=\"text\" id=\"23\"><field name=\"TEXT\">hello</field></block></value></block></statement></block></value><next><block type=\"say\" id=\"44\" inline=\"true\"><value name=\"msg\"><block type=\"variables_get\" id=\"48\"><field name=\"VAR\">item</field></block></value></block></next></block></statement></block></xml>"
+}

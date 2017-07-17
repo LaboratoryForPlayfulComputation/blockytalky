@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"get_value\" id=\"260\" x=\"318.0000000000007\" y=\"50.00000000000023\"><field name=\"port\">:D4</field></block></xml>"
+}

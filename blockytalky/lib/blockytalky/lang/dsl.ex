@@ -337,6 +337,13 @@ defmodule Blockytalky.DSL do
        _ -> nil
      end
   end
+  def gp_get_percentage(port_id) do
+     case GP.get_component_value(port_id) do
+       [_temp, hum] -> hum
+       _ -> nil
+     end
+  end
+   
   ## Comms
   # message <msg> to <unit>
   defmacro send_message(msg, to)do
@@ -489,5 +496,8 @@ defmodule Blockytalky.DSL do
   def unsync do
     program = SP.maestro_beat_pattern(false, 4)
     Music.send_music_program(program)
+  end
+  def send_val(data) do
+     GP.send_value(data)
   end
 end

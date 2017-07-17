@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"say\" id=\"9\" inline=\"true\" x=\"669\" y=\"66\"><value name=\"msg\"><block type=\"text\" id=\"10\"><field name=\"TEXT\">hello</field></block></value></block></xml>"
+}

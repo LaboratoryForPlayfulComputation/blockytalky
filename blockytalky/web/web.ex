@@ -4,7 +4,8 @@ defmodule Blockytalky.Web do
   views and so on.
 
   This can be used in your application as:
-
+      use Block.Web,       :controller
+      use Block.Web,       :view
       use Blockytalky.Web, :controller
       use Blockytalky.Web, :view
 
