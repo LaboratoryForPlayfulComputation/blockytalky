@@ -83,19 +83,24 @@ def set_pwm_component(port_num,value):
     analogWrite(port_num,value)
     return
 def uart_send(data):
-    time=100000
-    while True:
-        PORT="/dev/ttyACM0"
-        baud=115200
-        s=serial.Serial(PORT)
-        s.baudrate =baud
-        s.parity = serial.PARITY_NONE
-        s.databits = serial.EIGHTBITS
-        s.stopbits = serial.STOPBITS_ONE
-        data=str(data)
-        send=s.write(data)
+    once=1
+    PORT="/dev/ttyACM0"
+    baud=115200
+    s=serial.Serial(PORT)
+    s.baudrate =baud
+    s.parity = serial.PARITY_NONE
+    s.databits = serial.EIGHTBITS
+    s.stopbits = serial.STOPBITS_ONE
+    data=str(data)
+    send=s.write(data + "#")
 
     return send
+
+
+
+if __name__=='__main__':
+    uart_send(22.0)
+        
 
 
 

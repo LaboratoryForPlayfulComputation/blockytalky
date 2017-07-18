@@ -56,12 +56,14 @@ Blockly.Blocks['set_group'] = {
         .appendField("set GroupID to");
     this.appendValueInput("groupID")
         .setCheck("Number");
-    this.setOutput(true, "Number");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
     this.setColour(330);
     this.setTooltip('');
     this.setHelpUrl('');
   }
 };
+
 Blockly.Elixir['set_group'] = function(block) {
   var value_groupid = Blockly.Elixir.valueToCode(block, 'groupID', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
