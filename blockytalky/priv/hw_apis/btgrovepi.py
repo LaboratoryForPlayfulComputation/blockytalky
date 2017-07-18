@@ -98,9 +98,6 @@ def uart_send(data):
 
 
 
-if __name__=='__main__':
-    uart_send(22.0)
-        
 
 
 
