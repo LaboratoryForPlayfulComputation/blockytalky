@@ -498,8 +498,6 @@ defmodule Blockytalky.DSL do
     Music.send_music_program(program)
   end
   def send_val(data) do
-     case GP.send_value(data) do
-        data->data
-     end
+     GP.send_value(data)
   end
 end

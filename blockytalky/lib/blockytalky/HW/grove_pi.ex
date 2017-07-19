@@ -59,7 +59,6 @@ defmodule Blockytalky.GrovePi do
         def send_value(data) do
                 
                 PythonQuerier.run(:btgrovepi,:uart_send,[data])
-                GrovepiState.send_val(data)
                :ok
         end      
 end
@@ -94,12 +93,6 @@ defmodule Blockytalky.GrovePiState do
 	def terminate(_reason,_state) do
 		Logger.info("Terminating #{inspect __MODULE__}")
 	end
-        def send_val(data) do
-                case GenServer.call(__MODULE__, {:btgrovepi,data}) do
-                      data->data
-                end
-                
-        end
 	def handle_call({:get_port, port_id}, _from, map) do
 		{:reply, Map.get(map, port_id, {nil, nil}), map}
 	end

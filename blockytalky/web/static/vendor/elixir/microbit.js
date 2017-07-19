@@ -31,13 +31,14 @@ goog.require('Blockly.Elixir');
 Blockly.Blocks['microbit_button'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Microbit Button")
-        .appendField(new Blockly.FieldDropdown([["A is","a"], ["B is","b"]]), "button")
-        .appendField(new Blockly.FieldDropdown([["pressed","1"], ["released","0"]]), "status");
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
+        .appendField("on radio received")
+        .appendField(new Blockly.FieldDropdown([["name ","name"], ["received numer","received_number"],["value","value"]]), "button")
+        .appendField(new Blockly.FieldDropdown([["value","1"], ["name","0"]]), "status");
     this.appendStatementInput("DO")
         .setCheck(null);
-    this.setOutput(true, "Boolean");
-    this.setColour(230);
+    this.setPreviousStatement(true, null);
+    this.setColour(90);
     this.setTooltip('');
     this.setHelpUrl('');
   }
@@ -53,12 +54,14 @@ Blockly.Elixir['microbit_button'] = function(block) {
 Blockly.Blocks['set_group'] = {
   init: function() {
     this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
         .appendField("set GroupID to");
     this.appendValueInput("groupID")
         .setCheck("Number");
+    this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(330);
+    this.setColour(90);
     this.setTooltip('');
     this.setHelpUrl('');
   }
@@ -95,30 +98,31 @@ Blockly.Elixir['Sendmicrobit_value'] = function(block) {
 };
 
 
-Blockly.Blocks['radiosend'] = {
+Blockly.Blocks['radio_send'] = {
   init: function() {
-    this.appendValueInput("NAME")
-        .setCheck(["String", "Number"])
-        .appendField("Send value through radio");
-    this.setInputsInline(false);
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
+        .appendField("radio send number");
+    this.appendValueInput("Number")
+        .setCheck("Number");
+    this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(90);
     this.setTooltip('');
     this.setHelpUrl('');
   }
 };
-
-Blockly.Elixir['radiosend'] = function(block) {
-  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+Blockly.Elixir['radio_send'] = function(block) {
+  var value_number = Blockly.Elixir.valueToCode(block, 'Number', Blockly.Elixir.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
   var code = '...;\n';
   return code;
 };
-
 Blockly.Blocks['radio_receive'] = {
   init: function() {
     this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
         .appendField("on radio received");
     this.appendStatementInput("thenDo")
         .setCheck(null)
@@ -128,4 +132,33 @@ Blockly.Blocks['radio_receive'] = {
     this.setHelpUrl('');
   }
 };
+
+Blockly.Elixir['radio_receive'] = function(block) {
+  var dropdown_data = block.getFieldValue('data');
+  var statements_thendo = Blockly.Elixir.statementToCode(block, 'thenDo');
+  var code = dropdown_data + '\n';
+  return code;
+};
+
+Blockly.Blocks['received'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
+        .appendField("on radio received")
+        .appendField(new Blockly.FieldDropdown([["received string","recieved_str"], ["string","str"]]), "str");
+    this.appendStatementInput("NAME")
+        .setCheck(null);
+    this.setColour(90);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Elixir['received'] = function(block) {
+  var dropdown_str = block.getFieldValue('str');
+  var statements_name = Blockly.Elixir.statementToCode(block, 'NAME');
+  var code = statement_name +'\n';
+  return [code,Blockly.Elixir.ORDER_NONE];
+};
+
 
