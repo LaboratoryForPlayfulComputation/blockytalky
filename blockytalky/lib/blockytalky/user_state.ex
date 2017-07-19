@@ -151,11 +151,12 @@ defmodule Blockytalky.UserState do
   end
   defp update_gp_state do
     port_list = GP.port_id_map
+    
     |> Map.keys
     |> Enum.filter(fn port_id -> GPS.get_port_component(port_id) != nil end)
     port_values = port_list
-    |> Enum.map(fn {data} -> GP.send_value(data)end)
-     
+    |> Enum.map(fn data -> GP.send_value(data)end)
+    
     |> Enum.map(fn port_id -> GP.get_component_value(port_id) end)
 
     Enum.zip(port_values,port_list)

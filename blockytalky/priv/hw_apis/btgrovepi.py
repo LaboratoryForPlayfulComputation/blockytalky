@@ -92,7 +92,7 @@ def uart_send(data):
     s.databits = serial.EIGHTBITS
     s.stopbits = serial.STOPBITS_ONE
     data=str(data)
-    send=s.write(data + "#")
+    send=s.write(data)
 
     return send
 
