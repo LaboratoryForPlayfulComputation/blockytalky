@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nrepeatedly do\n   set(:item , \"hello\")\n  serial_wrap(\"SendNum\",12)\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"repeatedly_do\" id=\"28\" x=\"243.4999999999999\" y=\"81.99999999999972\"><statement name=\"DO\"><block type=\"variables_set\" id=\"2\" inline=\"true\"><field name=\"VAR\">item</field><value name=\"VALUE\"><block type=\"text\" id=\"3\"><field name=\"TEXT\">hello</field></block></value><next><block type=\"send_key\" id=\"4\" inline=\"true\"><value name=\"NAME\"><block type=\"text\" id=\"5\"><field name=\"TEXT\">SendNum</field></block></value><value name=\"key_value\"><block type=\"math_number\" id=\"6\"><field name=\"NUM\">12</field></block></value></block></next></block></statement></block></xml>"
+}

@@ -4,9 +4,10 @@ defmodule Blockytalky.DSL do
   alias Blockytalky.Music, as: Music
   alias Blockytalky.SonicPi, as: SP
   alias Blockytalky.GrovePi, as: GP
+  alias Blockytalky.MicroBit, as: MB
   #alias Blockytalky.CommsModule, as: CM
   #alias Blockytalky.CommsChannel, as: CC
-
+ 
   require Logger
   @moduledoc """
   The function-version of the Blockytalky.DSL as an intermediate representation
@@ -498,6 +499,14 @@ defmodule Blockytalky.DSL do
     Music.send_music_program(program)
   end
   def send_val(data) do
-     GP.send_value(data)
+     MB.send_value(data)
+     Logger.info("loop")
+  end
+  def send_no(value) do 
+      MB.send_number(value)
+  end
+  def serial_wrap(deli,data1) do
+      MB.serial_wrap(deli,data1)
+      Logger.info("The serial wrapper")
   end
 end

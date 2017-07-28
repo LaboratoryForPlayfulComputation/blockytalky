@@ -1,0 +1,4 @@
+{
+  "code": "defmodule Blockytalky.UserCode do\n  use Blockytalky.DSL\nrepeatedly do\n\nend\n\nend\n",
+  "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"repeatedly_do\" id=\"51\" x=\"229\" y=\"82\"></block><block type=\"radio_receive\" id=\"66\" x=\"513.0000000000014\" y=\"74.0000000000008\"><field name=\"data\">receivednumber</field><statement name=\"thenDo\"><block type=\"Sendmicrobit_value\" id=\"52\" inline=\"true\"><value name=\"inputdata\"><block type=\"math_number\" id=\"53\"><field name=\"NUM\">0</field></block></value></block></statement></block></xml>"
+}

@@ -82,25 +82,6 @@ def set_analog_component(port_num,value):
 def set_pwm_component(port_num,value):
     analogWrite(port_num,value)
     return
-def uart_send(data):
-    once=1
-    PORT="/dev/ttyACM0"
-    baud=115200
-    s=serial.Serial(PORT)
-    s.baudrate =baud
-    s.parity = serial.PARITY_NONE
-    s.databits = serial.EIGHTBITS
-    s.stopbits = serial.STOPBITS_ONE
-    data=str(data)
-    send=s.write(data + "#")
-
-    return send
-
-
-
-
-
-
 
 
 

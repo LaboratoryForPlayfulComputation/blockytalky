@@ -11,7 +11,6 @@ defmodule Blockytalky.Mixfile do
      start_permanent: Mix.env == :prod,
      deps: deps]
   end
-
   # Configuration for the OTP application
   #
   # Type `mix help compile.app` for more information
@@ -21,7 +20,7 @@ defmodule Blockytalky.Mixfile do
                     #:phoenix_ecto, :postgrex,
                     :httpoison, :syslog,
                     :erlport,:osc, :exjsx, :socket, :crypto, :conform,
-                    :conform_exrm]]
+                    :conform_exrm,:nerves_uart]]
   end
 
   # Specifies which paths to compile per environment
@@ -47,7 +46,9 @@ defmodule Blockytalky.Mixfile do
      { :socket, git: "https://github.com/meh/elixir-socket.git"},
      {:exrm, "~> 1.0.0-rc7", override: true},
      {:conform, git: "https://github.com/bitwalker/conform", tag: "1.0.0-rc8", override: true},
-     {:conform_exrm, "~> 0.2"}
+     {:conform_exrm, "~> 0.2"},
+     {:nerves_uart,"~>0.1"}
    ]
   end
+  
 end

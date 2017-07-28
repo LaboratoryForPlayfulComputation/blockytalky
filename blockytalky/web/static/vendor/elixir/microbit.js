@@ -69,9 +69,7 @@ Blockly.Blocks['set_group'] = {
 
 Blockly.Elixir['set_group'] = function(block) {
   var value_groupid = Blockly.Elixir.valueToCode(block, 'groupID', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = 'set('+value_group+')\n';
-  // TODO: Change ORDER_NONE to the correct strength.
+  var code = 'send_val('+value_groupid+')\n';
   return code;
 };
 
@@ -115,8 +113,7 @@ Blockly.Blocks['radio_send'] = {
 };
 Blockly.Elixir['radio_send'] = function(block) {
   var value_number = Blockly.Elixir.valueToCode(block, 'Number', Blockly.Elixir.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  var code = 'send_no('+value_number+')\n';
   return code;
 };
 Blockly.Blocks['radio_receive'] = {
@@ -161,4 +158,29 @@ Blockly.Elixir['received'] = function(block) {
   return [code,Blockly.Elixir.ORDER_NONE];
 };
 
+Blockly.Blocks['send_key'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fmetro-uinvert-dock%2F256%2FSignal.png&f=1", 15, 15, "*"))
+        .appendField("radio send key value");
+    this.appendValueInput("NAME")
+        .setCheck("String");
+    this.appendValueInput("key_value")
+        .setCheck("Number");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(90);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+
+Blockly.Elixir['send_key'] = function(block) {
+  var value_name = Blockly.Elixir.valueToCode(block, 'NAME', Blockly.Elixir.ORDER_ATOMIC);
+  var value_key_value = Blockly.Elixir.valueToCode(block, 'key_value', Blockly.Elixir.ORDER_ATOMIC);
+  var code = 'serial_wrap('+value_name+','+value_key_value+')\n';
+  return code;
+};
 

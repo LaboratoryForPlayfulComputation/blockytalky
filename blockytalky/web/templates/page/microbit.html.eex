@@ -5,5 +5,6 @@
    <block type ="radio_send"></block>
    <block type ="radio_receive"></block> 
    <block type ="received"></block>
+   <block type ="send_key"></block>
 </catogary>  
  

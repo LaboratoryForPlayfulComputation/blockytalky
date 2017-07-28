@@ -55,11 +55,7 @@ defmodule Blockytalky.GrovePi do
 		PythonQuerier.run(:btgrovepi, :set_component, [port_num, value, type])
                 GrovePiState.set_component_value(port_id, value)
 		:ok		
-	end
-        def send_value(data) do
-                PythonQuerier.run(:btgrovepi,:uart_send,[data])
-               :ok
-        end      
+	end           
 end
 
 defmodule Blockytalky.GrovePiState do
@@ -89,9 +85,6 @@ defmodule Blockytalky.GrovePiState do
                 { component_id, _ } = GenServer.call(__MODULE__, {:get_port, port_id})
 		component_id
         end
-        def send_val(data) do
-              GenServer.cast(__MODULE__, {:send_val,data})
-        end
 	def terminate(_reason,_state) do
 		Logger.info("Terminating #{inspect __MODULE__}")
 	end
@@ -106,7 +99,6 @@ defmodule Blockytalky.GrovePiState do
 		map = Map.put(map, port_id, {component_id, nil})
 		{:noreply, map}
 	end
-        
         def handle_cast({:set_value, port_id, value}, map) do
 		{ component_id, _ } = Map.get(map, port_id, {nil, nil})
 		map = Map.put(map, port_id, { component_id, value })
