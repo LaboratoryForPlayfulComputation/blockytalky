@@ -118,3 +118,31 @@ Blockly.Elixir['every_time'] = function(block) {
   var code = 'every_time('+value_time+') do\n '+statements_do+' \n end\n';
   return code;
 };
+Blockly.Blocks['every_time_until'] = {
+  init: function() {
+    this.appendValueInput("TIME")
+        .setCheck("Number")
+        .appendField("Every");
+    this.appendDummyInput()
+        .appendField("seconds");
+    this.appendStatementInput("DO")
+        .setCheck(['BP','Event','Message'])
+        .appendField("do:");
+    this.appendValueInput("UNTIL")
+        .setCheck("Boolean")
+        .appendField("until:");
+    this.setInputsInline(true,['BP','Event','Message']);
+    this.setPreviousStatement(true, ['BP','Event','Message']);
+    this.setNextStatement(false, null);
+    this.setColour(140);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+Blockly.Elixir['every_time_until'] = function(block) {
+  var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
+  var until_val = Blockly.Elixir.valueToCode(block, 'UNTIL', Blockly.Elixir.ORDER_ATOMIC);
+  var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
+  var code = 'every_time('+value_time +', ' + until_val+') do\n '+statements_do+' \n end\n';
+  return code;
+};

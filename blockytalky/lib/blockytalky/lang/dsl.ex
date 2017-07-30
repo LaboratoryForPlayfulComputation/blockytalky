@@ -70,6 +70,13 @@ defmodule Blockytalky.DSL do
       time = nil
     end
   end
+  defmacro every_time(seconds, until, [do: body]) do
+    quote do
+      time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds)
+      push_time_event({:every_time,time,round(unquote(seconds)),fn -> unquote(until) end, fn -> unquote(body) end})
+      time = nil
+    end
+  end
   defmacro for_time(seconds,clauses) do
     do_body = Keyword.get(clauses, :do, nil)
     after_body = Keyword.get(clauses, :after, :ok)
@@ -282,6 +289,19 @@ defmodule Blockytalky.DSL do
     else
       true
     end
+  end
+  def do_timer_action({:every_time,time,gap,until_fun,do_fun}) do
+    now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds
+      unless until_fun.() do
+        if now > (time + gap) do
+          do_fun.()
+          {:update, {:every_time, time + gap, gap, until_fun, do_fun}}
+        else
+          true
+        end
+      else
+        false
+      end
   end
   #when sensor value is <comp> <value>, do: <body>
   def when_sensor_value_compare(port_id, comp_fun, value, body_fun) do
