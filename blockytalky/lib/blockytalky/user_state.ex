@@ -124,7 +124,11 @@ defmodule Blockytalky.UserState do
      end
   end
   def update_var(var_name, fun) do
-    GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+    #GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+    case get_var(var_name) do
+      var -> set_var(var_name,fun.(var))
+      _   -> :ok
+    end
   end
 
   def get_var_history(var_name) do
