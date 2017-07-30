@@ -95,7 +95,7 @@ defmodule Blockytalky.HardwareDaemon do
       end
       Logger.debug "get label for: #{inspect sensor}"
       sensor
-    end) |> (Enum.filter (fn x -> x != nil end)
+    end) |> (Enum.filter (fn x -> x != nil end))
     case possible_results of
       [map] -> Map.get(map, :label, "None")
       _       -> "None"
