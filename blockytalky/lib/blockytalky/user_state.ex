@@ -274,7 +274,7 @@ defmodule Blockytalky.UserState do
     {:reply,:ok, %Blockytalky.UserState{user_code: ucs}}
   end
   def handle_call({:get_port_value, port_id}, _from, s=%Blockytalky.UserState{port_values: port_values}) do
-    value = Map.get(port_values, port_id)
+    value = Map.get(port_values, port_id,[])
     {:reply, value, s}
   end
   def handle_call(:get_port_value_map, _from, s=%Blockytalky.UserState{port_values: port_values}) do
