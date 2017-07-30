@@ -37,3 +37,6 @@ erl_crash.dump
 
 #compiled erts
 /rel/blockytalky
+
+#code files
+/priv/usercode/*

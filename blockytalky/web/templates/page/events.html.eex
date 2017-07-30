@@ -15,4 +15,11 @@
       </block>
     </value>
   </block>
+  <block type="every_time">
+    <value name="TIME">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+  </block>
 </category>

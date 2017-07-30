@@ -124,9 +124,9 @@ defmodule Blockytalky.HardwareDaemon do
         :btbrickpi ->
             [worker(PythonQuerier, [hw], id: hw, restart: :transient),
              worker(Blockytalky.BrickPiState,[])]
-	:btgrovepi ->
-	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
-	     worker(Blockytalky.GrovePiState, [])]
+      	:btgrovepi ->
+      	    [worker(PythonQuerier, [hw], id: hw, restart: :transient),
+      	     worker(Blockytalky.GrovePiState, [])]
         _ -> worker(PythonQuerier, [hw], id: hw, restart: :transient)
       end
     end
