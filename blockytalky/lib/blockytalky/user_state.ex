@@ -195,7 +195,7 @@ defmodule Blockytalky.UserState do
     list = for {key,data_list} <- map do
       data_list = 
        case data_list do
-         l when is_list(l) -> Enum.filter(l, fn {_, x} -> x != nil)
+         l when is_list(l) -> Enum.filter(l, (fn {_, x} -> x != nil end))
          _                 -> []
        end
       latest_value = case data_list do
