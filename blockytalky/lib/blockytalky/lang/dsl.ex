@@ -327,13 +327,13 @@ defmodule Blockytalky.DSL do
   end
   #get temperature and humidity from Grove
   def gp_get_temp(port_id) do
-    case GP.get_component_value(port_id) do
+    case US.get_value(port_id) do
       [temp, _hum] -> temp
       _ -> nil
     end
   end
   def gp_get_hum(port_id) do
-     case GP.get_component_value(port_id) do
+     case US.get_value(port_id) do
        [_temp, hum] -> hum
        _ -> nil
      end
