@@ -93,7 +93,8 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__,{:put_value, value, port_id})
   end
   def get_value(port_id) do
-    case GenServer.call(__MODULE__, {:get_port_value, port_id}) do
+    history = GenServer.call(__MODULE__, {:get_port_value, port_id}) |> (Enum.filter(fn {_,value} -> value != nil end))
+    case  do
       [{_, value} | _ ] -> value
       _ -> nil
     end
