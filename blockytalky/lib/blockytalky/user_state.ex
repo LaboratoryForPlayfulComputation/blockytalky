@@ -193,10 +193,12 @@ defmodule Blockytalky.UserState do
   end
   defp strip_oks(map) do
     list = for {key,data_list} <- map do
+      data_list = case data_list do
+       l when is_list(l) -> Enum.filter(l, fn {_, x} -> x != nil)
+       _                 -> []
       latest_value = case data_list do
-        [{_iteration, nil} | _ ] -> "-"
-        [{_iteration, v} | _ ] -> v #get the latest value
-        _ -> "-"
+        [{_,v}] -> v
+        _       -> "-"
       end
       {key, latest_value}
     end
