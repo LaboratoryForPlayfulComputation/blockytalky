@@ -133,7 +133,7 @@ Blockly.Blocks['every_time_until'] = {
         .appendField("until:");
     this.setInputsInline(true,['BP','Event','Message']);
     this.setPreviousStatement(true, ['BP','Event','Message']);
-    this.setNextStatement(true, ['BP','Event','Message'];
+    this.setNextStatement(true, ['BP','Event','Message']);
     this.setColour(140);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
