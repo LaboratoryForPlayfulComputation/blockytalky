@@ -11,7 +11,8 @@ defmodule Blockytalky.GrovePi do
 
 	def component_id_map do 
 		%{:LIGHT => "INPUT", :SOUND => "INPUT", :ROTARY_ANGLE => "INPUT",
-			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",
+			:BUTTON => "INPUT", :MOISTURE => "INPUT", :WATER => "INPUT",
+			:SLIDE_POT => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",
 			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC"}
 	end 
 	def get_component_value(port_id) do
