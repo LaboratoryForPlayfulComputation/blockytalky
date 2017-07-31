@@ -64,6 +64,13 @@ defmodule Blockytalky.DSL do
       time = nil
     end
   end
+   defmacro every_time(seconds, [do: body]) do
+     quote do
+       time = (:calendar.universal_time |> :calendar.datetime_to_gregorian_seconds)
+       push_time_event({:every_time,time,round(unquote(seconds)), fn -> unquote(body) end})
+       time = nil
+     end
+   end
   defmacro for_time(seconds,clauses) do
     do_body = Keyword.get(clauses, :do, nil)
     after_body = Keyword.get(clauses, :after, :ok)
@@ -212,11 +219,20 @@ defmodule Blockytalky.DSL do
   # timer Events
   def process_time_events() do
     US.update_var(:sys_timer, fn stack ->
-      stack |> Enum.filter(fn x ->
+      stack |> advance(fn x ->
         Blockytalky.DSL.do_timer_action(x)
       end)
     end)
   end
+  
+   def advance([], _), do: []
+   def advance([h|t], f) do
+     case f.(h) do
+       false -> advance(t, f)
+       true  -> [h | advance(t, f)]
+       {:update,h2} -> [h2 | advance(t, f)]
+     end
+   end
   def push_time_event(event) do
       US.update_var(:sys_timer, fn stack -> [event | stack] end)
   end
@@ -257,8 +273,16 @@ defmodule Blockytalky.DSL do
       then_fun.()
       false
     end
-
   end
+   def do_timer_action({:every_time,time,gap,do_fun}) do
+     now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds
+     if now > (time + gap) do
+       do_fun.()
+       {:update, {:every_time, time + gap, gap, do_fun}}
+     else
+       true
+     end
+   end
   #when sensor value is <comp> <value>, do: <body>
   def when_sensor_value_compare(port_id, comp_fun, value, body_fun) do
     #this is confusing, refactor this to be less awful.
@@ -327,13 +351,13 @@ defmodule Blockytalky.DSL do
   end
   #get temperature and humidity from Grove
   def gp_get_temp(port_id) do
-    case GP.get_component_value(port_id) do
+    case US.get_value(port_id) do
       [temp, _hum] -> temp
       _ -> nil
     end
   end
   def gp_get_hum(port_id) do
-     case GP.get_component_value(port_id) do
+     case US.get_value(port_id) do
        [_temp, hum] -> hum
        _ -> nil
      end
@@ -500,13 +524,12 @@ defmodule Blockytalky.DSL do
   end
   def send_val(data) do
      MB.send_value(data)
-     Logger.info("loop")
   end
   def send_no(value) do 
       MB.send_number(value)
   end
   def serial_wrap(deli,data1) do
       MB.serial_wrap(deli,data1)
-      Logger.info("The serial wrapper")
+      :timer.sleep(1000)     
   end
 end

@@ -69,7 +69,7 @@ Blockly.Blocks['set_group'] = {
 
 Blockly.Elixir['set_group'] = function(block) {
   var value_groupid = Blockly.Elixir.valueToCode(block, 'groupID', Blockly.Elixir.ORDER_ATOMIC);
-  var code = 'send_val('+value_groupid+')\n';
+  var code = 'send_no('+value_groupid+')\n';
   return code;
 };
 
@@ -113,7 +113,7 @@ Blockly.Blocks['radio_send'] = {
 };
 Blockly.Elixir['radio_send'] = function(block) {
   var value_number = Blockly.Elixir.valueToCode(block, 'Number', Blockly.Elixir.ORDER_ATOMIC);
-  var code = 'send_no('+value_number+')\n';
+  var code = 'send_val('+value_number+')\n';
   return code;
 };
 Blockly.Blocks['radio_receive'] = {

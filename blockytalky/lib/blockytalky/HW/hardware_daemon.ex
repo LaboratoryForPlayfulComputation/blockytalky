@@ -76,7 +76,8 @@ defmodule Blockytalky.HardwareDaemon do
     @sensor_data |> Enum.filter(fn x-> String.to_atom(Map.get(x, :hw)) in Blockytalky.RuntimeUtils.supported_hardware end)
   end
   def get_sensor_type_label_for_id(sensor_id) do
-    for hw <- Blockytalky.RuntimeUtils.supported_hardware do
+    possible_results=
+    (for hw <- Blockytalky.RuntimeUtils.supported_hardware do
       sensor = case hw do
         :btbrickpi ->
            @basic_sensor_types |> Enum.find( fn x -> Map.get(x, :id) == sensor_id end)
@@ -93,10 +94,11 @@ defmodule Blockytalky.HardwareDaemon do
           _ -> nil
       end
       Logger.debug "get label for: #{inspect sensor}"
-      case sensor do
-        nil -> "None"
-        map -> Map.get(map, :label, "None")
-      end
+      sensor
+      end) |> (Enum.filter(fn x->x !=nil end))
+        case possible_results do
+      [map] -> Map.get(map, :label, "None")
+      _       -> "None"
     end
   end
   @doc """

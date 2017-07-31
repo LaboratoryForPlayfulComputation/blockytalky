@@ -93,7 +93,8 @@ defmodule Blockytalky.UserState do
     GenServer.cast(__MODULE__,{:put_value, value, port_id})
   end
   def get_value(port_id) do
-    case GenServer.call(__MODULE__, {:get_port_value, port_id}) do
+      history = GenServer.call(__MODULE__, {:get_port_value, port_id}) |> (Enum.filter(fn {_,value} -> value != nil end))
+    case history do
       [{_, value} | _ ] -> value
       _ -> nil
     end
@@ -124,7 +125,11 @@ defmodule Blockytalky.UserState do
      end
   end
   def update_var(var_name, fun) do
-    GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+    #GenServer.cast(__MODULE__, {:update_var, var_name, fun})
+     case get_var(var_name) do
+      var -> set_var(var_name,fun.(var))
+      _   -> :ok
+    end
   end
 
   def get_var_history(var_name) do
@@ -192,10 +197,14 @@ defmodule Blockytalky.UserState do
   end
   defp strip_oks(map) do
     list = for {key,data_list} <- map do
+      data_list = 
+       case data_list do
+         l when is_list(l) -> Enum.filter(l, (fn {_, x} -> x != nil end))
+         _                 -> []
+       end
       latest_value = case data_list do
-        [{_iteration, nil} | _ ] -> "-"
-        [{_iteration, v} | _ ] -> v #get the latest value
-        _ -> "-"
+        [{_,v}] -> v
+        _       -> "-"
       end
       {key, latest_value}
     end
@@ -273,14 +282,14 @@ defmodule Blockytalky.UserState do
     {:reply,:ok, %Blockytalky.UserState{user_code: ucs}}
   end
   def handle_call({:get_port_value, port_id}, _from, s=%Blockytalky.UserState{port_values: port_values}) do
-    value = Map.get(port_values, port_id)
+    value = Map.get(port_values, port_id,[])
     {:reply, value, s}
   end
   def handle_call(:get_port_value_map, _from, s=%Blockytalky.UserState{port_values: port_values}) do
     {:reply, port_values, s}
   end
   def handle_call({:get_var, var_name}, _from, s=%Blockytalky.UserState{var_map: var_map}) do
-    value = Map.get(var_map, var_name)
+    value = Map.get(var_map, var_name,[])
     {:reply, value, s}
   end
   def handle_call(:get_user_code, _from, s=%Blockytalky.UserState{user_code: ucs}) do

@@ -58,7 +58,7 @@ Blockly.Blocks['for_time'] = {
         .appendField("repeatedly do:");
     this.setInputsInline(true,['BP','Event','Message']);
     this.setPreviousStatement(true, ['BP','Event','Message']);
-    this.setNextStatement(false, null);
+    this.setNextStatement(true,'Event');
     this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -92,5 +92,29 @@ Blockly.Elixir['in_time'] = function(block) {
   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
   var code = 'in_time('+value_time+') do\n '+statements_do+' \n end\n';
+  return code;
+};
+Blockly.Blocks['every_time'] = {
+   init: function() {
+     this.appendValueInput("TIME")
+         .setCheck("Number")
+         .appendField("Every");
+     this.appendDummyInput()
+         .appendField("seconds");
+     this.appendStatementInput("DO")
+         .setCheck(['BP','Event','Message'])
+         .appendField("do:");
+     this.setInputsInline(true,['BP','Event','Message']);
+     this.setPreviousStatement(true,['BP','Event','Message']);
+     this.setNextStatement(true, 'Event');
+     this.setColour(140);
+     this.setTooltip('');
+     this.setHelpUrl('http://www.example.com/');
+   }
+ };
+ Blockly.Elixir['every_time'] = function(block) {
+   var value_time = Blockly.Elixir.valueToCode(block, 'TIME', Blockly.Elixir.ORDER_ATOMIC);
+   var statements_do = Blockly.Elixir.statementToCode(block, 'DO');
+   var code = 'every_time('+value_time+') do\n '+statements_do+' \n end\n';
   return code;
 };

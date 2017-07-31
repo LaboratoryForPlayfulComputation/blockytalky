@@ -1,6 +1,6 @@
 import serial
 import time
-PORT="/dev/ttyACM1"
+PORT="/dev/ttyACM0"
 baud=115200
 s=serial.Serial(PORT)
 s.baudrate =baud
@@ -9,7 +9,7 @@ s.databits = serial.EIGHTBITS
 s.stopbits = serial.STOPBITS_ONE
 def setup():
     once=1
-    PORT="/dev/ttyACM1"
+    PORT="/dev/ttyACM0"
     baud=115200
     s=serial.Serial(PORT)
     s.baudrate =baud
@@ -19,20 +19,22 @@ def setup():
 
 def uart_send(data):
     data=str(data)
-    send=s.write(data + "#")
+    total="Num"+"^"+data+"#"
+    send=s.write(total)
     print("reached here")
     return send
 
 def uart_wrapper(deli,data1):
     data=str(data1)
-    total=deli+"^"+data+"#"
-    tot=str(total)
+    total="Key"+"^"+deli+"^"+data+"#"
     send=s.write(total)
+    print("time")
     return send
 
 def uart_no(value):
-    send=s.write(value+"#")
+    total="group"+"^"+value+"#"
+    send=s.write(total)
     return send
 
 if __name__=='__main__':
-    uart_wrapper("strin",10)
+    uart_wrapper("data",10)

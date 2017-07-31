@@ -19,6 +19,12 @@ defmodule Blockytalky.GrovePi do
 		io = GrovePiState.get_port_io(port_id)
                 case io do
 		   "OUTPUT" -> GrovePiState.get_last_set_value(port_id) 
+                    "DHT"    ->
+		        {_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		        case v do
+			  [t,h] -> [t,h]
+			  _     -> nil
+			end
                     _ -> 
 			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
 		        if v == "Error", do: nil, else: v
