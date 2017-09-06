@@ -526,10 +526,10 @@ defmodule Blockytalky.DSL do
      MB.send_value(data)
   end
   def send_no(value) do 
-      MB.send_number(value)
+      MB.send_no(value)
   end
   def serial_wrap(deli,data1) do
       MB.serial_wrap(deli,data1)
-      :timer.sleep(1000)     
+           
   end
 end
