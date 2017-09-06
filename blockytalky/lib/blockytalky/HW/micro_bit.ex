@@ -13,7 +13,7 @@ defmodule Blockytalky.MicroBit do
                :ok
         end
         def send_number(value) do
-               PythonQuerier.run(:microbit,:uart_no,[value])
+               PythonQuerier.run(:microbit,:uart_send,[value])
                
                :ok
         end
