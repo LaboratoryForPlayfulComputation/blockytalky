@@ -6,13 +6,13 @@ defmodule Blockytalky.GrovePi do
 	def port_id_map do
 		%{:A0 => {0, "analog"}, :A1 => {1, "analog"}, :A2 => {2, "analog"}, :D2 => {2, "digital"},
 			:D3 => {3, "PWM"}, :D4 => {4, "digital"}, :D5 => {5, "PWM"}, :D6 => {6, "PWM"}, 
-			:D7 => {7, "digital"}, :D8 => {8, "digital"}}
+			:D7 => {7, "digital"}, :D8 => {8, "digital"},:i2c0 =>{9,"i2c"}}
 	end
 
 	def component_id_map do 
 		%{:LIGHT => "INPUT", :SOUND => "INPUT", :ROTARY_ANGLE => "INPUT",
-			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",:C02_SENSOR => "INPUT",:PH_SENSOR => "INPUT",
-			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC",:O2_SENSOR => "INPUT"}
+			:BUTTON => "INPUT", :BUZZER => "OUTPUT", :LED => "OUTPUT",:C02_SENSOR => "CO2",:PH_SENSOR => "PH",
+			:RELAY => "OUTPUT", :TEMP_HUM => "DHT", :ULTRASONIC => "ULTRASONIC",:O2_SENSOR => "O2_SENSOR",:SUNLIGHT_SENSOR => "SUNLIGHT"}
 	end 
 	def get_component_value(port_id) do
 		{port_num, type} = Map.get(port_id_map, port_id,{nil,nil})
@@ -25,15 +25,37 @@ defmodule Blockytalky.GrovePi do
 			  [t,h] -> [t,h]
 			  _     -> nil
 			end
+		   "O2_SENSOR" ->
+			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		        if v == "Error", do: nil, else: v
+			v=v/256
+			v=((v*0.21)/2)*100
+		   "PH" ->
+			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		        if v == "Error", do: nil, else: v
+			v=(v*(-3.83))+7.720
+			case v do
+			  [v] -> [v]
+			  _     -> [v]
+                        end
+		   "CO2" ->
+			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
+		        if v == "Error", do: nil, else: v
+			v=(v*256)
                     _ -> 
 			{_,v} = PythonQuerier.run_result(:btgrovepi,:get_sensor_value,[port_num,type,io])		
 		        if v == "Error", do: nil, else: v
+		   
+					
 	        end
 	end
 	
 	def set_component_type(port_id, component_id) do
 		{port_num, _} = Map.get(port_id_map, port_id)
 		component_io = Map.get(component_id_map, component_id)
+		component_io = if component_io =="O2_SENSOR", do: "INPUT",else: component_io
+		component_io = if component_io =="PH", do: "INPUT",else: component_io
+                component_io = if component_io =="CO2", do: "INPUT",else: component_io
 		PythonQuerier.run(:btgrovepi, :set_sensor_type, [port_num, component_io])
 		GrovePiState.set_component_type(port_id, component_id)
 		:ok

@@ -30,7 +30,11 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :LIGHT, :label => "Light sensor"},
     %{:id => :SOUND, :label => "Sound sensor"},
     %{:id => :ROTARY_ANGLE, :label => "Rotary angle sensor"},
-    %{:id => :O2_SENSOR, :label => "O2 sensor"}
+    %{:id => :O2_SENSOR, :label => "O2 sensor"},
+    %{:id => :PH_SENSOR, :label => "ph sensor"}
+  ]
+  @grove_i2c_types [
+    %{:id => :SUNLIGHT_SENOSR, :label => "sunlight"}
   ]
   @grove_digital_types [
     %{:id => :TYPE_SENSOR_NONE, :label => "None"},
@@ -40,8 +44,7 @@ defmodule Blockytalky.HardwareDaemon do
     %{:id => :RELAY, :label => "Relay"},
     %{:id => :TEMP_HUM, :label => "Temp & Humidity sensor"},
     %{:id => :ULTRASONIC, :label => "Ultrasonic sensor"},
-    %{:id => :CO2_SENSOR, :label => "co2_sensor"},
-    %{:id => :PH_SENSOR, :label => "ph_sensor"}
+    %{:id => :CO2_SENSOR, :label => "co2 sensor"}
   ]
   @sensor_data [
     %{:hw => "mock", :id => "MOCK_1", :label => "A0", :type => "sensor", :types => @basic_sensor_types},
@@ -66,8 +69,9 @@ defmodule Blockytalky.HardwareDaemon do
     %{:hw => "btgrovepi", :id => :D6, :label => "Port D6", :type => "PWM", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D7, :label => "Port D7", :type => "digital", :types => @grove_digital_types},
     %{:hw => "btgrovepi", :id => :D8, :label => "Port D8", :type => "digital", :types => @grove_digital_types},
-    %{:hw => "btgrovepi", :id => :rpsier, :label => "RPSIER", :type => "digital", :types => @grove_digital_types}
-
+    %{:hw => "btgrovepi", :id => :i2c0, :label => "I2C 0", :type => "i2c", :types => @grove_i2c_types},
+    %{:hw => "btgrovepi", :id => :i2c1, :label => "I2C 1", :type => "i2c", :types => @grove_i2c_types},
+    %{:hw => "btgrovepi", :id => :i2c2, :label => "I2C 2", :type => "i2c", :types => @grove_i2c_types}
   ]
   ####
   #External API
